@@ -326,14 +326,24 @@ async function loadUserFromServer(){
     state.totalPoints = data.points || 0;
     state.adsToday = data.adsWatchedToday || {};
     state.tasksDone = data.tasksDone || {};
-    // Referrals list and 7-day history need their own backend routes as you grow —
-    // for now the Referral/Profile pages will show zeros until those are added.
   } catch(e){
     console.error("Could not load user from server:", e);
   }
   renderHome();
   renderReferral();
   renderProfile();
+}
+
+// Pulls the real list of people this user has referred
+async function loadReferralsFromServer(){
+  try{
+    const res = await fetch(`${API_BASE}/referrals/${state.user.id}`);
+    const list = await res.json();
+    state.referrals = list;
+  } catch(e){
+    console.error("Could not load referrals from server:", e);
+  }
+  renderReferral();
 }
 
 const AD_NETWORKS = [
@@ -551,6 +561,7 @@ async function submitWithdraw(){
 }
 
 loadUserFromServer();
+loadReferralsFromServer();
 </script>
 </body>
 </html>
