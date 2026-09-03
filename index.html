@@ -231,7 +231,7 @@
     <div class="ref-link-box">
       <div class="label">Your referral link</div>
       <div class="ref-link-row">
-        <input type="text" id="refLinkInput" readonly value="https://t.me/YourBot?start=ref_000000">
+        <input type="text" id="refLinkInput" readonly value="https://t.me/LiveForAds_Bot?start=ref_000000">
         <button class="copy-btn" onclick="copyRefLink()">Copy</button>
       </div>
       <div class="ref-stats">
@@ -460,7 +460,7 @@ async function completeTask(taskKey){
 }
 
 function renderReferral(){
-  document.getElementById('refLinkInput').value = `https://t.me/YourBot?start=ref_${state.user.id}`;
+  document.getElementById('refLinkInput').value = `https://t.me/LiveForAds_Bot?start=ref_${state.user.id}`;
   document.getElementById('refCount').textContent = state.referrals.length;
   document.getElementById('refEligible').textContent = state.referrals.filter(r=>r.eligible).length;
   document.getElementById('refEarned').textContent = state.refEarnedPoints;
