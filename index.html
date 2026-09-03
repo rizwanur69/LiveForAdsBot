@@ -291,29 +291,41 @@
 /* ============================================================
    CONFIG — replace with your real backend endpoint
    ============================================================ */
-const API_BASE = "https://your-backend-url.example.com/api"; // TODO: set your Render/Railway backend URL
+const API_BASE = "https://liveforadsbot-backend.onrender.com/api";
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { tg.ready(); tg.expand(); }
 
 /* ============================================================
-   MOCK STATE — replace all of this with real API calls.
-   Every function below is written so you can swap the mock
-   data for a fetch() to your backend without changing the UI code.
+   LIVE STATE — loaded from your real backend on Render.
    ============================================================ */
 let state = {
   user: { id: tg?.initDataUnsafe?.user?.id || "000000", name: tg?.initDataUnsafe?.user?.first_name || "User" },
-  totalPoints: 245,
-  adsToday: { adsgram: 3, monetag: 5 },
+  totalPoints: 0,
+  adsToday: {},
   dailyLimit: 10,
-  tasksDone: { subscribe: false },
-  referrals: [
-    { name: "Rafiq", ads: 12, eligible: true, id: "111" },
-    { name: "Nadia", ads: 4, eligible: false, id: "222" }
-  ],
-  refEarnedPoints: 55,
-  history: [ {d:"Mon",ads:6,total:180}, {d:"Tue",ads:8,total:210}, {d:"Wed",ads:5,total:225},
-             {d:"Thu",ads:10,total:255},{d:"Fri",ads:7,total:270},{d:"Sat",ads:9,total:295},{d:"Sun",ads:3,total:300} ]
+  tasksDone: {},
+  referrals: [],
+  refEarnedPoints: 0,
+  history: []
 };
+
+// Pulls this user's real record from the backend (creates it if it's their first time)
+async function loadUserFromServer(){
+  try{
+    const res = await fetch(`${API_BASE}/user/${state.user.id}`);
+    const data = await res.json();
+    state.totalPoints = data.points || 0;
+    state.adsToday = data.adsWatchedToday || {};
+    state.tasksDone = data.tasksDone || {};
+    // Referrals list and 7-day history need their own backend routes as you grow —
+    // for now the Referral/Profile pages will show zeros until those are added.
+  } catch(e){
+    console.error("Could not load user from server:", e);
+  }
+  renderHome();
+  renderReferral();
+  renderProfile();
+}
 
 const AD_NETWORKS = [
   { key:"adsgram", name:"Adsgram", icon:"▲" },
@@ -362,24 +374,53 @@ function renderHome(){
 }
 
 function watchAd(networkKey){
-  // TODO: replace this with the real SDK call, e.g.:
-  // Adsgram: AdController.show().then(() => reportAdWatched(networkKey))
-  // Monetag: show_monetag_ad().then(() => reportAdWatched(networkKey))
+  // TODO once you have real Adsgram/Monetag account + SDK script tags added to <head>:
+  // if (networkKey === 'adsgram') { AdController.show().then(() => reportAdWatched(networkKey)); }
+  // if (networkKey === 'monetag')  { show_monetag_ad().then(() => reportAdWatched(networkKey)); }
+  // Until the real SDKs are wired in, this simulates a finished ad view so you can test the points flow end-to-end:
   reportAdWatched(networkKey);
 }
 
-function reportAdWatched(networkKey){
-  // TODO: POST to your backend so it can verify + credit points server-side.
-  // fetch(`${API_BASE}/ad-watched`, { method:'POST', body: JSON.stringify({ userId: state.user.id, network: networkKey }) })
+async function reportAdWatched(networkKey){
   if ((state.adsToday[networkKey]||0) >= state.dailyLimit) return;
+  try{
+    const res = await fetch(`${API_BASE}/ad-watched`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: state.user.id, network: networkKey })
+    });
+    const result = await res.json();
+    if (!result.success){
+      if (result.reason === 'daily_limit_reached') alert('Daily limit reached for this network.');
+      return;
+    }
+  } catch(e){
+    console.error("ad-watched request failed:", e);
+    alert("Couldn't reach the server — check your connection.");
+    return;
+  }
   state.adsToday[networkKey] = (state.adsToday[networkKey]||0) + 1;
   state.totalPoints += POINTS_PER_AD;
   renderHome();
   if (tg) tg.HapticFeedback?.notificationOccurred('success');
 }
 
-function completeTask(taskKey){
-  // TODO: verify subscription server-side (Telegram Bot API getChatMember) before crediting
+async function completeTask(taskKey){
+  // NOTE: this currently trusts the button click. Before going public, verify the
+  // subscription server-side (Telegram Bot API getChatMember) in server.js before crediting —
+  // otherwise a user could tap "Go" without actually subscribing.
+  try{
+    const res = await fetch(`${API_BASE}/task-complete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: state.user.id, taskKey, rewardPoints: 5 })
+    });
+    const result = await res.json();
+    if (!result.success) return;
+  } catch(e){
+    console.error("task-complete request failed:", e);
+    return;
+  }
   state.tasksDone[taskKey] = true;
   state.totalPoints += 5;
   renderHome();
@@ -454,7 +495,8 @@ function drawChart(){
 }
 
 let withdrawWindowOpen = true; // TODO: compute from backend based on current date (1st of month, 24hrs)
-function submitWithdraw(){
+async function submitWithdraw(){
+  const network = document.getElementById('withdrawNetwork').value;
   const addr = document.getElementById('withdrawAddress').value.trim();
   const status = document.getElementById('withdrawStatus');
   if (!withdrawWindowOpen){
@@ -465,14 +507,27 @@ function submitWithdraw(){
     status.textContent = "Enter a wallet address first.";
     return;
   }
-  // TODO: POST to backend: { userId, network, address, points: state.totalPoints }
+  try{
+    const res = await fetch(`${API_BASE}/withdraw`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: state.user.id, network, address: addr })
+    });
+    const result = await res.json();
+    if (!result.success){
+      status.textContent = "Something went wrong — try again.";
+      return;
+    }
+  } catch(e){
+    console.error("withdraw request failed:", e);
+    status.textContent = "Couldn't reach the server — check your connection.";
+    return;
+  }
   status.textContent = "Request submitted. You'll be paid between the 3rd–5th if approved.";
   document.getElementById('withdrawBtn').disabled = true;
 }
 
-renderHome();
-renderReferral();
-renderProfile();
+loadUserFromServer();
 </script>
 </body>
 </html>
