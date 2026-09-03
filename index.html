@@ -6,6 +6,7 @@
 <title>Earn App</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+<script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
 
@@ -299,6 +300,10 @@ if (tg) { tg.ready(); tg.expand(); }
 // Adsgram — real rewarded ad block
 const AdsgramController = window.Adsgram ? window.Adsgram.init({ blockId: "45876" }) : null;
 
+// OnClicka — real rewarded ad block, initialized once and reused
+let onclickaShow = null;
+window.initCdTma?.({ id: 6145357 }).then(show => { onclickaShow = show; }).catch(e => console.log("OnClicka init failed:", e));
+
 /* ============================================================
    LIVE STATE — loaded from your real backend on Render.
    ============================================================ */
@@ -333,7 +338,7 @@ async function loadUserFromServer(){
 
 const AD_NETWORKS = [
   { key:"adsgram", name:"Adsgram", icon:"▲" },
-  { key:"monetag",  name:"Monetag",  icon:"◆" }
+  { key:"onclicka", name:"OnClicka", icon:"◆" }
 ];
 const POINTS_PER_AD = 10;
 
@@ -387,8 +392,15 @@ function watchAd(networkKey){
     });
     return;
   }
-  // TODO: Monetag goes here once that account is set up:
-  // if (networkKey === 'monetag') { ... }
+  if (networkKey === 'onclicka'){
+    if (!onclickaShow){ alert('Ad SDK not loaded — try again in a moment.'); return; }
+    onclickaShow().then(() => {
+      reportAdWatched(networkKey);
+    }).catch(() => {
+      // ad failed or was skipped — no reward
+    });
+    return;
+  }
   reportAdWatched(networkKey); // temporary fallback for networks not wired yet
 }
 
