@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Earn App</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
 
@@ -295,6 +296,9 @@ const API_BASE = "https://liveforadsbot-backend.onrender.com/api";
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { tg.ready(); tg.expand(); }
 
+// Adsgram — real rewarded ad block
+const AdsgramController = window.Adsgram ? window.Adsgram.init({ blockId: "45876" }) : null;
+
 /* ============================================================
    LIVE STATE — loaded from your real backend on Render.
    ============================================================ */
@@ -374,11 +378,18 @@ function renderHome(){
 }
 
 function watchAd(networkKey){
-  // TODO once you have real Adsgram/Monetag account + SDK script tags added to <head>:
-  // if (networkKey === 'adsgram') { AdController.show().then(() => reportAdWatched(networkKey)); }
-  // if (networkKey === 'monetag')  { show_monetag_ad().then(() => reportAdWatched(networkKey)); }
-  // Until the real SDKs are wired in, this simulates a finished ad view so you can test the points flow end-to-end:
-  reportAdWatched(networkKey);
+  if (networkKey === 'adsgram'){
+    if (!AdsgramController){ alert('Ad SDK not loaded — try again in a moment.'); return; }
+    AdsgramController.show().then(() => {
+      reportAdWatched(networkKey);
+    }).catch(() => {
+      // user closed the ad early or an error occurred — no reward
+    });
+    return;
+  }
+  // TODO: Monetag goes here once that account is set up:
+  // if (networkKey === 'monetag') { ... }
+  reportAdWatched(networkKey); // temporary fallback for networks not wired yet
 }
 
 async function reportAdWatched(networkKey){
