@@ -13,7 +13,8 @@
   :root{
     --bg:#0F1A1C; --surface:#16262A; --surface-raised:#1C2E32; --line:#24393D;
     --text:#EAF2F1; --text-muted:#8FA3A1;
-    --gold:#F2B33D; --gold-dim:#5A4523; --teal:#2DD4BF; --red:#E8604C;
+    --gold:#F2B33D; --gold-dim:#5A4523; --teal:#2DD4BF; --red:#E8604C; --green:#4ADE80;
+    --indigo:#6366F1; --indigo-bg:#1E1F3B;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{
@@ -37,9 +38,6 @@
 
   .section-label{font-size:13px; color:var(--text-muted); margin:22px 0 12px; font-weight:500;}
 
-  /* Card base */
-  .card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:12px;}
-
   /* Check-in box */
   .checkin-box{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; margin-top:16px;}
   .checkin-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
@@ -48,18 +46,12 @@
   .week-strip{display:flex; gap:6px; margin-bottom:14px;}
   .week-day{flex:1; text-align:center;}
   .week-day .dlabel{font-size:10px; color:var(--text-muted); margin-bottom:6px;}
-  .week-day .dcircle{
-    width:100%; aspect-ratio:1; border-radius:10px; background:var(--surface-raised);
-    border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:13px;
-  }
+  .week-day .dcircle{width:100%; aspect-ratio:1; border-radius:10px; background:var(--surface-raised); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:13px;}
   .week-day.done .dcircle{background:var(--gold); border-color:var(--gold); color:#1B1404; font-weight:700;}
   .week-day.today .dcircle{border-color:var(--gold); border-width:2px;}
-  .checkin-btn{
-    width:100%; background:var(--gold); border:none; color:#1B1404; font-weight:700;
-    font-size:14px; padding:12px; border-radius:10px; cursor:pointer; font-family:'Inter',sans-serif;
-  }
+  .checkin-btn{width:100%; background:var(--gold); border:none; color:#1B1404; font-weight:700; font-size:14px; padding:12px; border-radius:10px; cursor:pointer; font-family:'Inter',sans-serif;}
   .checkin-btn:disabled{background:var(--surface-raised); color:var(--text-muted);}
-  .checkin-next{font-size:11px; color:var(--text-muted); text-align:center; margin-top:8px;}
+  .checkin-next{font-size:12px; color:var(--text-muted); text-align:center; margin-top:8px; font-family:'Space Grotesk',sans-serif; letter-spacing:0.5px;}
 
   /* Task / Ad rows */
   .ad-row{display:flex; align-items:center; gap:14px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:10px;}
@@ -73,15 +65,14 @@
   .watch-btn{background:var(--gold); color:#1B1404; border:none; font-family:'Inter',sans-serif; font-weight:600; font-size:13px; padding:9px 16px; border-radius:10px; cursor:pointer; white-space:nowrap;}
   .watch-btn:disabled{background:var(--surface-raised); color:var(--text-muted); cursor:not-allowed;}
 
-  /* Ads page header */
   .ads-note{font-size:12.5px; color:var(--text-muted); line-height:1.5; margin:16px 0;}
 
   /* Leaderboard */
   .podium{display:flex; align-items:flex-end; gap:10px; margin:20px 0 10px;}
   .podium-item{flex:1; text-align:center; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 8px;}
-  .podium-item.gold{order:2; padding-top:6px; border-color:var(--gold);}
-  .podium-item.silver{order:1;}
-  .podium-item.bronze{order:3;}
+  .podium-item.gold{order:2; min-height:172px; border-color:var(--gold); padding-top:10px;}
+  .podium-item.silver{order:1; min-height:140px;}
+  .podium-item.bronze{order:3; min-height:120px;}
   .podium-hat{font-size:22px; margin-bottom:4px;}
   .podium-avatar{width:48px; height:48px; border-radius:50%; background:var(--surface-raised); margin:0 auto 8px; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--gold); overflow:hidden; font-size:16px;}
   .podium-avatar img{width:100%; height:100%; object-fit:cover;}
@@ -122,11 +113,24 @@
 
   /* Profile */
   .profile-head{display:flex; align-items:center; gap:14px; padding:20px 0 8px;}
-  .profile-head .avatar{width:64px; height:64px; border-radius:50%; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; color:var(--gold); overflow:hidden; flex-shrink:0;}
+  .profile-head .avatar-wrap{position:relative; width:64px; height:64px; flex-shrink:0;}
+  .profile-head .avatar{width:64px; height:64px; border-radius:50%; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; color:var(--gold); overflow:hidden;}
   .profile-head .avatar img{width:100%; height:100%; object-fit:cover;}
+  .avatar-change-overlay{
+    position:absolute; inset:0; border-radius:50%; background:rgba(0,0,0,0.55);
+    display:none; align-items:center; justify-content:center; font-size:10px; font-weight:600; color:#fff; cursor:pointer; text-align:center;
+  }
+  .editing .avatar-change-overlay{display:flex;}
   .profile-head .name-row{display:flex; align-items:center; gap:8px;}
   .profile-head .name{font-size:18px; font-weight:700;}
-  .profile-head .edit-btn{background:none; border:none; color:var(--text-muted); font-size:12px; cursor:pointer; text-decoration:underline;}
+  .profile-head .name-input{
+    font-size:16px; font-weight:700; background:var(--surface-raised); border:1px solid var(--gold);
+    color:var(--text); border-radius:8px; padding:6px 10px; font-family:'Inter',sans-serif; display:none;
+  }
+  .editing .name{display:none;}
+  .editing .name-input{display:inline-block;}
+  .profile-head .edit-btn{background:var(--surface-raised); border:1px solid var(--line); color:var(--text-muted); font-size:11.5px; cursor:pointer; padding:5px 12px; border-radius:8px; font-family:'Inter',sans-serif;}
+  .profile-head .edit-btn.done{background:var(--gold); color:#1B1404; border-color:var(--gold); font-weight:700;}
   .profile-head .id{font-size:12.5px; color:var(--text-muted); margin-top:2px;}
 
   .stat-grid{display:flex; gap:10px; margin:20px 0;}
@@ -143,13 +147,33 @@
   .chart-legend span{display:flex; align-items:center; gap:6px; color:var(--text-muted);}
   .dot{width:8px; height:8px; border-radius:50%; display:inline-block;}
 
-  .withdraw-box{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 16px 18px;}
+  /* Withdraw notice marquee */
+  .withdraw-notice{
+    background:var(--indigo-bg); border:1px solid var(--indigo); border-radius:12px;
+    padding:10px 0; margin-top:16px; overflow:hidden; white-space:nowrap;
+  }
+  .withdraw-notice-track{display:inline-block; padding-left:100%; animation:marquee 18s linear infinite; font-size:12.5px; color:#C7C9FB; font-weight:500;}
+  @keyframes marquee{ from{transform:translateX(0);} to{transform:translateX(-100%);} }
+
+  .withdraw-box{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 16px 18px; margin-top:12px;}
   .withdraw-box .title{font-size:14.5px; font-weight:600; margin-bottom:4px;}
   .withdraw-box .sub{font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.5;}
   .withdraw-box select, .withdraw-box input{width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:13.5px; padding:11px 12px; border-radius:10px; margin-bottom:10px; font-family:'Inter',sans-serif;}
   .withdraw-submit{width:100%; background:var(--gold); border:none; color:#1B1404; font-weight:700; font-size:14px; padding:12px; border-radius:10px; cursor:pointer;}
   .withdraw-submit:disabled{background:var(--surface-raised); color:var(--text-muted);}
   .withdraw-note{font-size:11px; color:var(--text-muted); margin-top:10px; text-align:center;}
+
+  /* Payouts */
+  .payouts-box{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; margin-top:12px;}
+  .payouts-box .title{font-size:14.5px; font-weight:600; margin-bottom:2px;}
+  .season-dates{font-size:11.5px; color:var(--text-muted); margin-bottom:14px;}
+  .payout-row{display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line);}
+  .payout-row:last-child{border-bottom:none;}
+  .payout-row .date{font-size:12.5px; color:var(--text-muted);}
+  .payout-row .pill{font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px;}
+  .pill.paid{background:rgba(74,222,128,0.12); color:var(--green);}
+  .pill.pending{background:rgba(242,179,61,0.12); color:var(--gold);}
+  .pill.rejected{background:rgba(232,96,76,0.12); color:var(--red);}
 
   /* LFA page */
   .lfa-frame{width:100%; height:70vh; border:1px solid var(--line); border-radius:14px; margin-top:16px; background:var(--surface);}
@@ -223,24 +247,29 @@
     <div id="refList"></div>
   </div>
 
-  <!-- ================= LFA (webpage) ================= -->
+  <!-- ================= LFA (web view) ================= -->
   <div class="page" id="page-lfa">
-    <div class="section-label" style="margin-top:16px;">Live For Ads</div>
+    <div class="section-label" style="margin-top:16px;">Web View</div>
     <iframe class="lfa-frame" id="lfaFrame" src="about:blank"></iframe>
   </div>
 
   <!-- ================= PROFILE ================= -->
   <div class="page" id="page-profile">
-    <div class="profile-head">
-      <div class="avatar" id="profileAvatar">U</div>
+    <div class="profile-head" id="profileHead">
+      <div class="avatar-wrap">
+        <div class="avatar" id="profileAvatar">U</div>
+        <div class="avatar-change-overlay" id="avatarChangeOverlay" onclick="triggerAvatarPick()">Change</div>
+      </div>
       <div>
         <div class="name-row">
           <div class="name" id="profileName">User</div>
-          <button class="edit-btn" onclick="editProfile()">Edit</button>
+          <input class="name-input" id="profileNameInput" type="text">
+          <button class="edit-btn" id="editBtn" onclick="toggleEdit()">Edit</button>
         </div>
         <div class="id" id="profileId">ID: —</div>
       </div>
     </div>
+    <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="onAvatarFileChosen(event)">
 
     <div class="stat-grid">
       <div class="stat-card"><div class="num" id="statAds">0</div><div class="label">Ads watched</div></div>
@@ -255,16 +284,16 @@
     </div>
 
     <div class="chart-box">
-      <div class="title" style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Activity</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Activity</div>
       <svg id="chartSvg" width="100%" height="120" viewBox="0 0 320 120"></svg>
-      <div id="chartAllTime" style="display:none; text-align:center; padding:20px 0;">
-        <div style="font-size:28px;font-weight:700;" id="allTimeAds">0</div>
-        <div style="font-size:11.5px;color:var(--text-muted);">total ads watched, all time</div>
+      <div class="chart-legend">
+        <span><i class="dot" style="background:#2DD4BF"></i>Ads</span>
+        <span><i class="dot" style="background:#F2B33D"></i>Points</span>
       </div>
-      <div class="chart-legend" id="chartLegend">
-        <span><i class="dot" style="background:#2DD4BF"></i>Daily ads</span>
-        <span><i class="dot" style="background:#F2B33D"></i>Points earned</span>
-      </div>
+    </div>
+
+    <div class="withdraw-notice" id="withdrawNoticeBox" style="display:none;">
+      <div class="withdraw-notice-track" id="withdrawNoticeText"></div>
     </div>
 
     <div class="withdraw-box">
@@ -277,6 +306,12 @@
       <input type="text" id="withdrawAddress" placeholder="Wallet address">
       <button class="withdraw-submit" id="withdrawBtn" onclick="submitWithdraw()">Submit request</button>
       <div class="withdraw-note" id="withdrawStatus"></div>
+    </div>
+
+    <div class="payouts-box">
+      <div class="title">Payouts</div>
+      <div class="season-dates" id="seasonDates">—</div>
+      <div id="payoutHistory"></div>
     </div>
   </div>
 
@@ -294,7 +329,7 @@
    CONFIG
    ============================================================ */
 const API_BASE = "https://liveforadsbot-backend.onrender.com/api";
-const LFA_WEBPAGE_URL = "https://rizwanur69.github.io/LiveForAdsBot/whitepaper.html"; // TODO: point this at your real webpage
+const LFA_WEBPAGE_URL = "https://rizwanur69.github.io/LiveForAdsWeb/";
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { tg.ready(); tg.expand(); }
 
@@ -314,20 +349,25 @@ let state = {
   user: { id: tg?.initDataUnsafe?.user?.id || "000000", name: tg?.initDataUnsafe?.user?.first_name || "User" },
   totalPoints: 0,
   adsToday: {},
-  tasksCompletedToday: {},
+  tasksCompleted: {},
   checkin: { lastDate: null, streak: 0 },
   displayName: null,
   avatarUrl: null,
   telegramAvatarUrl: null,
+  banned: false,
   referrals: [],
   refEarnedPoints: 0,
   tasks: [],
-  settings: { seasonName: "Testing Season", withdrawOpen: false },
-  statsRange: '7'
+  settings: { seasonName: "Testing Season", withdrawOpen: false, withdrawNotice: "", seasonStartDate: "", seasonEndDate: "" },
+  statsRange: '7',
+  editing: false,
+  pendingAvatarDataUrl: null
 };
 
+let countdownInterval = null;
+
 /* ============================================================
-   NAVIGATION — re-fetches the relevant data every time a tab opens
+   NAVIGATION
    ============================================================ */
 function showPage(name, el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -335,12 +375,14 @@ function showPage(name, el){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   el.classList.add('active');
 
+  if (countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
+
   if (name === 'home') loadHome();
   if (name === 'ads') loadUserFromServer().then(renderAds);
   if (name === 'leaderboard') loadLeaderboard();
-  if (name === 'referral') { loadUserFromServer(); loadReferralsFromServer(); }
+  if (name === 'referral') { loadUserFromServer().then(renderReferral); loadReferralsFromServer(); }
   if (name === 'lfa') loadLfaFrame();
-  if (name === 'profile') { loadUserFromServer().then(renderProfile); loadStats(); }
+  if (name === 'profile') { loadUserFromServer().then(()=>{ renderProfile(); loadSettings().then(renderWithdrawInfo); loadPayoutHistory(); }); loadStats(); }
 }
 
 /* ============================================================
@@ -352,11 +394,12 @@ async function loadUserFromServer(){
     const data = await res.json();
     state.totalPoints = data.points || 0;
     state.adsToday = data.adsWatchedToday || {};
-    state.tasksCompletedToday = data.tasksCompletedToday || {};
+    state.tasksCompleted = data.tasksCompleted || {};
     state.checkin = data.checkin || { lastDate: null, streak: 0 };
     state.displayName = data.displayName;
     state.avatarUrl = data.avatarUrl;
     state.telegramAvatarUrl = data.telegramAvatarUrl;
+    state.banned = !!data.banned;
     state.refEarnedPoints = data.referralEarnings || 0;
   } catch(e){ console.error("Could not load user:", e); }
 }
@@ -386,12 +429,17 @@ async function loadHome(){
   renderCheckin();
   await loadTasks();
   document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>pts</span>';
+
+  if (state.banned){
+    document.getElementById('checkinBtn').disabled = true;
+    document.getElementById('checkinBtn').textContent = 'Account suspended';
+  }
 }
 
 function renderCheckin(){
   const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   const now = new Date();
-  const todayIdx = (now.getUTCDay() + 6) % 7; // Monday = 0
+  const todayIdx = (now.getUTCDay() + 6) % 7;
   const today = now.toISOString().slice(0,10);
   const alreadyToday = state.checkin.lastDate === today;
   const streak = state.checkin.streak || 0;
@@ -409,19 +457,38 @@ function renderCheckin(){
 
   document.getElementById('streakLabel').textContent = `🔥 ${streak} day streak`;
   const btn = document.getElementById('checkinBtn');
-  const nextReward = 10 + streak*5;
+  const nextText = document.getElementById('checkinNext');
+
+  if (countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
+
   if (alreadyToday){
     btn.disabled = true;
     btn.textContent = 'Already checked in today';
-    document.getElementById('checkinNext').textContent = `Come back after 00:00 UTC (6:00 AM BD time)`;
+    startCountdown();
   } else {
     btn.disabled = false;
     btn.textContent = `Check in — claim ${10 + (streak>0? streak*5 : 0)} points`;
-    document.getElementById('checkinNext').textContent = `Next day's reward increases by 5 points`;
+    nextText.textContent = '';
   }
 }
 
+function startCountdown(){
+  const nextText = document.getElementById('checkinNext');
+  function tick(){
+    const now = new Date();
+    const nextMidnight = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()+1, 0,0,0));
+    let diff = Math.max(0, nextMidnight - now);
+    const hh = String(Math.floor(diff/3600000)).padStart(2,'0');
+    const mm = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+    const ss = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+    nextText.textContent = `Next check-in in ${hh}:${mm}:${ss}`;
+  }
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
 async function doCheckin(){
+  if (state.banned) return;
   try{
     const res = await fetch(`${API_BASE}/checkin`, {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -455,27 +522,20 @@ function renderTasks(){
     return;
   }
   list.innerHTML = state.tasks.map(t=>{
-    const done = (state.tasksCompletedToday[t.id]||0);
-    const limit = t.dailyLimit || 20;
-    const maxed = done >= limit;
-    const pct = Math.min(100, (done/limit)*100);
+    const done = !!state.tasksCompleted[t.id];
     return `<div class="ad-row">
       <div class="icon">${t.type==='channel'?'📢':t.type==='webpage'?'🌐':t.type==='pdf'?'📄':'✓'}</div>
       <div class="info">
         <div class="name">${t.title}</div>
-        <div class="sub">+${t.points||50} points</div>
-        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-        <div class="count">${done}/${limit} today</div>
+        <div class="sub">+${t.points||50} points ${done?'· Completed':''}</div>
       </div>
-      <button class="watch-btn" ${maxed?'disabled':''} onclick="doTask('${t.id}','${t.url||''}')">${maxed?'Done':'Go'}</button>
+      <button class="watch-btn" ${done?'disabled':''} onclick="doTask('${t.id}','${t.url||''}')">${done?'Done':'Go'}</button>
     </div>`;
   }).join('');
 }
 
 function doTask(taskId, url){
-  if (url){
-    if (tg) tg.openLink(url); else window.open(url, '_blank');
-  }
+  if (url){ if (tg) tg.openLink(url); else window.open(url, '_blank'); }
   claimTask(taskId);
 }
 
@@ -487,7 +547,7 @@ async function claimTask(taskId){
     });
     const result = await res.json();
     if (result.success){
-      state.tasksCompletedToday[taskId] = (state.tasksCompletedToday[taskId]||0) + 1;
+      state.tasksCompleted[taskId] = true;
       state.totalPoints += result.pointsEarned;
       document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>pts</span>';
       renderTasks();
@@ -499,13 +559,12 @@ async function claimTask(taskId){
    ADS PAGE
    ============================================================ */
 function renderAds(){
-  document.getElementById('totalPoints');
   const adList = document.getElementById('adList');
   adList.innerHTML = '';
   AD_NETWORKS.forEach(net=>{
     const watched = state.adsToday[net.key] || 0;
     const pct = Math.min(100, (watched/AD_DAILY_LIMIT)*100);
-    const maxed = watched >= AD_DAILY_LIMIT;
+    const maxed = watched >= AD_DAILY_LIMIT || state.banned;
     adList.innerHTML += `
       <div class="ad-row">
         <div class="icon">${net.icon}</div>
@@ -515,12 +574,13 @@ function renderAds(){
           <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
           <div class="count">${watched}/${AD_DAILY_LIMIT} watched today</div>
         </div>
-        <button class="watch-btn" ${maxed?'disabled':''} onclick="watchAd('${net.key}')">${maxed?'Limit reached':'Watch'}</button>
+        <button class="watch-btn" ${maxed?'disabled':''} onclick="watchAd('${net.key}')">${state.banned?'Suspended':(watched>=AD_DAILY_LIMIT?'Limit reached':'Watch')}</button>
       </div>`;
   });
 }
 
 function watchAd(networkKey){
+  if (state.banned) return;
   if (networkKey === 'adsgram'){
     if (!AdsgramController){ alert('Ad SDK not loaded — try again in a moment.'); return; }
     AdsgramController.show().then(() => reportAdWatched(networkKey)).catch(() => {});
@@ -543,6 +603,7 @@ async function reportAdWatched(networkKey){
     const result = await res.json();
     if (!result.success){
       if (result.reason === 'daily_limit_reached') alert('Daily limit reached for this network.');
+      if (result.reason === 'banned') alert('Your account is suspended.');
       return;
     }
     state.adsToday[networkKey] = (state.adsToday[networkKey]||0) + 1;
@@ -564,7 +625,7 @@ async function loadLeaderboard(){
 }
 
 function initials(name){ return (name||'U')[0].toUpperCase(); }
-function avatarHtml(user, size){
+function avatarHtml(user){
   if (user.avatarUrl) return `<img src="${user.avatarUrl}" alt="">`;
   return initials(user.name);
 }
@@ -611,8 +672,7 @@ function renderLeaderboard(data){
    REFERRAL
    ============================================================ */
 function refColor(pct){
-  // deep red -> orange -> deep green as percentage increases
-  const hue = Math.round((pct/100) * 120); // 0=red, 60=orange/yellow, 120=green
+  const hue = Math.round((pct/100) * 120);
   return `hsl(${hue}, 70%, 45%)`;
 }
 
@@ -652,7 +712,7 @@ function copyRefLink(){
 }
 
 /* ============================================================
-   LFA WEBPAGE
+   LFA WEB VIEW
    ============================================================ */
 function loadLfaFrame(){
   const frame = document.getElementById('lfaFrame');
@@ -665,40 +725,70 @@ function loadLfaFrame(){
 function renderProfile(){
   const name = state.displayName || state.user.name;
   document.getElementById('profileName').textContent = name;
+  document.getElementById('profileNameInput').value = name;
   document.getElementById('profileId').textContent = 'ID: ' + state.user.id;
-  const avatarUrl = state.avatarUrl || state.telegramAvatarUrl;
+  const avatarUrl = state.pendingAvatarDataUrl || state.avatarUrl || state.telegramAvatarUrl;
   document.getElementById('profileAvatar').innerHTML = avatarUrl ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
 
   document.getElementById('statAds').textContent = Object.values(state.adsToday).reduce((a,b)=>a+b,0);
   document.getElementById('statTasks').textContent = (state.checkin.streak||0) + ' 🔥';
   document.getElementById('statRef').textContent = state.refEarnedPoints;
+}
 
-  const sub = document.getElementById('withdrawSub');
-  const btn = document.getElementById('withdrawBtn');
-  if (state.settings.withdrawOpen){
-    sub.textContent = `Withdrawals for ${state.settings.seasonName} are open now. Requests are reviewed and paid between the 3rd–5th of next month.`;
-    btn.disabled = false;
+function toggleEdit(){
+  state.editing = !state.editing;
+  const head = document.getElementById('profileHead');
+  const btn = document.getElementById('editBtn');
+  if (state.editing){
+    head.classList.add('editing');
+    btn.textContent = 'DONE';
+    btn.classList.add('done');
   } else {
-    sub.textContent = `Withdrawals open on the 1st–2nd after ${state.settings.seasonName} ends. Requests are reviewed and paid between the 3rd–5th.`;
-    btn.disabled = true;
+    head.classList.remove('editing');
+    btn.textContent = 'Edit';
+    btn.classList.remove('done');
+    saveProfile();
   }
 }
 
-function editProfile(){
-  const newName = prompt("Set your display name:", state.displayName || state.user.name);
-  if (newName === null) return;
-  const newAvatar = prompt("Set a custom avatar image URL (leave blank to keep your Telegram photo):", state.avatarUrl || "");
-  saveProfile(newName, newAvatar);
+function triggerAvatarPick(){
+  document.getElementById('avatarFileInput').click();
 }
 
-async function saveProfile(displayName, avatarUrl){
+function onAvatarFileChosen(event){
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const size = 200;
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const scale = Math.max(size/img.width, size/img.height);
+      const w = img.width*scale, h = img.height*scale;
+      ctx.drawImage(img, (size-w)/2, (size-h)/2, w, h);
+      state.pendingAvatarDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      renderProfile();
+      document.getElementById('profileHead').classList.add('editing');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveProfile(){
+  const newName = document.getElementById('profileNameInput').value.trim() || state.user.name;
+  const newAvatar = state.pendingAvatarDataUrl || state.avatarUrl;
   try{
     await fetch(`${API_BASE}/user/${state.user.id}/profile`, {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ displayName, avatarUrl: avatarUrl || null })
+      body: JSON.stringify({ displayName: newName, avatarUrl: newAvatar })
     });
-    state.displayName = displayName;
-    state.avatarUrl = avatarUrl || null;
+    state.displayName = newName;
+    state.avatarUrl = newAvatar;
+    state.pendingAvatarDataUrl = null;
     renderProfile();
   } catch(e){ console.error("Could not save profile:", e); }
 }
@@ -715,14 +805,8 @@ async function loadStats(){
     const res = await fetch(`${API_BASE}/user/${state.user.id}/stats?range=${state.statsRange}`);
     const data = await res.json();
     if (state.statsRange === 'all'){
-      document.getElementById('chartSvg').style.display = 'none';
-      document.getElementById('chartLegend').style.display = 'none';
-      document.getElementById('chartAllTime').style.display = 'block';
-      document.getElementById('allTimeAds').textContent = data.totalAds || 0;
+      drawChart((data.buckets||[]).map(b=>({date:b.label, ads:b.ads, points:b.points})));
     } else {
-      document.getElementById('chartSvg').style.display = 'block';
-      document.getElementById('chartLegend').style.display = 'flex';
-      document.getElementById('chartAllTime').style.display = 'none';
       drawChart(data.days || []);
     }
   } catch(e){ console.error("Could not load stats:", e); }
@@ -730,7 +814,7 @@ async function loadStats(){
 
 function drawChart(data){
   const svg = document.getElementById('chartSvg');
-  if (data.length === 0){ svg.innerHTML = ''; return; }
+  if (!data || data.length === 0){ svg.innerHTML = ''; return; }
   const w = 320, h = 120, pad = 10;
   const maxAds = Math.max(...data.map(d=>d.ads), 1);
   const maxPts = Math.max(...data.map(d=>d.points), 1);
@@ -743,25 +827,65 @@ function drawChart(data){
       return `${x},${y}`;
     }).join(' ');
   }
-  const showLabels = data.length <= 10;
+  const showLabels = data.length <= 12;
   svg.innerHTML = `
     <polyline points="${pointsFor('ads',maxAds)}" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
     <polyline points="${pointsFor('points',maxPts)}" fill="none" stroke="#F2B33D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    ${showLabels ? data.map((d,i)=>`<text x="${pad+i*stepX}" y="${h-1}" font-size="8" fill="#8FA3A1" text-anchor="middle" font-family="Inter">${d.date.slice(5)}</text>`).join('') : ''}
+    ${showLabels ? data.map((d,i)=>`<text x="${pad+i*stepX}" y="${h-1}" font-size="8" fill="#8FA3A1" text-anchor="middle" font-family="Inter">${(d.date||'').slice(-5)}</text>`).join('') : ''}
   `;
 }
 
 /* ============================================================
-   WITHDRAW
+   WITHDRAW + PAYOUTS
    ============================================================ */
+function renderWithdrawInfo(){
+  const sub = document.getElementById('withdrawSub');
+  const btn = document.getElementById('withdrawBtn');
+  const noticeBox = document.getElementById('withdrawNoticeBox');
+  const noticeText = document.getElementById('withdrawNoticeText');
+
+  if (state.settings.withdrawNotice){
+    noticeBox.style.display = 'block';
+    noticeText.textContent = state.settings.withdrawNotice;
+  } else {
+    noticeBox.style.display = 'none';
+  }
+
+  if (state.settings.withdrawOpen){
+    sub.textContent = `Withdrawals for ${state.settings.seasonName} are open now. Requests are reviewed and paid between the 3rd–5th of next month.`;
+    btn.disabled = false || state.banned;
+  } else {
+    sub.textContent = `Withdrawals open on the 1st–2nd after ${state.settings.seasonName} ends. Requests are reviewed and paid between the 3rd–5th.`;
+    btn.disabled = true;
+  }
+
+  const start = state.settings.seasonStartDate || '—';
+  const end = state.settings.seasonEndDate || '—';
+  document.getElementById('seasonDates').textContent = `${state.settings.seasonName || 'Season'}: ${start} to ${end}`;
+}
+
+async function loadPayoutHistory(){
+  try{
+    const res = await fetch(`${API_BASE}/withdrawals/${state.user.id}`);
+    const list = await res.json();
+    const box = document.getElementById('payoutHistory');
+    if (list.length === 0){
+      box.innerHTML = `<div style="font-size:12px;color:var(--text-muted);">No withdrawal requests yet.</div>`;
+      return;
+    }
+    box.innerHTML = list.map(w=>`
+      <div class="payout-row">
+        <div class="date">${w.createdAt ? new Date(w.createdAt).toLocaleDateString() : '—'}</div>
+        <span class="pill ${w.status}">${w.status.charAt(0).toUpperCase()+w.status.slice(1)}</span>
+      </div>`).join('');
+  } catch(e){ console.error("Could not load payout history:", e); }
+}
+
 async function submitWithdraw(){
   const network = document.getElementById('withdrawNetwork').value;
   const addr = document.getElementById('withdrawAddress').value.trim();
   const status = document.getElementById('withdrawStatus');
-  if (!state.settings.withdrawOpen){
-    status.textContent = "Withdrawals are currently closed.";
-    return;
-  }
+  if (!state.settings.withdrawOpen){ status.textContent = "Withdrawals are currently closed."; return; }
   if (!addr){ status.textContent = "Enter a wallet address first."; return; }
   try{
     const res = await fetch(`${API_BASE}/withdraw`, {
@@ -773,6 +897,7 @@ async function submitWithdraw(){
   } catch(e){ status.textContent = "Couldn't reach the server."; return; }
   status.textContent = "Request submitted. You'll be paid between the 3rd–5th if approved.";
   document.getElementById('withdrawBtn').disabled = true;
+  loadPayoutHistory();
 }
 
 /* ============================================================
