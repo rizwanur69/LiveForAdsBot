@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Earn App</title>
+<title>Live For Ads</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
@@ -11,150 +11,122 @@
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
 
   :root{
-    --bg:#0F1A1C;
-    --surface:#16262A;
-    --surface-raised:#1C2E32;
-    --line:#24393D;
-    --text:#EAF2F1;
-    --text-muted:#8FA3A1;
-    --gold:#F2B33D;
-    --gold-dim:#5A4523;
-    --teal:#2DD4BF;
-    --red:#E8604C;
+    --bg:#0F1A1C; --surface:#16262A; --surface-raised:#1C2E32; --line:#24393D;
+    --text:#EAF2F1; --text-muted:#8FA3A1;
+    --gold:#F2B33D; --gold-dim:#5A4523; --teal:#2DD4BF; --red:#E8604C;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    max-width:480px;
-    margin:0 auto;
-    min-height:100vh;
-    padding-bottom:84px;
+    background:var(--bg); color:var(--text); font-family:'Inter',sans-serif;
+    max-width:480px; margin:0 auto; min-height:100vh; padding-bottom:84px;
     -webkit-tap-highlight-color:transparent;
   }
   h1,h2,h3,.num{font-family:'Space Grotesk',sans-serif;}
 
-  /* ---------- Top bar ---------- */
-  .topbar{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:18px 20px 10px;
-  }
-  .topbar .brand{font-size:15px; font-weight:600; letter-spacing:0.2px; color:var(--text-muted);}
-  .topbar .season{
-    font-size:12px; color:var(--gold); background:rgba(242,179,61,0.1);
-    padding:5px 10px; border-radius:20px; border:1px solid var(--gold-dim);
-  }
+  .topbar{display:flex; align-items:center; justify-content:space-between; padding:18px 20px 10px;}
+  .topbar .brand{font-size:15px; font-weight:600; color:var(--text-muted);}
+  .topbar .season{font-size:12px; color:var(--gold); background:rgba(242,179,61,0.1); padding:5px 10px; border-radius:20px; border:1px solid var(--gold-dim);}
 
-  /* ---------- Page container ---------- */
   .page{display:none; padding:0 20px;}
   .page.active{display:block;}
 
-  /* ---------- HOME ---------- */
-  .balance-hero{
-    padding:24px 4px 8px;
-  }
+  .balance-hero{padding:16px 4px 4px;}
   .balance-hero .label{font-size:13px; color:var(--text-muted); margin-bottom:6px;}
-  .balance-hero .num{font-size:52px; font-weight:700; line-height:1; letter-spacing:-1px;}
-  .balance-hero .num span{font-size:22px; color:var(--text-muted); font-weight:500; margin-left:6px;}
+  .balance-hero .num{font-size:44px; font-weight:700; line-height:1; letter-spacing:-1px;}
+  .balance-hero .num span{font-size:19px; color:var(--text-muted); font-weight:500; margin-left:6px;}
 
-  .section-label{
-    font-size:13px; color:var(--text-muted); margin:28px 0 12px; font-weight:500;
-  }
+  .section-label{font-size:13px; color:var(--text-muted); margin:22px 0 12px; font-weight:500;}
 
-  .ad-row{
-    display:flex; align-items:center; gap:14px;
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:14px 16px;
-    margin-bottom:10px;
+  /* Card base */
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:12px;}
+
+  /* Check-in box */
+  .checkin-box{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; margin-top:16px;}
+  .checkin-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .checkin-head .title{font-size:14.5px; font-weight:600;}
+  .checkin-head .streak{font-size:12.5px; color:var(--gold);}
+  .week-strip{display:flex; gap:6px; margin-bottom:14px;}
+  .week-day{flex:1; text-align:center;}
+  .week-day .dlabel{font-size:10px; color:var(--text-muted); margin-bottom:6px;}
+  .week-day .dcircle{
+    width:100%; aspect-ratio:1; border-radius:10px; background:var(--surface-raised);
+    border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:13px;
   }
-  .ad-row .icon{
-    width:42px; height:42px; border-radius:10px;
-    background:var(--surface-raised);
-    display:flex; align-items:center; justify-content:center;
-    font-size:18px; flex-shrink:0;
+  .week-day.done .dcircle{background:var(--gold); border-color:var(--gold); color:#1B1404; font-weight:700;}
+  .week-day.today .dcircle{border-color:var(--gold); border-width:2px;}
+  .checkin-btn{
+    width:100%; background:var(--gold); border:none; color:#1B1404; font-weight:700;
+    font-size:14px; padding:12px; border-radius:10px; cursor:pointer; font-family:'Inter',sans-serif;
   }
+  .checkin-btn:disabled{background:var(--surface-raised); color:var(--text-muted);}
+  .checkin-next{font-size:11px; color:var(--text-muted); text-align:center; margin-top:8px;}
+
+  /* Task / Ad rows */
+  .ad-row{display:flex; align-items:center; gap:14px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:10px;}
+  .ad-row .icon{width:42px; height:42px; border-radius:10px; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;}
   .ad-row .info{flex:1; min-width:0;}
   .ad-row .info .name{font-size:14.5px; font-weight:600;}
-  .ad-row .info .progress-track{
-    height:5px; background:var(--line); border-radius:4px; margin-top:8px; overflow:hidden;
-  }
-  .ad-row .info .progress-fill{
-    height:100%; background:var(--teal); border-radius:4px; transition:width .3s ease;
-  }
+  .ad-row .info .sub{font-size:11.5px; color:var(--text-muted); margin-top:2px;}
+  .ad-row .info .progress-track{height:5px; background:var(--line); border-radius:4px; margin-top:8px; overflow:hidden;}
+  .ad-row .info .progress-fill{height:100%; background:var(--teal); border-radius:4px; transition:width .3s ease;}
   .ad-row .count{font-size:12px; color:var(--text-muted); white-space:nowrap; margin-top:6px;}
-  .watch-btn{
-    background:var(--gold); color:#1B1404; border:none;
-    font-family:'Inter',sans-serif; font-weight:600; font-size:13px;
-    padding:9px 16px; border-radius:10px; cursor:pointer; white-space:nowrap;
-  }
+  .watch-btn{background:var(--gold); color:#1B1404; border:none; font-family:'Inter',sans-serif; font-weight:600; font-size:13px; padding:9px 16px; border-radius:10px; cursor:pointer; white-space:nowrap;}
   .watch-btn:disabled{background:var(--surface-raised); color:var(--text-muted); cursor:not-allowed;}
 
-  .task-row{
-    display:flex; align-items:center; justify-content:space-between;
-    background:var(--surface); border:1px solid var(--line);
-    border-radius:14px; padding:14px 16px; margin-bottom:10px;
-  }
-  .task-row .name{font-size:14.5px; font-weight:600;}
-  .task-row .reward{font-size:12.5px; color:var(--gold); margin-top:4px;}
-  .task-btn{
-    background:transparent; border:1px solid var(--teal); color:var(--teal);
-    font-family:'Inter',sans-serif; font-weight:600; font-size:13px;
-    padding:8px 14px; border-radius:10px; cursor:pointer;
-  }
-  .task-btn.done{border-color:var(--line); color:var(--text-muted);}
+  /* Ads page header */
+  .ads-note{font-size:12.5px; color:var(--text-muted); line-height:1.5; margin:16px 0;}
 
-  /* ---------- REFERRAL ---------- */
-  .ref-link-box{
-    background:var(--surface); border:1px solid var(--line); border-radius:14px;
-    padding:16px; margin-top:20px;
-  }
+  /* Leaderboard */
+  .podium{display:flex; align-items:flex-end; gap:10px; margin:20px 0 10px;}
+  .podium-item{flex:1; text-align:center; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 8px;}
+  .podium-item.gold{order:2; padding-top:6px; border-color:var(--gold);}
+  .podium-item.silver{order:1;}
+  .podium-item.bronze{order:3;}
+  .podium-hat{font-size:22px; margin-bottom:4px;}
+  .podium-avatar{width:48px; height:48px; border-radius:50%; background:var(--surface-raised); margin:0 auto 8px; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--gold); overflow:hidden; font-size:16px;}
+  .podium-avatar img{width:100%; height:100%; object-fit:cover;}
+  .podium-item .pname{font-size:12px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .podium-item .ppts{font-size:11px; color:var(--gold); margin-top:2px;}
+
+  .lb-row{display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:10px 14px; margin-bottom:8px;}
+  .lb-row .rank{width:26px; font-size:13px; color:var(--text-muted); font-weight:600; text-align:center;}
+  .lb-row .avatar{width:32px; height:32px; border-radius:50%; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--gold); overflow:hidden;}
+  .lb-row .avatar img{width:100%; height:100%; object-fit:cover;}
+  .lb-row .name{flex:1; font-size:13.5px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .lb-row .pts{font-size:13px; font-weight:600; color:var(--gold);}
+  .lb-row.you{border-color:var(--gold);}
+
+  /* Referral */
+  .ref-link-box{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; margin-top:16px;}
   .ref-link-box .label{font-size:12.5px; color:var(--text-muted); margin-bottom:8px;}
   .ref-link-row{display:flex; gap:8px;}
-  .ref-link-row input{
-    flex:1; background:var(--surface-raised); border:1px solid var(--line);
-    color:var(--text); font-size:12.5px; padding:10px 12px; border-radius:10px;
-    font-family:monospace; overflow:hidden; text-overflow:ellipsis;
-  }
-  .copy-btn{
-    background:var(--gold); border:none; color:#1B1404; font-weight:600;
-    font-size:13px; padding:0 16px; border-radius:10px; cursor:pointer;
-  }
+  .ref-link-row input{flex:1; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:12.5px; padding:10px 12px; border-radius:10px; font-family:monospace; overflow:hidden; text-overflow:ellipsis;}
+  .copy-btn{background:var(--gold); border:none; color:#1B1404; font-weight:600; font-size:13px; padding:0 16px; border-radius:10px; cursor:pointer;}
   .ref-stats{display:flex; gap:10px; margin-top:16px;}
-  .ref-stat{
-    flex:1; background:var(--surface-raised); border-radius:12px; padding:12px; text-align:center;
-  }
-  .ref-stat .num{font-size:22px; font-weight:700;}
-  .ref-stat .label{font-size:11px; color:var(--text-muted); margin-top:2px;}
+  .ref-stat{flex:1; background:var(--surface-raised); border-radius:12px; padding:12px; text-align:center;}
+  .ref-stat .num{font-size:20px; font-weight:700;}
+  .ref-stat .label{font-size:10.5px; color:var(--text-muted); margin-top:2px;}
 
-  .ref-user{
-    display:flex; align-items:center; gap:12px;
-    background:var(--surface); border:1px solid var(--line);
-    border-radius:14px; padding:12px 14px; margin-bottom:10px;
-  }
-  .ref-user .avatar{
-    width:38px; height:38px; border-radius:50%; background:var(--surface-raised);
-    display:flex; align-items:center; justify-content:center; font-weight:600; font-size:14px;
-    color:var(--gold); flex-shrink:0;
-  }
+  .ref-user{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:10px;}
+  .ref-user-top{display:flex; align-items:center; gap:12px;}
+  .ref-user .avatar{width:38px; height:38px; border-radius:50%; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:14px; color:var(--gold); flex-shrink:0;}
   .ref-user .info{flex:1;}
   .ref-user .info .name{font-size:14px; font-weight:600;}
   .ref-user .info .sub{font-size:11.5px; color:var(--text-muted); margin-top:2px;}
-  .badge{
-    font-size:11px; font-weight:600; padding:4px 9px; border-radius:20px;
-  }
+  .badge{font-size:11px; font-weight:600; padding:4px 9px; border-radius:20px;}
   .badge.eligible{background:rgba(45,212,191,0.12); color:var(--teal);}
   .badge.pending{background:rgba(232,96,76,0.12); color:var(--red);}
+  .ref-progress-track{height:6px; background:var(--line); border-radius:4px; margin-top:10px; overflow:hidden;}
+  .ref-progress-fill{height:100%; border-radius:4px; transition:width .3s ease;}
+  .ref-commission{font-size:11px; color:var(--text-muted); margin-top:8px;}
 
-  /* ---------- PROFILE ---------- */
-  .profile-head{display:flex; align-items:center; gap:14px; padding:24px 0 8px;}
-  .profile-head .avatar{
-    width:64px; height:64px; border-radius:50%; background:var(--surface-raised);
-    display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; color:var(--gold);
-  }
+  /* Profile */
+  .profile-head{display:flex; align-items:center; gap:14px; padding:20px 0 8px;}
+  .profile-head .avatar{width:64px; height:64px; border-radius:50%; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; color:var(--gold); overflow:hidden; flex-shrink:0;}
+  .profile-head .avatar img{width:100%; height:100%; object-fit:cover;}
+  .profile-head .name-row{display:flex; align-items:center; gap:8px;}
   .profile-head .name{font-size:18px; font-weight:700;}
+  .profile-head .edit-btn{background:none; border:none; color:var(--text-muted); font-size:12px; cursor:pointer; text-decoration:underline;}
   .profile-head .id{font-size:12.5px; color:var(--text-muted); margin-top:2px;}
 
   .stat-grid{display:flex; gap:10px; margin:20px 0;}
@@ -162,53 +134,37 @@
   .stat-card .num{font-size:20px; font-weight:700;}
   .stat-card .label{font-size:11.5px; color:var(--text-muted); margin-top:4px;}
 
-  .chart-box{
-    background:var(--surface); border:1px solid var(--line); border-radius:14px;
-    padding:16px; margin-bottom:20px;
-  }
-  .chart-box .title{font-size:13px; color:var(--text-muted); margin-bottom:10px;}
+  .range-toggle{display:flex; gap:6px; margin-bottom:12px;}
+  .range-toggle button{flex:1; background:var(--surface-raised); border:1px solid var(--line); color:var(--text-muted); font-size:12px; font-weight:600; padding:8px; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .range-toggle button.active{background:var(--gold); color:#1B1404; border-color:var(--gold);}
+
+  .chart-box{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:20px;}
   .chart-legend{display:flex; gap:16px; font-size:11.5px; margin-top:8px;}
   .chart-legend span{display:flex; align-items:center; gap:6px; color:var(--text-muted);}
   .dot{width:8px; height:8px; border-radius:50%; display:inline-block;}
 
-  .withdraw-box{
-    background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 16px 18px;
-  }
+  .withdraw-box{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 16px 18px;}
   .withdraw-box .title{font-size:14.5px; font-weight:600; margin-bottom:4px;}
   .withdraw-box .sub{font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.5;}
-  .withdraw-box select, .withdraw-box input{
-    width:100%; background:var(--surface-raised); border:1px solid var(--line);
-    color:var(--text); font-size:13.5px; padding:11px 12px; border-radius:10px;
-    margin-bottom:10px; font-family:'Inter',sans-serif;
-  }
-  .withdraw-submit{
-    width:100%; background:var(--gold); border:none; color:#1B1404;
-    font-weight:700; font-size:14px; padding:12px; border-radius:10px; cursor:pointer;
-  }
+  .withdraw-box select, .withdraw-box input{width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:13.5px; padding:11px 12px; border-radius:10px; margin-bottom:10px; font-family:'Inter',sans-serif;}
+  .withdraw-submit{width:100%; background:var(--gold); border:none; color:#1B1404; font-weight:700; font-size:14px; padding:12px; border-radius:10px; cursor:pointer;}
   .withdraw-submit:disabled{background:var(--surface-raised); color:var(--text-muted);}
   .withdraw-note{font-size:11px; color:var(--text-muted); margin-top:10px; text-align:center;}
 
-  /* ---------- Bottom nav ---------- */
-  .bottom-nav{
-    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-    width:100%; max-width:480px;
-    background:var(--surface); border-top:1px solid var(--line);
-    display:flex;
-    padding:10px 10px calc(10px + env(safe-area-inset-bottom));
-  }
-  .nav-item{
-    flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;
-    background:none; border:none; color:var(--text-muted); font-family:'Inter',sans-serif;
-    font-size:11px; padding:6px 0; cursor:pointer;
-  }
-  .nav-item .icon{font-size:19px; line-height:1;}
+  /* LFA page */
+  .lfa-frame{width:100%; height:70vh; border:1px solid var(--line); border-radius:14px; margin-top:16px; background:var(--surface);}
+
+  /* Bottom nav */
+  .bottom-nav{position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; background:var(--surface); border-top:1px solid var(--line); display:flex; padding:8px 4px calc(8px + env(safe-area-inset-bottom));}
+  .nav-item{flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; color:var(--text-muted); font-family:'Inter',sans-serif; font-size:9.5px; padding:5px 0; cursor:pointer;}
+  .nav-item .icon{font-size:17px; line-height:1;}
   .nav-item.active{color:var(--gold);}
 </style>
 </head>
 <body>
 
   <div class="topbar">
-    <div class="brand">EarnApp</div>
+    <div class="brand">Live For Ads</div>
     <div class="season" id="seasonLabel">Testing Season</div>
   </div>
 
@@ -219,11 +175,33 @@
       <div class="num" id="totalPoints">0 <span>pts</span></div>
     </div>
 
-    <div class="section-label">Watch ads</div>
-    <div id="adList"></div>
+    <div class="checkin-box">
+      <div class="checkin-head">
+        <div class="title">Daily Check-in</div>
+        <div class="streak" id="streakLabel">🔥 0 day streak</div>
+      </div>
+      <div class="week-strip" id="weekStrip"></div>
+      <button class="checkin-btn" id="checkinBtn" onclick="doCheckin()">Check in — claim points</button>
+      <div class="checkin-next" id="checkinNext"></div>
+    </div>
 
     <div class="section-label">Tasks</div>
     <div id="taskList"></div>
+  </div>
+
+  <!-- ================= ADS ================= -->
+  <div class="page" id="page-ads">
+    <div class="section-label" style="margin-top:16px;">Watch ads, earn points</div>
+    <div class="ads-note">Each ad gives 50 points. Limited slots per day per network.</div>
+    <div id="adList"></div>
+  </div>
+
+  <!-- ================= LEADERBOARD ================= -->
+  <div class="page" id="page-leaderboard">
+    <div class="section-label" style="margin-top:16px;">Top earners</div>
+    <div class="podium" id="podium"></div>
+    <div id="lbList"></div>
+    <div id="lbYou"></div>
   </div>
 
   <!-- ================= REFERRAL ================= -->
@@ -245,34 +223,53 @@
     <div id="refList"></div>
   </div>
 
+  <!-- ================= LFA (webpage) ================= -->
+  <div class="page" id="page-lfa">
+    <div class="section-label" style="margin-top:16px;">Live For Ads</div>
+    <iframe class="lfa-frame" id="lfaFrame" src="about:blank"></iframe>
+  </div>
+
   <!-- ================= PROFILE ================= -->
   <div class="page" id="page-profile">
     <div class="profile-head">
       <div class="avatar" id="profileAvatar">U</div>
       <div>
-        <div class="name" id="profileName">User</div>
+        <div class="name-row">
+          <div class="name" id="profileName">User</div>
+          <button class="edit-btn" onclick="editProfile()">Edit</button>
+        </div>
         <div class="id" id="profileId">ID: —</div>
       </div>
     </div>
 
     <div class="stat-grid">
       <div class="stat-card"><div class="num" id="statAds">0</div><div class="label">Ads watched</div></div>
-      <div class="stat-card"><div class="num" id="statTasks">0</div><div class="label">From tasks</div></div>
+      <div class="stat-card"><div class="num" id="statTasks">0</div><div class="label">Streak</div></div>
       <div class="stat-card"><div class="num" id="statRef">0</div><div class="label">From referrals</div></div>
     </div>
 
+    <div class="range-toggle">
+      <button class="active" onclick="setStatsRange('7', this)">7 Days</button>
+      <button onclick="setStatsRange('30', this)">30 Days</button>
+      <button onclick="setStatsRange('all', this)">All Time</button>
+    </div>
+
     <div class="chart-box">
-      <div class="title">Activity (last 7 days)</div>
+      <div class="title" style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Activity</div>
       <svg id="chartSvg" width="100%" height="120" viewBox="0 0 320 120"></svg>
-      <div class="chart-legend">
+      <div id="chartAllTime" style="display:none; text-align:center; padding:20px 0;">
+        <div style="font-size:28px;font-weight:700;" id="allTimeAds">0</div>
+        <div style="font-size:11.5px;color:var(--text-muted);">total ads watched, all time</div>
+      </div>
+      <div class="chart-legend" id="chartLegend">
         <span><i class="dot" style="background:#2DD4BF"></i>Daily ads</span>
-        <span><i class="dot" style="background:#F2B33D"></i>Total points</span>
+        <span><i class="dot" style="background:#F2B33D"></i>Points earned</span>
       </div>
     </div>
 
     <div class="withdraw-box">
       <div class="title">Withdraw</div>
-      <div class="sub" id="withdrawSub">Withdrawals open on the 1st of every month for 24 hours. Requests are reviewed and paid between the 3rd–5th.</div>
+      <div class="sub" id="withdrawSub">Loading withdrawal info...</div>
       <select id="withdrawNetwork">
         <option value="bep20">USDT — BEP20</option>
         <option value="polygon">USDT — Polygon</option>
@@ -285,141 +282,262 @@
 
   <div class="bottom-nav">
     <button class="nav-item active" onclick="showPage('home', this)"><span class="icon">▣</span>Home</button>
+    <button class="nav-item" onclick="showPage('ads', this)"><span class="icon">▶</span>Ads</button>
+    <button class="nav-item" onclick="showPage('leaderboard', this)"><span class="icon">★</span>Leaders</button>
     <button class="nav-item" onclick="showPage('referral', this)"><span class="icon">◎</span>Referral</button>
+    <button class="nav-item" onclick="showPage('lfa', this)"><span class="icon">◈</span>LFA</button>
     <button class="nav-item" onclick="showPage('profile', this)"><span class="icon">●</span>Profile</button>
   </div>
 
 <script>
 /* ============================================================
-   CONFIG — replace with your real backend endpoint
+   CONFIG
    ============================================================ */
 const API_BASE = "https://liveforadsbot-backend.onrender.com/api";
+const LFA_WEBPAGE_URL = "https://rizwanur69.github.io/LiveForAdsBot/whitepaper.html"; // TODO: point this at your real webpage
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { tg.ready(); tg.expand(); }
 
-// Adsgram — real rewarded ad block
 const AdsgramController = window.Adsgram ? window.Adsgram.init({ blockId: "45876" }) : null;
-
-// OnClicka — real rewarded ad block, initialized once and reused
 let onclickaShow = null;
 window.initCdTma?.({ id: 6145357 }).then(show => { onclickaShow = show; }).catch(e => console.log("OnClicka init failed:", e));
 
-/* ============================================================
-   LIVE STATE — loaded from your real backend on Render.
-   ============================================================ */
+const AD_NETWORKS = [
+  { key:"adsgram", name:"Adsgram", icon:"▲" },
+  { key:"onclicka", name:"OnClicka", icon:"◆" }
+];
+const AD_DAILY_LIMIT = 10;
+const POINTS_PER_AD = 50;
+const REFERRAL_ELIGIBILITY_ADS = 25;
+
 let state = {
   user: { id: tg?.initDataUnsafe?.user?.id || "000000", name: tg?.initDataUnsafe?.user?.first_name || "User" },
   totalPoints: 0,
   adsToday: {},
-  dailyLimit: 10,
-  tasksDone: {},
+  tasksCompletedToday: {},
+  checkin: { lastDate: null, streak: 0 },
+  displayName: null,
+  avatarUrl: null,
+  telegramAvatarUrl: null,
   referrals: [],
   refEarnedPoints: 0,
-  history: []
+  tasks: [],
+  settings: { seasonName: "Testing Season", withdrawOpen: false },
+  statsRange: '7'
 };
 
-// Pulls this user's real record from the backend (creates it if it's their first time)
+/* ============================================================
+   NAVIGATION — re-fetches the relevant data every time a tab opens
+   ============================================================ */
+function showPage(name, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+
+  if (name === 'home') loadHome();
+  if (name === 'ads') loadUserFromServer().then(renderAds);
+  if (name === 'leaderboard') loadLeaderboard();
+  if (name === 'referral') { loadUserFromServer(); loadReferralsFromServer(); }
+  if (name === 'lfa') loadLfaFrame();
+  if (name === 'profile') { loadUserFromServer().then(renderProfile); loadStats(); }
+}
+
+/* ============================================================
+   USER DATA
+   ============================================================ */
 async function loadUserFromServer(){
   try{
     const res = await fetch(`${API_BASE}/user/${state.user.id}`);
     const data = await res.json();
     state.totalPoints = data.points || 0;
     state.adsToday = data.adsWatchedToday || {};
-    state.tasksDone = data.tasksDone || {};
-  } catch(e){
-    console.error("Could not load user from server:", e);
-  }
-  renderHome();
-  renderReferral();
-  renderProfile();
+    state.tasksCompletedToday = data.tasksCompletedToday || {};
+    state.checkin = data.checkin || { lastDate: null, streak: 0 };
+    state.displayName = data.displayName;
+    state.avatarUrl = data.avatarUrl;
+    state.telegramAvatarUrl = data.telegramAvatarUrl;
+    state.refEarnedPoints = data.referralEarnings || 0;
+  } catch(e){ console.error("Could not load user:", e); }
 }
 
-// Pulls the real list of people this user has referred
 async function loadReferralsFromServer(){
   try{
     const res = await fetch(`${API_BASE}/referrals/${state.user.id}`);
-    const list = await res.json();
-    state.referrals = list;
-  } catch(e){
-    console.error("Could not load referrals from server:", e);
-  }
+    state.referrals = await res.json();
+  } catch(e){ console.error("Could not load referrals:", e); }
   renderReferral();
 }
 
-const AD_NETWORKS = [
-  { key:"adsgram", name:"Adsgram", icon:"▲" },
-  { key:"onclicka", name:"OnClicka", icon:"◆" }
-];
-const POINTS_PER_AD = 10;
-
-function showPage(name, el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  el.classList.add('active');
+async function loadSettings(){
+  try{
+    const res = await fetch(`${API_BASE}/settings`);
+    state.settings = await res.json();
+  } catch(e){ console.error("Could not load settings:", e); }
+  document.getElementById('seasonLabel').textContent = state.settings.seasonName || 'Testing Season';
 }
 
-function renderHome(){
+/* ============================================================
+   HOME — check-in + tasks
+   ============================================================ */
+async function loadHome(){
+  await loadUserFromServer();
+  await loadSettings();
+  renderCheckin();
+  await loadTasks();
   document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>pts</span>';
+}
+
+function renderCheckin(){
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const now = new Date();
+  const todayIdx = (now.getUTCDay() + 6) % 7; // Monday = 0
+  const today = now.toISOString().slice(0,10);
+  const alreadyToday = state.checkin.lastDate === today;
+  const streak = state.checkin.streak || 0;
+
+  const strip = document.getElementById('weekStrip');
+  strip.innerHTML = days.map((d, i) => {
+    const daysAgo = todayIdx - i;
+    const isDone = daysAgo >= 0 && daysAgo < streak;
+    const isToday = i === todayIdx;
+    return `<div class="week-day ${isDone?'done':''} ${isToday?'today':''}">
+      <div class="dlabel">${d}</div>
+      <div class="dcircle">${isDone?'✓':''}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('streakLabel').textContent = `🔥 ${streak} day streak`;
+  const btn = document.getElementById('checkinBtn');
+  const nextReward = 10 + streak*5;
+  if (alreadyToday){
+    btn.disabled = true;
+    btn.textContent = 'Already checked in today';
+    document.getElementById('checkinNext').textContent = `Come back after 00:00 UTC (6:00 AM BD time)`;
+  } else {
+    btn.disabled = false;
+    btn.textContent = `Check in — claim ${10 + (streak>0? streak*5 : 0)} points`;
+    document.getElementById('checkinNext').textContent = `Next day's reward increases by 5 points`;
+  }
+}
+
+async function doCheckin(){
+  try{
+    const res = await fetch(`${API_BASE}/checkin`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId: state.user.id })
+    });
+    const result = await res.json();
+    if (result.success){
+      state.checkin = { lastDate: new Date().toISOString().slice(0,10), streak: result.streak };
+      state.totalPoints += result.reward;
+      document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>pts</span>';
+      renderCheckin();
+      if (tg) tg.HapticFeedback?.notificationOccurred('success');
+    } else {
+      renderCheckin();
+    }
+  } catch(e){ console.error("Check-in failed:", e); }
+}
+
+async function loadTasks(){
+  try{
+    const res = await fetch(`${API_BASE}/tasks`);
+    state.tasks = await res.json();
+  } catch(e){ console.error("Could not load tasks:", e); state.tasks = []; }
+  renderTasks();
+}
+
+function renderTasks(){
+  const list = document.getElementById('taskList');
+  if (state.tasks.length === 0){
+    list.innerHTML = `<div class="ad-row"><div class="info"><div class="name" style="color:var(--text-muted);font-weight:400;">No tasks available right now.</div></div></div>`;
+    return;
+  }
+  list.innerHTML = state.tasks.map(t=>{
+    const done = (state.tasksCompletedToday[t.id]||0);
+    const limit = t.dailyLimit || 20;
+    const maxed = done >= limit;
+    const pct = Math.min(100, (done/limit)*100);
+    return `<div class="ad-row">
+      <div class="icon">${t.type==='channel'?'📢':t.type==='webpage'?'🌐':t.type==='pdf'?'📄':'✓'}</div>
+      <div class="info">
+        <div class="name">${t.title}</div>
+        <div class="sub">+${t.points||50} points</div>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="count">${done}/${limit} today</div>
+      </div>
+      <button class="watch-btn" ${maxed?'disabled':''} onclick="doTask('${t.id}','${t.url||''}')">${maxed?'Done':'Go'}</button>
+    </div>`;
+  }).join('');
+}
+
+function doTask(taskId, url){
+  if (url){
+    if (tg) tg.openLink(url); else window.open(url, '_blank');
+  }
+  claimTask(taskId);
+}
+
+async function claimTask(taskId){
+  try{
+    const res = await fetch(`${API_BASE}/task-claim`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId: state.user.id, taskId })
+    });
+    const result = await res.json();
+    if (result.success){
+      state.tasksCompletedToday[taskId] = (state.tasksCompletedToday[taskId]||0) + 1;
+      state.totalPoints += result.pointsEarned;
+      document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>pts</span>';
+      renderTasks();
+    }
+  } catch(e){ console.error("Task claim failed:", e); }
+}
+
+/* ============================================================
+   ADS PAGE
+   ============================================================ */
+function renderAds(){
+  document.getElementById('totalPoints');
   const adList = document.getElementById('adList');
   adList.innerHTML = '';
   AD_NETWORKS.forEach(net=>{
     const watched = state.adsToday[net.key] || 0;
-    const pct = Math.min(100, (watched/state.dailyLimit)*100);
-    const maxed = watched >= state.dailyLimit;
+    const pct = Math.min(100, (watched/AD_DAILY_LIMIT)*100);
+    const maxed = watched >= AD_DAILY_LIMIT;
     adList.innerHTML += `
       <div class="ad-row">
         <div class="icon">${net.icon}</div>
         <div class="info">
           <div class="name">${net.name}</div>
+          <div class="sub">+${POINTS_PER_AD} points per ad</div>
           <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-          <div class="count">${watched}/${state.dailyLimit} watched today</div>
+          <div class="count">${watched}/${AD_DAILY_LIMIT} watched today</div>
         </div>
         <button class="watch-btn" ${maxed?'disabled':''} onclick="watchAd('${net.key}')">${maxed?'Limit reached':'Watch'}</button>
       </div>`;
   });
-
-  const taskList = document.getElementById('taskList');
-  taskList.innerHTML = `
-    <div class="task-row">
-      <div>
-        <div class="name">Subscribe to our channel</div>
-        <div class="reward">+5 points</div>
-      </div>
-      <button class="task-btn ${state.tasksDone.subscribe?'done':''}" ${state.tasksDone.subscribe?'disabled':''} onclick="completeTask('subscribe')">
-        ${state.tasksDone.subscribe ? 'Done' : 'Go'}
-      </button>
-    </div>`;
 }
 
 function watchAd(networkKey){
   if (networkKey === 'adsgram'){
     if (!AdsgramController){ alert('Ad SDK not loaded — try again in a moment.'); return; }
-    AdsgramController.show().then(() => {
-      reportAdWatched(networkKey);
-    }).catch(() => {
-      // user closed the ad early or an error occurred — no reward
-    });
+    AdsgramController.show().then(() => reportAdWatched(networkKey)).catch(() => {});
     return;
   }
   if (networkKey === 'onclicka'){
     if (!onclickaShow){ alert('Ad SDK not loaded — try again in a moment.'); return; }
-    onclickaShow().then(() => {
-      reportAdWatched(networkKey);
-    }).catch(() => {
-      // ad failed or was skipped — no reward
-    });
+    onclickaShow().then(() => reportAdWatched(networkKey)).catch(() => {});
     return;
   }
-  reportAdWatched(networkKey); // temporary fallback for networks not wired yet
 }
 
 async function reportAdWatched(networkKey){
-  if ((state.adsToday[networkKey]||0) >= state.dailyLimit) return;
+  if ((state.adsToday[networkKey]||0) >= AD_DAILY_LIMIT) return;
   try{
     const res = await fetch(`${API_BASE}/ad-watched`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId: state.user.id, network: networkKey })
     });
     const result = await res.json();
@@ -427,36 +545,75 @@ async function reportAdWatched(networkKey){
       if (result.reason === 'daily_limit_reached') alert('Daily limit reached for this network.');
       return;
     }
-  } catch(e){
-    console.error("ad-watched request failed:", e);
-    alert("Couldn't reach the server — check your connection.");
-    return;
-  }
-  state.adsToday[networkKey] = (state.adsToday[networkKey]||0) + 1;
-  state.totalPoints += POINTS_PER_AD;
-  renderHome();
+    state.adsToday[networkKey] = (state.adsToday[networkKey]||0) + 1;
+    state.totalPoints += result.pointsEarned || POINTS_PER_AD;
+  } catch(e){ console.error("ad-watched failed:", e); alert("Couldn't reach the server."); return; }
+  renderAds();
   if (tg) tg.HapticFeedback?.notificationOccurred('success');
 }
 
-async function completeTask(taskKey){
-  // NOTE: this currently trusts the button click. Before going public, verify the
-  // subscription server-side (Telegram Bot API getChatMember) in server.js before crediting —
-  // otherwise a user could tap "Go" without actually subscribing.
+/* ============================================================
+   LEADERBOARD
+   ============================================================ */
+async function loadLeaderboard(){
   try{
-    const res = await fetch(`${API_BASE}/task-complete`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: state.user.id, taskKey, rewardPoints: 5 })
-    });
-    const result = await res.json();
-    if (!result.success) return;
-  } catch(e){
-    console.error("task-complete request failed:", e);
-    return;
+    const res = await fetch(`${API_BASE}/leaderboard/${state.user.id}`);
+    const data = await res.json();
+    renderLeaderboard(data);
+  } catch(e){ console.error("Could not load leaderboard:", e); }
+}
+
+function initials(name){ return (name||'U')[0].toUpperCase(); }
+function avatarHtml(user, size){
+  if (user.avatarUrl) return `<img src="${user.avatarUrl}" alt="">`;
+  return initials(user.name);
+}
+
+function renderLeaderboard(data){
+  const top = data.top || [];
+  const top3 = top.slice(0,3);
+  const rest = top.slice(3);
+
+  const hats = {1:'👑',2:'🥈',3:'🥉'};
+  const order = {1:'gold',2:'silver',3:'bronze'};
+  document.getElementById('podium').innerHTML = top3.map(u=>`
+    <div class="podium-item ${order[u.rank]}">
+      <div class="podium-hat">${hats[u.rank]}</div>
+      <div class="podium-avatar">${avatarHtml(u)}</div>
+      <div class="pname">${u.name}</div>
+      <div class="ppts">${u.points} pts</div>
+    </div>`).join('');
+
+  document.getElementById('lbList').innerHTML = rest.map(u=>`
+    <div class="lb-row ${u.tgId===String(state.user.id)?'you':''}">
+      <div class="rank">${u.rank}</div>
+      <div class="avatar">${avatarHtml(u)}</div>
+      <div class="name">${u.name}</div>
+      <div class="pts">${u.points}</div>
+    </div>`).join('');
+
+  const you = data.you;
+  const youBox = document.getElementById('lbYou');
+  if (you && you.outsideTop){
+    youBox.innerHTML = `<div class="section-label">Your rank</div>
+      <div class="lb-row you">
+        <div class="rank">${you.rank}</div>
+        <div class="avatar">${avatarHtml(you)}</div>
+        <div class="name">${you.name} (You)</div>
+        <div class="pts">${you.points}</div>
+      </div>`;
+  } else {
+    youBox.innerHTML = '';
   }
-  state.tasksDone[taskKey] = true;
-  state.totalPoints += 5;
-  renderHome();
+}
+
+/* ============================================================
+   REFERRAL
+   ============================================================ */
+function refColor(pct){
+  // deep red -> orange -> deep green as percentage increases
+  const hue = Math.round((pct/100) * 120); // 0=red, 60=orange/yellow, 120=green
+  return `hsl(${hue}, 70%, 45%)`;
 }
 
 function renderReferral(){
@@ -466,22 +623,25 @@ function renderReferral(){
   document.getElementById('refEarned').textContent = state.refEarnedPoints;
 
   const refList = document.getElementById('refList');
-  refList.innerHTML = '';
   if (state.referrals.length === 0){
-    refList.innerHTML = `<div class="task-row"><div class="name" style="color:var(--text-muted)">No referrals yet — share your link above.</div></div>`;
+    refList.innerHTML = `<div class="ad-row"><div class="info"><div class="name" style="color:var(--text-muted);font-weight:400;">No referrals yet — share your link above.</div></div></div>`;
     return;
   }
-  state.referrals.forEach(r=>{
-    refList.innerHTML += `
-      <div class="ref-user">
+  refList.innerHTML = state.referrals.map(r=>{
+    const pct = Math.min(100, (r.ads/REFERRAL_ELIGIBILITY_ADS)*100);
+    return `<div class="ref-user">
+      <div class="ref-user-top">
         <div class="avatar">${r.name[0]}</div>
         <div class="info">
           <div class="name">${r.name}</div>
-          <div class="sub">${r.ads}/10 ads watched</div>
+          <div class="sub">${r.ads}/${REFERRAL_ELIGIBILITY_ADS} ads watched</div>
         </div>
         <span class="badge ${r.eligible?'eligible':'pending'}">${r.eligible?'Eligible':'Pending'}</span>
-      </div>`;
-  });
+      </div>
+      <div class="ref-progress-track"><div class="ref-progress-fill" style="width:${pct}%; background:${refColor(pct)};"></div></div>
+      <div class="ref-commission">Commission generated: ${r.commissionGenerated||0} pts</div>
+    </div>`;
+  }).join('');
 }
 
 function copyRefLink(){
@@ -491,77 +651,134 @@ function copyRefLink(){
   if (tg) tg.HapticFeedback?.notificationOccurred('success');
 }
 
-function renderProfile(){
-  document.getElementById('profileName').textContent = state.user.name;
-  document.getElementById('profileId').textContent = 'ID: ' + state.user.id;
-  document.getElementById('profileAvatar').textContent = state.user.name[0]?.toUpperCase() || 'U';
-
-  const adsPts = Object.values(state.adsToday).reduce((a,b)=>a+b,0) * POINTS_PER_AD;
-  document.getElementById('statAds').textContent = Object.values(state.adsToday).reduce((a,b)=>a+b,0);
-  document.getElementById('statTasks').textContent = (state.tasksDone.subscribe?5:0);
-  document.getElementById('statRef').textContent = state.refEarnedPoints;
-
-  drawChart();
+/* ============================================================
+   LFA WEBPAGE
+   ============================================================ */
+function loadLfaFrame(){
+  const frame = document.getElementById('lfaFrame');
+  if (frame.src !== LFA_WEBPAGE_URL) frame.src = LFA_WEBPAGE_URL;
 }
 
-function drawChart(){
+/* ============================================================
+   PROFILE
+   ============================================================ */
+function renderProfile(){
+  const name = state.displayName || state.user.name;
+  document.getElementById('profileName').textContent = name;
+  document.getElementById('profileId').textContent = 'ID: ' + state.user.id;
+  const avatarUrl = state.avatarUrl || state.telegramAvatarUrl;
+  document.getElementById('profileAvatar').innerHTML = avatarUrl ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
+
+  document.getElementById('statAds').textContent = Object.values(state.adsToday).reduce((a,b)=>a+b,0);
+  document.getElementById('statTasks').textContent = (state.checkin.streak||0) + ' 🔥';
+  document.getElementById('statRef').textContent = state.refEarnedPoints;
+
+  const sub = document.getElementById('withdrawSub');
+  const btn = document.getElementById('withdrawBtn');
+  if (state.settings.withdrawOpen){
+    sub.textContent = `Withdrawals for ${state.settings.seasonName} are open now. Requests are reviewed and paid between the 3rd–5th of next month.`;
+    btn.disabled = false;
+  } else {
+    sub.textContent = `Withdrawals open on the 1st–2nd after ${state.settings.seasonName} ends. Requests are reviewed and paid between the 3rd–5th.`;
+    btn.disabled = true;
+  }
+}
+
+function editProfile(){
+  const newName = prompt("Set your display name:", state.displayName || state.user.name);
+  if (newName === null) return;
+  const newAvatar = prompt("Set a custom avatar image URL (leave blank to keep your Telegram photo):", state.avatarUrl || "");
+  saveProfile(newName, newAvatar);
+}
+
+async function saveProfile(displayName, avatarUrl){
+  try{
+    await fetch(`${API_BASE}/user/${state.user.id}/profile`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ displayName, avatarUrl: avatarUrl || null })
+    });
+    state.displayName = displayName;
+    state.avatarUrl = avatarUrl || null;
+    renderProfile();
+  } catch(e){ console.error("Could not save profile:", e); }
+}
+
+function setStatsRange(range, el){
+  state.statsRange = range;
+  document.querySelectorAll('.range-toggle button').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  loadStats();
+}
+
+async function loadStats(){
+  try{
+    const res = await fetch(`${API_BASE}/user/${state.user.id}/stats?range=${state.statsRange}`);
+    const data = await res.json();
+    if (state.statsRange === 'all'){
+      document.getElementById('chartSvg').style.display = 'none';
+      document.getElementById('chartLegend').style.display = 'none';
+      document.getElementById('chartAllTime').style.display = 'block';
+      document.getElementById('allTimeAds').textContent = data.totalAds || 0;
+    } else {
+      document.getElementById('chartSvg').style.display = 'block';
+      document.getElementById('chartLegend').style.display = 'flex';
+      document.getElementById('chartAllTime').style.display = 'none';
+      drawChart(data.days || []);
+    }
+  } catch(e){ console.error("Could not load stats:", e); }
+}
+
+function drawChart(data){
   const svg = document.getElementById('chartSvg');
+  if (data.length === 0){ svg.innerHTML = ''; return; }
   const w = 320, h = 120, pad = 10;
-  const data = state.history;
   const maxAds = Math.max(...data.map(d=>d.ads), 1);
-  const maxTotal = Math.max(...data.map(d=>d.total), 1);
-  const stepX = (w - pad*2) / (data.length - 1);
+  const maxPts = Math.max(...data.map(d=>d.points), 1);
+  const stepX = (w - pad*2) / Math.max(data.length - 1, 1);
 
   function pointsFor(key, max){
-    return data.map((d,i)=> {
+    return data.map((d,i) => {
       const x = pad + i*stepX;
       const y = h - pad - (d[key]/max)*(h - pad*2);
       return `${x},${y}`;
     }).join(' ');
   }
-
+  const showLabels = data.length <= 10;
   svg.innerHTML = `
     <polyline points="${pointsFor('ads',maxAds)}" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <polyline points="${pointsFor('total',maxTotal)}" fill="none" stroke="#F2B33D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    ${data.map((d,i)=>`<text x="${pad+i*stepX}" y="${h-1}" font-size="9" fill="#8FA3A1" text-anchor="middle" font-family="Inter">${d.d}</text>`).join('')}
+    <polyline points="${pointsFor('points',maxPts)}" fill="none" stroke="#F2B33D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${showLabels ? data.map((d,i)=>`<text x="${pad+i*stepX}" y="${h-1}" font-size="8" fill="#8FA3A1" text-anchor="middle" font-family="Inter">${d.date.slice(5)}</text>`).join('') : ''}
   `;
 }
 
-let withdrawWindowOpen = true; // TODO: compute from backend based on current date (1st of month, 24hrs)
+/* ============================================================
+   WITHDRAW
+   ============================================================ */
 async function submitWithdraw(){
   const network = document.getElementById('withdrawNetwork').value;
   const addr = document.getElementById('withdrawAddress').value.trim();
   const status = document.getElementById('withdrawStatus');
-  if (!withdrawWindowOpen){
-    status.textContent = "Withdrawals are closed. Come back on the 1st of the month.";
+  if (!state.settings.withdrawOpen){
+    status.textContent = "Withdrawals are currently closed.";
     return;
   }
-  if (!addr){
-    status.textContent = "Enter a wallet address first.";
-    return;
-  }
+  if (!addr){ status.textContent = "Enter a wallet address first."; return; }
   try{
     const res = await fetch(`${API_BASE}/withdraw`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId: state.user.id, network, address: addr })
     });
     const result = await res.json();
-    if (!result.success){
-      status.textContent = "Something went wrong — try again.";
-      return;
-    }
-  } catch(e){
-    console.error("withdraw request failed:", e);
-    status.textContent = "Couldn't reach the server — check your connection.";
-    return;
-  }
+    if (!result.success){ status.textContent = "Something went wrong — try again."; return; }
+  } catch(e){ status.textContent = "Couldn't reach the server."; return; }
   status.textContent = "Request submitted. You'll be paid between the 3rd–5th if approved.";
   document.getElementById('withdrawBtn').disabled = true;
 }
 
-loadUserFromServer();
-loadReferralsFromServer();
+/* ============================================================
+   INIT
+   ============================================================ */
+loadHome();
 </script>
 </body>
 </html>
