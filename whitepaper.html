@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: A4; margin: 2.2cm 2cm; }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color: #1c2224;
+    line-height: 1.55;
+    font-size: 11pt;
+  }
+  .cover {
+    text-align: center;
+    padding-top: 5.5cm;
+    page-break-after: always;
+  }
+  .cover .eyebrow {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 11pt;
+    letter-spacing: 3px;
+    color: #C99A3D;
+    margin-bottom: 18px;
+  }
+  .cover h1 {
+    font-size: 40pt;
+    margin: 0 0 10px;
+    color: #14211F;
+  }
+  .cover .sub {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 13pt;
+    color: #4C5A58;
+    margin-bottom: 40px;
+  }
+  .cover .divider {
+    width: 60px;
+    height: 3px;
+    background: #C99A3D;
+    margin: 30px auto;
+  }
+  .cover .version {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 10pt;
+    color: #8A9694;
+    margin-top: 60px;
+  }
+  h2 {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 15pt;
+    color: #14211F;
+    border-bottom: 1.5px solid #C99A3D;
+    padding-bottom: 6px;
+    margin-top: 34px;
+    margin-bottom: 14px;
+  }
+  h2 .num {
+    color: #C99A3D;
+    margin-right: 8px;
+  }
+  p { margin: 0 0 12px; text-align: justify; }
+  ul, ol { margin: 0 0 14px; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  strong { color: #14211F; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 18px;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 10pt;
+  }
+  th {
+    background: #14211F;
+    color: #fff;
+    text-align: left;
+    padding: 8px 12px;
+    font-weight: 600;
+  }
+  td {
+    padding: 7px 12px;
+    border-bottom: 1px solid #E2E6E5;
+  }
+  tr:nth-child(even) td { background: #F7F8F7; }
+  .callout {
+    background: #FBF6EA;
+    border-left: 3px solid #C99A3D;
+    padding: 12px 16px;
+    font-size: 10.5pt;
+    color: #4C5A58;
+    margin: 16px 0;
+  }
+  .footer-note {
+    text-align: center;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 9.5pt;
+    color: #8A9694;
+    margin-top: 40px;
+    border-top: 1px solid #E2E6E5;
+    padding-top: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="eyebrow">WHITEPAPER</div>
+  <h1>Live For Ads</h1>
+  <div class="sub">Ad-to-Earn Telegram Mini App</div>
+  <div class="divider"></div>
+  <div class="version">Version 1.0 &nbsp;•&nbsp; Draft</div>
+</div>
+
+<h2><span class="num">1.</span>Abstract</h2>
+<p>Live For Ads (LFA) is a Telegram Mini App built around a simple idea: users watch ads, complete light tasks, and refer friends to earn points. At the end of every two-month "season," a share of real advertising revenue is pooled and distributed to the community based on each user's point allocation. The model is transparent, manually verified, and designed to reward genuine, active participation rather than automated or fraudulent activity.</p>
+
+<h2><span class="num">2.</span>Overview</h2>
+<p>The app runs entirely inside Telegram as a Mini App, requiring no separate download or account creation beyond a user's existing Telegram identity. Revenue is generated through partnered rewarded-ad networks, and a portion of that revenue is shared back with the community that generates it — creating a direct link between user engagement and real payouts.</p>
+<p><strong>Core pages:</strong></p>
+<ul>
+  <li><strong>Home</strong> — Watch Ads (multiple ad network sources) + Tasks</li>
+  <li><strong>Referral</strong> — Personal referral link, referred users list, and eligibility tracker</li>
+  <li><strong>Profile</strong> — Stats, daily/cumulative earnings graph, and withdrawal request form</li>
+  <li><strong>Admin Panel</strong> (internal) — Full visibility into user points, referrals, and withdrawal approvals</li>
+</ul>
+
+<h2><span class="num">3.</span>Ad-to-Earn Mechanism</h2>
+<p>Users earn points by watching short rewarded video ads served through in-app ad networks, including <strong>Adsgram</strong> and <strong>Monetag</strong> — both built to display natively inside Telegram's WebView environment, avoiding external browser redirects.</p>
+<table>
+  <tr><th>Rule</th><th>Detail</th></tr>
+  <tr><td>Points per ad</td><td>10 points</td></tr>
+  <tr><td>Daily ad limit</td><td>10 ads per user</td></tr>
+  <tr><td>Ad sources</td><td>Multiple networks shown separately, each with its own daily counter</td></tr>
+  <tr><td>Additional task</td><td>Subscribe to official channel — 5 points (one-time)</td></tr>
+</table>
+
+<h2><span class="num">4.</span>Points System</h2>
+<p>Points are the sole unit of value within the app during active use. They are earned through three channels:</p>
+<ol>
+  <li><strong>Ad views</strong> — 10 points per ad, up to the daily cap</li>
+  <li><strong>Tasks</strong> — fixed one-time rewards (e.g., channel subscription)</li>
+  <li><strong>Referral activity</strong> — bonus and ongoing commission (see Section 5)</li>
+</ol>
+<p>All points are permanently tied to a user's Telegram ID, not to a device or session — meaning progress is preserved even if a user leaves and rejoins the bot.</p>
+
+<h2><span class="num">5.</span>Referral Program</h2>
+<p>Referrals are central to organic growth and are designed to reward sustained engagement, not just sign-ups.</p>
+<ul>
+  <li><strong>Eligibility condition:</strong> A referred user must watch a minimum of 10 ads before the referral is considered valid.</li>
+  <li><strong>Fixed bonus:</strong> Once eligible, the referrer automatically receives <strong>25 points</strong>.</li>
+  <li><strong>Ongoing commission:</strong> The referrer additionally earns <strong>10% of the ad-based points</strong> their referred user generates, for as long as that user remains active.</li>
+</ul>
+<p>The Referral page displays each invited user's name, profile picture, number of ads watched, and current eligibility status.</p>
+
+<h2><span class="num">6.</span>Season System</h2>
+<p>The project operates on a seasonal cycle to structure revenue pooling and give the community predictable milestones.</p>
+<table>
+  <tr><th>Period</th><th>Phase</th></tr>
+  <tr><td>September – October</td><td>Testing Season</td></tr>
+  <tr><td>November – December</td><td>Season 0</td></tr>
+  <tr><td>January onward</td><td>Season 1, and subsequent seasons</td></tr>
+</table>
+<p><strong>Pool calculation</strong> is performed once every two months, covering the full season's accumulated ad revenue and user points together.</p>
+
+<h2><span class="num">7.</span>Withdrawal &amp; Payout</h2>
+<ul>
+  <li><strong>Withdrawal window:</strong> Opens on the 1st of each month for 24 hours only.</li>
+  <li><strong>Review period:</strong> Submitted requests are manually reviewed and approved between the 3rd and 5th.</li>
+  <li><strong>Payout method:</strong> USDT, sent manually via BEP20 or Polygon network, to the wallet address the user submits at withdrawal time.</li>
+  <li><strong>No fixed conversion rate</strong> — payout amount is determined by the season's allocation calculation, not a pre-set point-to-dollar ratio.</li>
+</ul>
+
+<h2><span class="num">8.</span>Anti-Fraud &amp; Integrity Measures</h2>
+<ul>
+  <li><strong>Persistent identity tracking:</strong> Progress is tied permanently to a user's Telegram ID.</li>
+  <li><strong>Referral eligibility threshold:</strong> A referred account must reach 10 watched ads before it counts.</li>
+  <li><strong>Daily ad caps:</strong> A hard limit of 10 ads per day per user prevents unnatural point accumulation.</li>
+  <li><strong>Manual withdrawal approval:</strong> All payouts are reviewed by the admin before funds are sent.</li>
+  <li><strong>Full admin visibility:</strong> The admin panel provides a complete view of every user's points and referral tree.</li>
+</ul>
+
+<h2><span class="num">9.</span>Future Outlook — The LFA Token</h2>
+<p>Live For Ads is designed to grow beyond a points-and-payout system. As the community and ad revenue scale, the project intends to explore launching its own token, <strong>LFA</strong>, on-chain.</p>
+<p>The long-term idea is straightforward: the same engagement that earns points today — watching ads, completing tasks, referring friends — becomes the foundation for a token economy tomorrow. Early, active community members would be positioned to benefit most from this transition, since points and season activity are being tracked from day one.</p>
+<div class="callout">This is a forward-looking direction, not a current commitment. No token exists yet, no launch date is set, and nothing here should be treated as a promise of value. If and when a token launch becomes viable, full details — supply, distribution, utility, and timeline — will be published in a dedicated update to this whitepaper.</div>
+
+<h2><span class="num">10.</span>Roadmap</h2>
+<ul>
+  <li><strong>Sep – Oct:</strong> Testing Season — core features live, feedback and bug fixes</li>
+  <li><strong>Nov – Dec:</strong> Season 0 — first live season, first pool distribution</li>
+  <li><strong>Jan onward:</strong> Season 1 — full public rollout, community growth push</li>
+  <li><strong>Future:</strong> Additional ad network integrations, expanded task system, exploration of the LFA token launch pending community growth</li>
+</ul>
+
+<h2><span class="num">11.</span>Disclaimer</h2>
+<p>This document describes the intended design and mechanics of the project as of its current development stage. Features, ratios, timelines, and the potential LFA token described above may be adjusted or may not materialize as the project develops. This is not a guarantee of returns; payouts depend entirely on actual advertising revenue generated and community size. Nothing in this document constitutes financial or investment advice.</p>
+
+<div class="footer-note">Live For Ads — Built for and by its community.</div>
+
+</body>
+</html>
