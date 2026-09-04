@@ -46,9 +46,13 @@
   .week-strip{display:flex; gap:6px; margin-bottom:14px;}
   .week-day{flex:1; text-align:center;}
   .week-day .dlabel{font-size:10px; color:var(--text-muted); margin-bottom:6px;}
-  .week-day .dcircle{width:100%; aspect-ratio:1; border-radius:10px; background:var(--surface-raised); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:13px;}
+  .week-day .dcircle{width:100%; aspect-ratio:1; border-radius:10px; background:var(--surface-raised); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:14px;}
   .week-day.done .dcircle{background:var(--gold); border-color:var(--gold); color:#1B1404; font-weight:700;}
+  .week-day.missed .dcircle{background:rgba(232,96,76,0.12); border-color:var(--red); color:var(--red); font-weight:700;}
   .week-day.today .dcircle{border-color:var(--gold); border-width:2px;}
+  .week-day .dpoints{font-size:9px; color:var(--text-muted); margin-top:4px; font-family:'Space Grotesk',sans-serif;}
+  .week-day.done .dpoints{color:var(--gold);}
+  .week-day.missed .dpoints{color:var(--red);}
   .checkin-btn{width:100%; background:var(--gold); border:none; color:#1B1404; font-weight:700; font-size:14px; padding:12px; border-radius:10px; cursor:pointer; font-family:'Inter',sans-serif;}
   .checkin-btn:disabled{background:var(--surface-raised); color:var(--text-muted);}
   .checkin-next{font-size:12px; color:var(--text-muted); text-align:center; margin-top:8px; font-family:'Space Grotesk',sans-serif; letter-spacing:0.5px;}
@@ -67,25 +71,26 @@
 
   .ads-note{font-size:12.5px; color:var(--text-muted); line-height:1.5; margin:16px 0;}
 
-  /* Leaderboard */
+  /* Leaderboard — premium styling */
   .podium{display:flex; align-items:flex-end; gap:10px; margin:20px 0 10px;}
-  .podium-item{flex:1; text-align:center; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 8px;}
-  .podium-item.gold{order:2; min-height:172px; border-color:var(--gold); padding-top:10px;}
-  .podium-item.silver{order:1; min-height:140px;}
-  .podium-item.bronze{order:3; min-height:120px;}
-  .podium-hat{font-size:22px; margin-bottom:4px;}
-  .podium-avatar{width:48px; height:48px; border-radius:50%; background:var(--surface-raised); margin:0 auto 8px; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--gold); overflow:hidden; font-size:16px;}
+  .podium-item{flex:1; text-align:center; background:linear-gradient(180deg, var(--surface-raised), var(--surface)); border:1px solid var(--line); border-radius:16px; padding:14px 8px; box-shadow:0 4px 14px rgba(0,0,0,0.25);}
+  .podium-item.gold{order:2; min-height:186px; border-color:var(--gold); padding-top:12px; box-shadow:0 6px 20px rgba(242,179,61,0.25);}
+  .podium-item.silver{order:1; min-height:150px;}
+  .podium-item.bronze{order:3; min-height:128px;}
+  .podium-hat{font-size:24px; margin-bottom:4px;}
+  .podium-avatar{width:60px; height:60px; border-radius:50%; background:var(--surface-raised); margin:0 auto 8px; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--gold); overflow:hidden; font-size:19px; border:2px solid var(--line);}
+  .podium-item.gold .podium-avatar{width:68px; height:68px; border-color:var(--gold);}
   .podium-avatar img{width:100%; height:100%; object-fit:cover;}
-  .podium-item .pname{font-size:12px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .podium-item .ppts{font-size:11px; color:var(--gold); margin-top:2px;}
+  .podium-item .pname{font-size:12.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .podium-item .ppts{font-size:11.5px; color:var(--gold); margin-top:2px; font-weight:600;}
 
   .lb-row{display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:10px 14px; margin-bottom:8px;}
   .lb-row .rank{width:26px; font-size:13px; color:var(--text-muted); font-weight:600; text-align:center;}
-  .lb-row .avatar{width:32px; height:32px; border-radius:50%; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--gold); overflow:hidden;}
+  .lb-row .avatar{width:42px; height:42px; border-radius:50%; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:600; color:var(--gold); overflow:hidden;}
   .lb-row .avatar img{width:100%; height:100%; object-fit:cover;}
   .lb-row .name{flex:1; font-size:13.5px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .lb-row .pts{font-size:13px; font-weight:600; color:var(--gold);}
-  .lb-row.you{border-color:var(--gold);}
+  .lb-row.you{border-color:var(--gold); box-shadow:0 0 0 1px var(--gold) inset;}
 
   /* Referral */
   .ref-link-box{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; margin-top:16px;}
@@ -112,26 +117,20 @@
   .ref-commission{font-size:11px; color:var(--text-muted); margin-top:8px;}
 
   /* Profile */
-  .profile-head{display:flex; align-items:center; gap:14px; padding:20px 0 8px;}
+  .profile-card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; margin-top:16px;}
+  .profile-head{display:flex; align-items:center; gap:14px;}
   .profile-head .avatar-wrap{position:relative; width:64px; height:64px; flex-shrink:0;}
   .profile-head .avatar{width:64px; height:64px; border-radius:50%; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; color:var(--gold); overflow:hidden;}
   .profile-head .avatar img{width:100%; height:100%; object-fit:cover;}
-  .avatar-change-overlay{
-    position:absolute; inset:0; border-radius:50%; background:rgba(0,0,0,0.55);
-    display:none; align-items:center; justify-content:center; font-size:10px; font-weight:600; color:#fff; cursor:pointer; text-align:center;
-  }
+  .avatar-change-overlay{position:absolute; inset:0; border-radius:50%; background:rgba(0,0,0,0.55); display:none; align-items:center; justify-content:center; font-size:10px; font-weight:600; color:#fff; cursor:pointer; text-align:center;}
   .editing .avatar-change-overlay{display:flex;}
-  .profile-head .name-row{display:flex; align-items:center; gap:8px;}
   .profile-head .name{font-size:18px; font-weight:700;}
-  .profile-head .name-input{
-    font-size:16px; font-weight:700; background:var(--surface-raised); border:1px solid var(--gold);
-    color:var(--text); border-radius:8px; padding:6px 10px; font-family:'Inter',sans-serif; display:none;
-  }
+  .profile-head .name-input{font-size:16px; font-weight:700; background:var(--surface-raised); border:1px solid var(--gold); color:var(--text); border-radius:8px; padding:7px 10px; font-family:'Inter',sans-serif; display:none; width:100%; margin-top:2px;}
   .editing .name{display:none;}
-  .editing .name-input{display:inline-block;}
-  .profile-head .edit-btn{background:var(--surface-raised); border:1px solid var(--line); color:var(--text-muted); font-size:11.5px; cursor:pointer; padding:5px 12px; border-radius:8px; font-family:'Inter',sans-serif;}
-  .profile-head .edit-btn.done{background:var(--gold); color:#1B1404; border-color:var(--gold); font-weight:700;}
+  .editing .name-input{display:block;}
   .profile-head .id{font-size:12.5px; color:var(--text-muted); margin-top:2px;}
+  .edit-toggle-btn{width:100%; margin-top:16px; background:var(--surface-raised); border:1px solid var(--line); color:var(--text-muted); font-size:13px; font-weight:600; cursor:pointer; padding:10px; border-radius:10px; font-family:'Inter',sans-serif;}
+  .edit-toggle-btn.done{background:var(--gold); color:#1B1404; border-color:var(--gold);}
 
   .stat-grid{display:flex; gap:10px; margin:20px 0;}
   .stat-card{flex:1; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px;}
@@ -146,12 +145,10 @@
   .chart-legend{display:flex; gap:16px; font-size:11.5px; margin-top:8px;}
   .chart-legend span{display:flex; align-items:center; gap:6px; color:var(--text-muted);}
   .dot{width:8px; height:8px; border-radius:50%; display:inline-block;}
+  .chart-loading{text-align:center; font-size:11.5px; color:var(--text-muted); padding:20px 0;}
 
   /* Withdraw notice marquee */
-  .withdraw-notice{
-    background:var(--indigo-bg); border:1px solid var(--indigo); border-radius:12px;
-    padding:10px 0; margin-top:16px; overflow:hidden; white-space:nowrap;
-  }
+  .withdraw-notice{background:var(--indigo-bg); border:1px solid var(--indigo); border-radius:12px; padding:10px 0; margin-top:16px; overflow:hidden; white-space:nowrap;}
   .withdraw-notice-track{display:inline-block; padding-left:100%; animation:marquee 18s linear infinite; font-size:12.5px; color:#C7C9FB; font-weight:500;}
   @keyframes marquee{ from{transform:translateX(0);} to{transform:translateX(-100%);} }
 
@@ -163,26 +160,41 @@
   .withdraw-submit:disabled{background:var(--surface-raised); color:var(--text-muted);}
   .withdraw-note{font-size:11px; color:var(--text-muted); margin-top:10px; text-align:center;}
 
-  /* Payouts */
-  .payouts-box{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; margin-top:12px;}
-  .payouts-box .title{font-size:14.5px; font-weight:600; margin-bottom:2px;}
-  .season-dates{font-size:11.5px; color:var(--text-muted); margin-bottom:14px;}
-  .payout-row{display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line);}
-  .payout-row:last-child{border-bottom:none;}
-  .payout-row .date{font-size:12.5px; color:var(--text-muted);}
-  .payout-row .pill{font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px;}
-  .pill.paid{background:rgba(74,222,128,0.12); color:var(--green);}
-  .pill.pending{background:rgba(242,179,61,0.12); color:var(--gold);}
-  .pill.rejected{background:rgba(232,96,76,0.12); color:var(--red);}
+  /* Payout season boxes — premium cards */
+  .payouts-section-title{font-size:14.5px; font-weight:600; margin:20px 4px 10px;}
+  .season-box{background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border:1px solid var(--gold-dim); border-radius:16px; padding:16px; margin-bottom:12px; box-shadow:0 4px 16px rgba(0,0,0,0.2);}
+  .season-box .sname{font-size:15px; font-weight:700; color:var(--gold);}
+  .season-box .sdates{font-size:11.5px; color:var(--text-muted); margin-top:2px; margin-bottom:14px;}
+  .season-box .srow{display:flex; gap:10px;}
+  .season-box .sstat{flex:1; background:rgba(0,0,0,0.18); border-radius:10px; padding:10px; text-align:center;}
+  .season-box .sstat .snum{font-size:16px; font-weight:700;}
+  .season-box .sstat .slabel{font-size:9.5px; color:var(--text-muted); margin-top:2px;}
 
   /* LFA page */
-  .lfa-frame{width:100%; height:70vh; border:1px solid var(--line); border-radius:14px; margin-top:16px; background:var(--surface);}
+  .lfa-frame{width:100%; height:65vh; border:1px solid var(--line); border-radius:14px; margin-top:16px; background:var(--surface);}
+  .lfa-doc-row{display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-top:10px; text-decoration:none; color:var(--text);}
+  .lfa-doc-row .icon{font-size:20px;}
+  .lfa-doc-row .label{flex:1; font-size:13.5px; font-weight:600;}
+  .lfa-doc-row .arrow{color:var(--text-muted);}
 
   /* Bottom nav */
   .bottom-nav{position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; background:var(--surface); border-top:1px solid var(--line); display:flex; padding:8px 4px calc(8px + env(safe-area-inset-bottom));}
   .nav-item{flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; color:var(--text-muted); font-family:'Inter',sans-serif; font-size:9.5px; padding:5px 0; cursor:pointer;}
   .nav-item .icon{font-size:17px; line-height:1;}
   .nav-item.active{color:var(--gold);}
+
+  /* Crop modal */
+  .crop-overlay{position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:none; align-items:center; justify-content:center; flex-direction:column;}
+  .crop-overlay.active{display:flex;}
+  .crop-frame{width:280px; height:280px; border-radius:50%; overflow:hidden; position:relative; touch-action:none; border:2px solid var(--gold); background:#000;}
+  .crop-frame img{position:absolute; top:0; left:0; transform-origin:0 0; cursor:grab; user-select:none; -webkit-user-drag:none;}
+  .crop-controls{width:280px; margin-top:20px;}
+  .crop-controls input[type=range]{width:100%;}
+  .crop-actions{display:flex; gap:10px; margin-top:16px; width:280px;}
+  .crop-actions button{flex:1; padding:11px; border-radius:10px; border:none; font-weight:700; font-size:13.5px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .crop-actions .cancel-btn{background:var(--surface-raised); color:var(--text-muted);}
+  .crop-actions .confirm-btn{background:var(--gold); color:#1B1404;}
+  .crop-hint{color:var(--text-muted); font-size:11.5px; margin-top:12px;}
 </style>
 </head>
 <body>
@@ -222,7 +234,7 @@
 
   <!-- ================= LEADERBOARD ================= -->
   <div class="page" id="page-leaderboard">
-    <div class="section-label" style="margin-top:16px;">Top earners</div>
+    <div class="section-label" style="margin-top:16px;">Top 20 earners</div>
     <div class="podium" id="podium"></div>
     <div id="lbList"></div>
     <div id="lbYou"></div>
@@ -251,23 +263,29 @@
   <div class="page" id="page-lfa">
     <div class="section-label" style="margin-top:16px;">Web View</div>
     <iframe class="lfa-frame" id="lfaFrame" src="about:blank"></iframe>
+    <div class="section-label">Documents</div>
+    <a class="lfa-doc-row" id="lfaWhitepaperLink" href="#" target="_blank">
+      <div class="icon">📄</div>
+      <div class="label">Whitepaper (PDF)</div>
+      <div class="arrow">›</div>
+    </a>
   </div>
 
   <!-- ================= PROFILE ================= -->
   <div class="page" id="page-profile">
-    <div class="profile-head" id="profileHead">
-      <div class="avatar-wrap">
-        <div class="avatar" id="profileAvatar">U</div>
-        <div class="avatar-change-overlay" id="avatarChangeOverlay" onclick="triggerAvatarPick()">Change</div>
-      </div>
-      <div>
-        <div class="name-row">
+    <div class="profile-card" id="profileCard">
+      <div class="profile-head" id="profileHead">
+        <div class="avatar-wrap">
+          <div class="avatar" id="profileAvatar">U</div>
+          <div class="avatar-change-overlay" id="avatarChangeOverlay" onclick="triggerAvatarPick()">Change</div>
+        </div>
+        <div style="flex:1;">
           <div class="name" id="profileName">User</div>
           <input class="name-input" id="profileNameInput" type="text">
-          <button class="edit-btn" id="editBtn" onclick="toggleEdit()">Edit</button>
+          <div class="id" id="profileId">ID: —</div>
         </div>
-        <div class="id" id="profileId">ID: —</div>
       </div>
+      <button class="edit-toggle-btn" id="editBtn" onclick="toggleEdit()">Edit profile</button>
     </div>
     <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="onAvatarFileChosen(event)">
 
@@ -286,6 +304,7 @@
     <div class="chart-box">
       <div style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Activity</div>
       <svg id="chartSvg" width="100%" height="120" viewBox="0 0 320 120"></svg>
+      <div id="chartLoading" class="chart-loading" style="display:none;">Loading…</div>
       <div class="chart-legend">
         <span><i class="dot" style="background:#2DD4BF"></i>Ads</span>
         <span><i class="dot" style="background:#F2B33D"></i>Points</span>
@@ -308,11 +327,8 @@
       <div class="withdraw-note" id="withdrawStatus"></div>
     </div>
 
-    <div class="payouts-box">
-      <div class="title">Payouts</div>
-      <div class="season-dates" id="seasonDates">—</div>
-      <div id="payoutHistory"></div>
-    </div>
+    <div class="payouts-section-title">Payouts</div>
+    <div id="seasonBoxesList"></div>
   </div>
 
   <div class="bottom-nav">
@@ -324,14 +340,32 @@
     <button class="nav-item" onclick="showPage('profile', this)"><span class="icon">●</span>Profile</button>
   </div>
 
+  <!-- ================= AVATAR CROP MODAL ================= -->
+  <div class="crop-overlay" id="cropOverlay">
+    <div class="crop-frame" id="cropFrame">
+      <img id="cropImg" src="" alt="">
+    </div>
+    <div class="crop-controls">
+      <input type="range" id="cropZoom" min="100" max="300" value="100">
+    </div>
+    <div class="crop-hint">Drag to reposition · slide to zoom</div>
+    <div class="crop-actions">
+      <button class="cancel-btn" onclick="cancelCrop()">Cancel</button>
+      <button class="confirm-btn" onclick="confirmCrop()">Use photo</button>
+    </div>
+  </div>
+
 <script>
 /* ============================================================
    CONFIG
    ============================================================ */
 const API_BASE = "https://liveforadsbot-backend.onrender.com/api";
 const LFA_WEBPAGE_URL = "https://rizwanur69.github.io/LiveForAdsWeb/";
+const LFA_WHITEPAPER_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/whitepaper.pdf";
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { tg.ready(); tg.expand(); }
+
+document.getElementById('lfaWhitepaperLink').href = LFA_WHITEPAPER_PDF_URL;
 
 const AdsgramController = window.Adsgram ? window.Adsgram.init({ blockId: "45876" }) : null;
 let onclickaShow = null;
@@ -351,6 +385,7 @@ let state = {
   adsToday: {},
   tasksCompleted: {},
   checkin: { lastDate: null, streak: 0 },
+  checkinHistory: {},
   displayName: null,
   avatarUrl: null,
   telegramAvatarUrl: null,
@@ -358,7 +393,7 @@ let state = {
   referrals: [],
   refEarnedPoints: 0,
   tasks: [],
-  settings: { seasonName: "Testing Season", withdrawOpen: false, withdrawNotice: "", seasonStartDate: "", seasonEndDate: "" },
+  settings: { seasonName: "Testing Season", withdrawOpen: false, withdrawNotice: "" },
   statsRange: '7',
   editing: false,
   pendingAvatarDataUrl: null
@@ -382,7 +417,12 @@ function showPage(name, el){
   if (name === 'leaderboard') loadLeaderboard();
   if (name === 'referral') { loadUserFromServer().then(renderReferral); loadReferralsFromServer(); }
   if (name === 'lfa') loadLfaFrame();
-  if (name === 'profile') { loadUserFromServer().then(()=>{ renderProfile(); loadSettings().then(renderWithdrawInfo); loadPayoutHistory(); }); loadStats(); }
+  if (name === 'profile') {
+    loadUserFromServer().then(renderProfile);
+    loadSettings().then(renderWithdrawInfo);
+    loadSeasonBoxes();
+    loadStats();
+  }
 }
 
 /* ============================================================
@@ -396,6 +436,7 @@ async function loadUserFromServer(){
     state.adsToday = data.adsWatchedToday || {};
     state.tasksCompleted = data.tasksCompleted || {};
     state.checkin = data.checkin || { lastDate: null, streak: 0 };
+    state.checkinHistory = data.checkinHistory || {};
     state.displayName = data.displayName;
     state.avatarUrl = data.avatarUrl;
     state.telegramAvatarUrl = data.telegramAvatarUrl;
@@ -437,27 +478,43 @@ async function loadHome(){
 }
 
 function renderCheckin(){
-  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const dayLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   const now = new Date();
-  const todayIdx = (now.getUTCDay() + 6) % 7;
+  const todayIdx = (now.getUTCDay() + 6) % 7; // Monday = 0
   const today = now.toISOString().slice(0,10);
-  const alreadyToday = state.checkin.lastDate === today;
-  const streak = state.checkin.streak || 0;
+  const monday = new Date(now);
+  monday.setUTCDate(now.getUTCDate() - todayIdx);
 
   const strip = document.getElementById('weekStrip');
-  strip.innerHTML = days.map((d, i) => {
-    const daysAgo = todayIdx - i;
-    const isDone = daysAgo >= 0 && daysAgo < streak;
+  strip.innerHTML = dayLabels.map((label, i) => {
+    const d = new Date(monday);
+    d.setUTCDate(monday.getUTCDate() + i);
+    const key = d.toISOString().slice(0,10);
+    const entry = state.checkinHistory[key];
     const isToday = i === todayIdx;
-    return `<div class="week-day ${isDone?'done':''} ${isToday?'today':''}">
-      <div class="dlabel">${d}</div>
-      <div class="dcircle">${isDone?'✓':''}</div>
+    const isFuture = i > todayIdx;
+
+    let cls = '', inner = '', pointsHtml = '';
+    if (entry && entry.status === 'done'){
+      cls = 'done'; inner = '✓'; pointsHtml = `<div class="dpoints">+${entry.points}</div>`;
+    } else if (entry && entry.status === 'missed'){
+      cls = 'missed'; inner = '✕'; pointsHtml = `<div class="dpoints">${entry.points}</div>`;
+    } else if (isFuture) {
+      inner = '';
+    }
+    if (isToday) cls += ' today';
+
+    return `<div class="week-day ${cls}">
+      <div class="dlabel">${label}</div>
+      <div class="dcircle">${inner}</div>
+      ${pointsHtml}
     </div>`;
   }).join('');
 
-  document.getElementById('streakLabel').textContent = `🔥 ${streak} day streak`;
+  document.getElementById('streakLabel').textContent = `🔥 ${state.checkin.streak || 0} day streak`;
   const btn = document.getElementById('checkinBtn');
   const nextText = document.getElementById('checkinNext');
+  const alreadyToday = state.checkin.lastDate === today;
 
   if (countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
 
@@ -466,7 +523,8 @@ function renderCheckin(){
     btn.textContent = 'Already checked in today';
     startCountdown();
   } else {
-    btn.disabled = false;
+    btn.disabled = false || state.banned;
+    const streak = state.checkin.streak || 0;
     btn.textContent = `Check in — claim ${10 + (streak>0? streak*5 : 0)} points`;
     nextText.textContent = '';
   }
@@ -496,8 +554,8 @@ async function doCheckin(){
     });
     const result = await res.json();
     if (result.success){
-      state.checkin = { lastDate: new Date().toISOString().slice(0,10), streak: result.streak };
-      state.totalPoints += result.reward;
+      await loadUserFromServer(); // re-pull full checkinHistory so the week box is accurate
+      state.totalPoints += 0; // already included from loadUserFromServer
       document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>pts</span>';
       renderCheckin();
       if (tg) tg.HapticFeedback?.notificationOccurred('success');
@@ -510,8 +568,12 @@ async function doCheckin(){
 async function loadTasks(){
   try{
     const res = await fetch(`${API_BASE}/tasks`);
-    state.tasks = await res.json();
-  } catch(e){ console.error("Could not load tasks:", e); state.tasks = []; }
+    const tasks = await res.json();
+    state.tasks = tasks; // only overwrite on a successful response
+  } catch(e){
+    console.error("Could not load tasks (keeping previous list):", e);
+    // Do NOT reset state.tasks here — a transient network hiccup should not make tasks vanish
+  }
   renderTasks();
 }
 
@@ -626,7 +688,7 @@ async function loadLeaderboard(){
 
 function initials(name){ return (name||'U')[0].toUpperCase(); }
 function avatarHtml(user){
-  if (user.avatarUrl) return `<img src="${user.avatarUrl}" alt="">`;
+  if (user.avatarUrl) return `<img src="${user.avatarUrl}" alt="" onerror="this.parentElement.textContent='${initials(user.name)}'">`;
   return initials(user.name);
 }
 
@@ -745,7 +807,7 @@ function toggleEdit(){
     btn.classList.add('done');
   } else {
     head.classList.remove('editing');
-    btn.textContent = 'Edit';
+    btn.textContent = 'Edit profile';
     btn.classList.remove('done');
     saveProfile();
   }
@@ -755,6 +817,10 @@ function triggerAvatarPick(){
   document.getElementById('avatarFileInput').click();
 }
 
+/* ---------- Avatar crop modal ---------- */
+let cropState = { img: null, baseScale: 1, zoom: 1, offsetX: 0, offsetY: 0, dragging: false, lastX: 0, lastY: 0 };
+const CROP_SIZE = 280;
+
 function onAvatarFileChosen(event){
   const file = event.target.files[0];
   if (!file) return;
@@ -762,20 +828,92 @@ function onAvatarFileChosen(event){
   reader.onload = (e) => {
     const img = new Image();
     img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const size = 200;
-      canvas.width = size; canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      const scale = Math.max(size/img.width, size/img.height);
-      const w = img.width*scale, h = img.height*scale;
-      ctx.drawImage(img, (size-w)/2, (size-h)/2, w, h);
-      state.pendingAvatarDataUrl = canvas.toDataURL('image/jpeg', 0.8);
-      renderProfile();
-      document.getElementById('profileHead').classList.add('editing');
+      cropState.img = img;
+      cropState.baseScale = Math.max(CROP_SIZE/img.width, CROP_SIZE/img.height);
+      cropState.zoom = 1;
+      cropState.offsetX = (CROP_SIZE - img.width*cropState.baseScale)/2;
+      cropState.offsetY = (CROP_SIZE - img.height*cropState.baseScale)/2;
+      document.getElementById('cropImg').src = e.target.result;
+      document.getElementById('cropZoom').value = 100;
+      applyCropTransform();
+      document.getElementById('cropOverlay').classList.add('active');
     };
     img.src = e.target.result;
   };
   reader.readAsDataURL(file);
+  event.target.value = ''; // allow picking the same file again later
+}
+
+function applyCropTransform(){
+  const img = document.getElementById('cropImg');
+  const scale = cropState.baseScale * cropState.zoom;
+  img.style.width = (cropState.img.width*scale)+'px';
+  img.style.height = (cropState.img.height*scale)+'px';
+  img.style.transform = `translate(${cropState.offsetX}px, ${cropState.offsetY}px)`;
+}
+
+function clampOffsets(){
+  const scale = cropState.baseScale * cropState.zoom;
+  const w = cropState.img.width*scale, h = cropState.img.height*scale;
+  cropState.offsetX = Math.min(0, Math.max(CROP_SIZE - w, cropState.offsetX));
+  cropState.offsetY = Math.min(0, Math.max(CROP_SIZE - h, cropState.offsetY));
+}
+
+document.getElementById('cropZoom').addEventListener('input', (e)=>{
+  const oldScale = cropState.baseScale * cropState.zoom;
+  const cx = CROP_SIZE/2, cy = CROP_SIZE/2;
+  // keep the center point stable while zooming
+  const imgCx = (cx - cropState.offsetX) / oldScale;
+  const imgCy = (cy - cropState.offsetY) / oldScale;
+  cropState.zoom = e.target.value / 100;
+  const newScale = cropState.baseScale * cropState.zoom;
+  cropState.offsetX = cx - imgCx*newScale;
+  cropState.offsetY = cy - imgCy*newScale;
+  clampOffsets();
+  applyCropTransform();
+});
+
+const cropFrame = document.getElementById('cropFrame');
+cropFrame.addEventListener('pointerdown', (e)=>{
+  cropState.dragging = true;
+  cropState.lastX = e.clientX; cropState.lastY = e.clientY;
+  cropFrame.setPointerCapture(e.pointerId);
+});
+cropFrame.addEventListener('pointermove', (e)=>{
+  if (!cropState.dragging) return;
+  cropState.offsetX += e.clientX - cropState.lastX;
+  cropState.offsetY += e.clientY - cropState.lastY;
+  cropState.lastX = e.clientX; cropState.lastY = e.clientY;
+  clampOffsets();
+  applyCropTransform();
+});
+cropFrame.addEventListener('pointerup', ()=>{ cropState.dragging = false; });
+cropFrame.addEventListener('pointercancel', ()=>{ cropState.dragging = false; });
+
+function cancelCrop(){
+  document.getElementById('cropOverlay').classList.remove('active');
+}
+
+function confirmCrop(){
+  const canvas = document.createElement('canvas');
+  const OUT = 240;
+  canvas.width = OUT; canvas.height = OUT;
+  const ctx = canvas.getContext('2d');
+  const scale = cropState.baseScale * cropState.zoom;
+  const drawScale = OUT / CROP_SIZE;
+  ctx.drawImage(
+    cropState.img,
+    0, 0, cropState.img.width, cropState.img.height,
+    cropState.offsetX*drawScale, cropState.offsetY*drawScale,
+    cropState.img.width*scale*drawScale, cropState.img.height*scale*drawScale
+  );
+  state.pendingAvatarDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+  document.getElementById('cropOverlay').classList.remove('active');
+  renderProfile();
+  document.getElementById('profileHead').classList.add('editing');
+  state.editing = true;
+  document.getElementById('editBtn').textContent = 'DONE';
+  document.getElementById('editBtn').classList.add('done');
 }
 
 async function saveProfile(){
@@ -801,6 +939,10 @@ function setStatsRange(range, el){
 }
 
 async function loadStats(){
+  const loading = document.getElementById('chartLoading');
+  const svg = document.getElementById('chartSvg');
+  loading.style.display = 'block';
+  svg.style.opacity = '0.3';
   try{
     const res = await fetch(`${API_BASE}/user/${state.user.id}/stats?range=${state.statsRange}`);
     const data = await res.json();
@@ -810,6 +952,8 @@ async function loadStats(){
       drawChart(data.days || []);
     }
   } catch(e){ console.error("Could not load stats:", e); }
+  loading.style.display = 'none';
+  svg.style.opacity = '1';
 }
 
 function drawChart(data){
@@ -836,7 +980,7 @@ function drawChart(data){
 }
 
 /* ============================================================
-   WITHDRAW + PAYOUTS
+   WITHDRAW + SEASON PAYOUT BOXES
    ============================================================ */
 function renderWithdrawInfo(){
   const sub = document.getElementById('withdrawSub');
@@ -853,32 +997,33 @@ function renderWithdrawInfo(){
 
   if (state.settings.withdrawOpen){
     sub.textContent = `Withdrawals for ${state.settings.seasonName} are open now. Requests are reviewed and paid between the 3rd–5th of next month.`;
-    btn.disabled = false || state.banned;
+    btn.disabled = state.banned;
   } else {
-    sub.textContent = `Withdrawals open on the 1st–2nd after ${state.settings.seasonName} ends. Requests are reviewed and paid between the 3rd–5th.`;
+    sub.textContent = `${state.settings.seasonName} payout window opens once this season ends. Exact dates are set by the team and shown here when withdrawals are active.`;
     btn.disabled = true;
   }
-
-  const start = state.settings.seasonStartDate || '—';
-  const end = state.settings.seasonEndDate || '—';
-  document.getElementById('seasonDates').textContent = `${state.settings.seasonName || 'Season'}: ${start} to ${end}`;
 }
 
-async function loadPayoutHistory(){
+async function loadSeasonBoxes(){
   try{
-    const res = await fetch(`${API_BASE}/withdrawals/${state.user.id}`);
-    const list = await res.json();
-    const box = document.getElementById('payoutHistory');
-    if (list.length === 0){
-      box.innerHTML = `<div style="font-size:12px;color:var(--text-muted);">No withdrawal requests yet.</div>`;
+    const res = await fetch(`${API_BASE}/season-boxes`);
+    const boxes = await res.json();
+    const list = document.getElementById('seasonBoxesList');
+    if (boxes.length === 0){
+      list.innerHTML = `<div style="font-size:12px;color:var(--text-muted);">No season data published yet.</div>`;
       return;
     }
-    box.innerHTML = list.map(w=>`
-      <div class="payout-row">
-        <div class="date">${w.createdAt ? new Date(w.createdAt).toLocaleDateString() : '—'}</div>
-        <span class="pill ${w.status}">${w.status.charAt(0).toUpperCase()+w.status.slice(1)}</span>
+    list.innerHTML = boxes.map(b=>`
+      <div class="season-box">
+        <div class="sname">${b.seasonName}</div>
+        <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}</div>
+        <div class="srow">
+          <div class="sstat"><div class="snum">${b.participants||0}</div><div class="slabel">Participants</div></div>
+          <div class="sstat"><div class="snum">${b.totalPointsEarned||0}</div><div class="slabel">Points earned</div></div>
+          <div class="sstat"><div class="snum">$${b.totalUsdtPaid||0}</div><div class="slabel">USDT paid</div></div>
+        </div>
       </div>`).join('');
-  } catch(e){ console.error("Could not load payout history:", e); }
+  } catch(e){ console.error("Could not load season boxes:", e); }
 }
 
 async function submitWithdraw(){
@@ -897,7 +1042,6 @@ async function submitWithdraw(){
   } catch(e){ status.textContent = "Couldn't reach the server."; return; }
   status.textContent = "Request submitted. You'll be paid between the 3rd–5th if approved.";
   document.getElementById('withdrawBtn').disabled = true;
-  loadPayoutHistory();
 }
 
 /* ============================================================
