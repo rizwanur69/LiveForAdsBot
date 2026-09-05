@@ -15,6 +15,12 @@
     --text:#EAF2F1; --text-muted:#8FA3A1;
     --gold:#F2B33D; --gold-dim:#5A4523; --teal:#2DD4BF; --red:#E8604C; --green:#4ADE80;
     --indigo:#6366F1; --indigo-bg:#1E1F3B;
+    --up-color:#4ADE80; --up-dim:#1F4A33;
+  }
+  body.light-theme{
+    --bg:#F4F6F5; --surface:#FFFFFF; --surface-raised:#EEF2F1; --line:#DCE3E1;
+    --text:#152321; --text-muted:#647572;
+    --indigo-bg:#E9EAFB;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{
@@ -50,6 +56,11 @@
   .week-day.done .dcircle{background:var(--gold); border-color:var(--gold); color:#1B1404; font-weight:700;}
   .week-day.missed .dcircle{background:rgba(232,96,76,0.12); border-color:var(--red); color:var(--red); font-weight:700;}
   .week-day.today .dcircle{border-color:var(--gold); border-width:2px;}
+  .week-day.today:not(.done) .dcircle{animation:glowPulse 1.6s ease-in-out infinite;}
+  @keyframes glowPulse{
+    0%,100%{box-shadow:0 0 0px rgba(242,179,61,0.5);}
+    50%{box-shadow:0 0 12px 2px rgba(242,179,61,0.7);}
+  }
   .week-day .dpoints{font-size:9px; color:var(--text-muted); margin-top:4px; font-family:'Space Grotesk',sans-serif;}
   .week-day.done .dpoints{color:var(--gold);}
   .week-day.missed .dpoints{color:var(--red);}
@@ -70,6 +81,45 @@
   .watch-btn:disabled{background:var(--surface-raised); color:var(--text-muted); cursor:not-allowed;}
 
   .ads-note{font-size:12.5px; color:var(--text-muted); line-height:1.5; margin:16px 0;}
+
+  /* Earn page — two sections with per-section subtotal */
+  .earn-section-head{display:flex; align-items:center; justify-content:space-between; margin:22px 0 10px;}
+  .earn-section-head .stitle{font-size:13px; color:var(--text-muted); font-weight:500;}
+  .earn-section-head .ssubtotal{font-size:13px; font-weight:700; font-family:'Space Grotesk',sans-serif;}
+  .earn-section-head .ssubtotal.ap{color:var(--gold);}
+  .earn-section-head .ssubtotal.up{color:var(--up-color);}
+  .coming-soon-box{background:var(--surface); border:1px dashed var(--line); border-radius:14px; padding:24px 16px; text-align:center; color:var(--text-muted); font-size:12.5px; line-height:1.6;}
+
+  /* AP/UP pill badges (leaderboard, profile) */
+  .ap-tag, .up-tag{font-size:11px; font-weight:700; padding:2px 8px; border-radius:8px; font-family:'Space Grotesk',sans-serif;}
+  .ap-tag{background:rgba(242,179,61,0.12); color:var(--gold);}
+  .up-tag{background:rgba(74,222,128,0.12); color:var(--up-color);}
+
+  /* Settings gear + modal */
+  .settings-gear{position:absolute; top:14px; right:14px; background:var(--surface-raised); border:1px solid var(--line); width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; cursor:pointer; color:var(--text-muted);}
+  .settings-overlay{position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:900; display:none; align-items:flex-end; justify-content:center;}
+  .settings-overlay.active{display:flex;}
+  .settings-sheet{background:var(--surface); border-radius:20px 20px 0 0; width:100%; max-width:480px; padding:20px; padding-bottom:calc(20px + env(safe-area-inset-bottom));}
+  .settings-sheet h3{font-size:15px; margin-bottom:16px;}
+  .settings-row{display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--line);}
+  .settings-row:last-child{border-bottom:none;}
+  .settings-row .slabel{font-size:13.5px; font-weight:600;}
+  .settings-row .shint{font-size:11px; color:var(--text-muted); margin-top:2px;}
+  .settings-btn{background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:12.5px; font-weight:600; padding:8px 14px; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .theme-switch{display:flex; gap:6px;}
+  .theme-switch button{background:var(--surface-raised); border:1px solid var(--line); color:var(--text-muted); font-size:11.5px; font-weight:600; padding:7px 12px; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .theme-switch button.active{background:var(--gold); color:#1B1404; border-color:var(--gold);}
+  .settings-close{width:100%; margin-top:16px; background:none; border:none; color:var(--text-muted); font-size:13px; padding:10px; cursor:pointer; font-family:'Inter',sans-serif;}
+
+  /* Profile stat readout (replaces the old inline edit button area) */
+  .profile-breakdown{margin-top:16px; padding-top:16px; border-top:1px solid var(--line);}
+  .editing-mode .profile-breakdown{display:none;}
+  .pb-row{display:flex; justify-content:space-between; align-items:center; padding:6px 0; font-size:12.5px;}
+  .pb-row .pbl{color:var(--text-muted);}
+  .pb-row .pbv{font-weight:600; font-family:'Space Grotesk',sans-serif;}
+  .pb-row.ap .pbv{color:var(--gold);}
+  .pb-row.up .pbv{color:var(--up-color);}
+  .pb-divider{height:1px; background:var(--line); margin:8px 0;}
 
   /* Leaderboard — premium styling */
   .podium{display:flex; align-items:flex-end; gap:10px; margin:20px 0 10px;}
@@ -117,7 +167,7 @@
   .ref-commission{font-size:11px; color:var(--text-muted); margin-top:8px;}
 
   /* Profile */
-  .profile-card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; margin-top:16px;}
+  .profile-card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; margin-top:16px; position:relative;}
   .profile-head{display:flex; align-items:center; gap:14px;}
   .profile-head .avatar-wrap{position:relative; width:64px; height:64px; flex-shrink:0;}
   .profile-head .avatar{width:64px; height:64px; border-radius:50%; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; color:var(--gold); overflow:hidden;}
@@ -129,7 +179,8 @@
   .editing .name{display:none;}
   .editing .name-input{display:block;}
   .profile-head .id{font-size:12.5px; color:var(--text-muted); margin-top:2px;}
-  .edit-toggle-btn{width:100%; margin-top:16px; background:var(--surface-raised); border:1px solid var(--line); color:var(--text-muted); font-size:13px; font-weight:600; cursor:pointer; padding:10px; border-radius:10px; font-family:'Inter',sans-serif;}
+  .edit-toggle-btn{width:100%; margin-top:16px; background:var(--surface-raised); border:1px solid var(--line); color:var(--text-muted); font-size:13px; font-weight:600; cursor:pointer; padding:10px; border-radius:10px; font-family:'Inter',sans-serif; display:none;}
+  .editing-mode .edit-toggle-btn{display:block;}
   .edit-toggle-btn.done{background:var(--gold); color:#1B1404; border-color:var(--gold);}
 
   .stat-grid{display:flex; gap:10px; margin:20px 0;}
@@ -207,8 +258,8 @@
   <!-- ================= HOME ================= -->
   <div class="page active" id="page-home">
     <div class="balance-hero">
-      <div class="label">Your points</div>
-      <div class="num" id="totalPoints">0 <span>pts</span></div>
+      <div class="label">Your AP (Ad Points)</div>
+      <div class="num" id="totalPoints">0 <span>AP</span></div>
     </div>
 
     <div class="checkin-box">
@@ -225,10 +276,20 @@
     <div id="taskList"></div>
   </div>
 
-  <!-- ================= ADS ================= -->
+  <!-- ================= EARN (Offerwall + Ads) ================= -->
   <div class="page" id="page-ads">
-    <div class="section-label" style="margin-top:16px;">Watch ads, earn points</div>
-    <div class="ads-note">Each ad gives 50 points. Limited slots per day per network.</div>
+    <div class="earn-section-head" style="margin-top:16px;">
+      <div class="stitle">Offerwall</div>
+      <div class="ssubtotal up" id="offerwallSubtotal">0 UP</div>
+    </div>
+    <div class="ads-note">Complete simple offers for real USD value. 100 UP = 1 USDT.</div>
+    <div class="coming-soon-box">Offerwall partner coming soon — this section will light up once it's live.</div>
+
+    <div class="earn-section-head">
+      <div class="stitle">Ads</div>
+      <div class="ssubtotal ap" id="adsSubtotal">0 AP</div>
+    </div>
+    <div class="ads-note">Each ad gives 50 AP. Limited slots per day per network.</div>
     <div id="adList"></div>
   </div>
 
@@ -269,11 +330,17 @@
       <div class="label">Whitepaper (PDF)</div>
       <div class="arrow">›</div>
     </a>
+    <a class="lfa-doc-row" id="lfaTermsLink" href="#" target="_blank">
+      <div class="icon">📜</div>
+      <div class="label">Terms & Privacy Policy (PDF)</div>
+      <div class="arrow">›</div>
+    </a>
   </div>
 
   <!-- ================= PROFILE ================= -->
   <div class="page" id="page-profile">
     <div class="profile-card" id="profileCard">
+      <div class="settings-gear" id="settingsGear" onclick="openSettings()">⚙</div>
       <div class="profile-head" id="profileHead">
         <div class="avatar-wrap">
           <div class="avatar" id="profileAvatar">U</div>
@@ -285,7 +352,18 @@
           <div class="id" id="profileId">ID: —</div>
         </div>
       </div>
-      <button class="edit-toggle-btn" id="editBtn" onclick="toggleEdit()">Edit profile</button>
+
+      <div class="profile-breakdown" id="profileBreakdown">
+        <div class="pb-row ap"><span class="pbl">Total AP</span><span class="pbv" id="pbTotalAp">0</span></div>
+        <div class="pb-row"><span class="pbl">— from check-in</span><span class="pbv" id="pbApCheckin">0</span></div>
+        <div class="pb-row"><span class="pbl">— from tasks</span><span class="pbv" id="pbApTasks">0</span></div>
+        <div class="pb-row"><span class="pbl">— from ads</span><span class="pbv" id="pbApAds">0</span></div>
+        <div class="pb-row"><span class="pbl">— from referrals</span><span class="pbv" id="pbApReferral">0</span></div>
+        <div class="pb-divider"></div>
+        <div class="pb-row up"><span class="pbl">Total UP (offerwall)</span><span class="pbv" id="pbTotalUp">0</span></div>
+      </div>
+
+      <button class="edit-toggle-btn" id="editBtn" onclick="toggleEdit()">Save profile</button>
     </div>
     <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="onAvatarFileChosen(event)">
 
@@ -333,11 +411,43 @@
 
   <div class="bottom-nav">
     <button class="nav-item active" onclick="showPage('home', this)"><span class="icon">▣</span>Home</button>
-    <button class="nav-item" onclick="showPage('ads', this)"><span class="icon">▶</span>Ads</button>
+    <button class="nav-item" onclick="showPage('ads', this)"><span class="icon">▶</span>Earn</button>
     <button class="nav-item" onclick="showPage('leaderboard', this)"><span class="icon">★</span>Leaders</button>
     <button class="nav-item" onclick="showPage('referral', this)"><span class="icon">◎</span>Referral</button>
     <button class="nav-item" onclick="showPage('lfa', this)"><span class="icon">◈</span>LFA</button>
     <button class="nav-item" onclick="showPage('profile', this)"><span class="icon">●</span>Profile</button>
+  </div>
+
+  <!-- ================= SETTINGS SHEET ================= -->
+  <div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this) closeSettings()">
+    <div class="settings-sheet">
+      <h3>Settings</h3>
+      <div class="settings-row">
+        <div>
+          <div class="slabel">Edit Profile</div>
+          <div class="shint">Change your name and photo</div>
+        </div>
+        <button class="settings-btn" onclick="startEditFromSettings()">Edit</button>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="slabel">Theme</div>
+          <div class="shint">Choose light or dark mode</div>
+        </div>
+        <div class="theme-switch">
+          <button id="themeDarkBtn" onclick="setTheme('dark')">Dark</button>
+          <button id="themeLightBtn" onclick="setTheme('light')">Light</button>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="slabel">Connect account</div>
+          <div class="shint">Needed later for offerwall verification</div>
+        </div>
+        <button class="settings-btn" disabled style="opacity:0.5;">Coming soon</button>
+      </div>
+      <button class="settings-close" onclick="closeSettings()">Close</button>
+    </div>
   </div>
 
   <!-- ================= AVATAR CROP MODAL ================= -->
@@ -362,10 +472,12 @@
 const API_BASE = "https://liveforadsbot-backend.onrender.com/api";
 const LFA_WEBPAGE_URL = "https://rizwanur69.github.io/LiveForAdsWeb/";
 const LFA_WHITEPAPER_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/whitepaper.pdf";
+const LFA_TERMS_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/terms-and-privacy.pdf";
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { tg.ready(); tg.expand(); }
 
 document.getElementById('lfaWhitepaperLink').href = LFA_WHITEPAPER_PDF_URL;
+document.getElementById('lfaTermsLink').href = LFA_TERMS_PDF_URL;
 
 const AdsgramController = window.Adsgram ? window.Adsgram.init({ blockId: "45876" }) : null;
 let onclickaShow = null;
@@ -382,6 +494,11 @@ const REFERRAL_ELIGIBILITY_ADS = 25;
 let state = {
   user: { id: tg?.initDataUnsafe?.user?.id || "000000", name: tg?.initDataUnsafe?.user?.first_name || "User" },
   totalPoints: 0,
+  up: 0,
+  apFromAds: 0,
+  apFromTasks: 0,
+  apFromCheckin: 0,
+  theme: 'dark',
   adsToday: {},
   tasksCompleted: {},
   checkin: { lastDate: null, streak: 0 },
@@ -413,7 +530,7 @@ function showPage(name, el){
   if (countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
 
   if (name === 'home') loadHome();
-  if (name === 'ads') loadUserFromServer().then(renderAds);
+  if (name === 'ads') loadUserFromServer().then(renderEarn);
   if (name === 'leaderboard') loadLeaderboard();
   if (name === 'referral') { loadUserFromServer().then(renderReferral); loadReferralsFromServer(); }
   if (name === 'lfa') loadLfaFrame();
@@ -433,6 +550,12 @@ async function loadUserFromServer(){
     const res = await fetch(`${API_BASE}/user/${state.user.id}`);
     const data = await res.json();
     state.totalPoints = data.points || 0;
+    state.up = data.up || 0;
+    state.apFromAds = data.apFromAds || 0;
+    state.apFromTasks = data.apFromTasks || 0;
+    state.apFromCheckin = data.apFromCheckin || 0;
+    state.theme = data.theme || 'dark';
+    applyTheme(state.theme);
     state.adsToday = data.adsWatchedToday || {};
     state.tasksCompleted = data.tasksCompleted || {};
     state.checkin = data.checkin || { lastDate: null, streak: 0 };
@@ -469,7 +592,7 @@ async function loadHome(){
   await loadSettings();
   renderCheckin();
   await loadTasks();
-  document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>pts</span>';
+  document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>AP</span>';
 
   if (state.banned){
     document.getElementById('checkinBtn').disabled = true;
@@ -556,7 +679,7 @@ async function doCheckin(){
     if (result.success){
       await loadUserFromServer(); // re-pull full checkinHistory so the week box is accurate
       state.totalPoints += 0; // already included from loadUserFromServer
-      document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>pts</span>';
+      document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>AP</span>';
       renderCheckin();
       if (tg) tg.HapticFeedback?.notificationOccurred('success');
     } else {
@@ -611,15 +734,22 @@ async function claimTask(taskId){
     if (result.success){
       state.tasksCompleted[taskId] = true;
       state.totalPoints += result.pointsEarned;
-      document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>pts</span>';
+      state.apFromTasks += result.pointsEarned;
+      document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>AP</span>';
       renderTasks();
     }
   } catch(e){ console.error("Task claim failed:", e); }
 }
 
 /* ============================================================
-   ADS PAGE
+   EARN PAGE (Offerwall + Ads)
    ============================================================ */
+function renderEarn(){
+  document.getElementById('offerwallSubtotal').textContent = `${state.up} UP`;
+  document.getElementById('adsSubtotal').textContent = `${state.apFromAds} AP`;
+  renderAds();
+}
+
 function renderAds(){
   const adList = document.getElementById('adList');
   adList.innerHTML = '';
@@ -670,8 +800,9 @@ async function reportAdWatched(networkKey){
     }
     state.adsToday[networkKey] = (state.adsToday[networkKey]||0) + 1;
     state.totalPoints += result.pointsEarned || POINTS_PER_AD;
+    state.apFromAds += result.pointsEarned || POINTS_PER_AD;
   } catch(e){ console.error("ad-watched failed:", e); alert("Couldn't reach the server."); return; }
-  renderAds();
+  renderEarn();
   if (tg) tg.HapticFeedback?.notificationOccurred('success');
 }
 
@@ -704,7 +835,8 @@ function renderLeaderboard(data){
       <div class="podium-hat">${hats[u.rank]}</div>
       <div class="podium-avatar">${avatarHtml(u)}</div>
       <div class="pname">${u.name}</div>
-      <div class="ppts">${u.points} pts</div>
+      <div class="ppts">${u.points} AP</div>
+      <div style="margin-top:2px;"><span class="up-tag">${u.up||0} UP</span></div>
     </div>`).join('');
 
   document.getElementById('lbList').innerHTML = rest.map(u=>`
@@ -712,7 +844,8 @@ function renderLeaderboard(data){
       <div class="rank">${u.rank}</div>
       <div class="avatar">${avatarHtml(u)}</div>
       <div class="name">${u.name}</div>
-      <div class="pts">${u.points}</div>
+      <span class="ap-tag">${u.points} AP</span>&nbsp;
+      <span class="up-tag">${u.up||0} UP</span>
     </div>`).join('');
 
   const you = data.you;
@@ -723,7 +856,8 @@ function renderLeaderboard(data){
         <div class="rank">${you.rank}</div>
         <div class="avatar">${avatarHtml(you)}</div>
         <div class="name">${you.name} (You)</div>
-        <div class="pts">${you.points}</div>
+        <span class="ap-tag">${you.points} AP</span>&nbsp;
+        <span class="up-tag">${you.up||0} UP</span>
       </div>`;
   } else {
     youBox.innerHTML = '';
@@ -761,7 +895,7 @@ function renderReferral(){
         <span class="badge ${r.eligible?'eligible':'pending'}">${r.eligible?'Eligible':'Pending'}</span>
       </div>
       <div class="ref-progress-track"><div class="ref-progress-fill" style="width:${pct}%; background:${refColor(pct)};"></div></div>
-      <div class="ref-commission">Commission generated: ${r.commissionGenerated||0} pts</div>
+      <div class="ref-commission">Commission generated: ${r.commissionGenerated||0} AP</div>
     </div>`;
   }).join('');
 }
@@ -795,22 +929,61 @@ function renderProfile(){
   document.getElementById('statAds').textContent = Object.values(state.adsToday).reduce((a,b)=>a+b,0);
   document.getElementById('statTasks').textContent = (state.checkin.streak||0) + ' 🔥';
   document.getElementById('statRef').textContent = state.refEarnedPoints;
+
+  document.getElementById('pbTotalAp').textContent = state.totalPoints;
+  document.getElementById('pbApCheckin').textContent = state.apFromCheckin;
+  document.getElementById('pbApTasks').textContent = state.apFromTasks;
+  document.getElementById('pbApAds').textContent = state.apFromAds;
+  document.getElementById('pbApReferral').textContent = state.refEarnedPoints;
+  document.getElementById('pbTotalUp').textContent = state.up;
+}
+
+function enterEditMode(){
+  state.editing = true;
+  document.getElementById('profileCard').classList.add('editing', 'editing-mode');
+}
+
+function exitEditMode(){
+  state.editing = false;
+  document.getElementById('profileCard').classList.remove('editing', 'editing-mode');
+}
+
+function startEditFromSettings(){
+  closeSettings();
+  enterEditMode();
 }
 
 function toggleEdit(){
-  state.editing = !state.editing;
-  const head = document.getElementById('profileHead');
-  const btn = document.getElementById('editBtn');
-  if (state.editing){
-    head.classList.add('editing');
-    btn.textContent = 'DONE';
-    btn.classList.add('done');
-  } else {
-    head.classList.remove('editing');
-    btn.textContent = 'Edit profile';
-    btn.classList.remove('done');
-    saveProfile();
-  }
+  // The "Save profile" button — only visible while in edit mode
+  exitEditMode();
+  saveProfile();
+}
+
+/* ---------- Settings sheet ---------- */
+function openSettings(){
+  document.getElementById('settingsOverlay').classList.add('active');
+  document.getElementById('themeDarkBtn').classList.toggle('active', state.theme !== 'light');
+  document.getElementById('themeLightBtn').classList.toggle('active', state.theme === 'light');
+}
+function closeSettings(){
+  document.getElementById('settingsOverlay').classList.remove('active');
+}
+
+async function setTheme(theme){
+  state.theme = theme;
+  applyTheme(theme);
+  document.getElementById('themeDarkBtn').classList.toggle('active', theme === 'dark');
+  document.getElementById('themeLightBtn').classList.toggle('active', theme === 'light');
+  try{
+    await fetch(`${API_BASE}/user/${state.user.id}/profile`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ theme })
+    });
+  } catch(e){ console.error("Could not save theme:", e); }
+}
+
+function applyTheme(theme){
+  document.body.classList.toggle('light-theme', theme === 'light');
 }
 
 function triggerAvatarPick(){
@@ -910,10 +1083,7 @@ function confirmCrop(){
   state.pendingAvatarDataUrl = canvas.toDataURL('image/jpeg', 0.82);
   document.getElementById('cropOverlay').classList.remove('active');
   renderProfile();
-  document.getElementById('profileHead').classList.add('editing');
-  state.editing = true;
-  document.getElementById('editBtn').textContent = 'DONE';
-  document.getElementById('editBtn').classList.add('done');
+  enterEditMode();
 }
 
 async function saveProfile(){
