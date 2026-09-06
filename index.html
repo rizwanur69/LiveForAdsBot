@@ -7,6 +7,7 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
+<script src="//libtl.com/sdk.js" data-zone="11739436" data-sdk="show_11739436"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
 
@@ -486,7 +487,8 @@ window.initCdTma?.({ id: 6145357 }).then(show => { onclickaShow = show; }).catch
 
 const AD_NETWORKS = [
   { key:"adsgram", name:"Adsgram", icon:"▲" },
-  { key:"onclicka", name:"OnClicka", icon:"◆" }
+  { key:"onclicka", name:"OnClicka", icon:"◆" },
+  { key:"monetag", name:"Monetag", icon:"●" }
 ];
 const AD_DAILY_LIMIT = 10;
 const POINTS_PER_AD = 50;
@@ -785,6 +787,11 @@ function watchAd(networkKey){
   if (networkKey === 'onclicka'){
     if (!onclickaShow){ alert('Ad SDK not loaded — try again in a moment.'); return; }
     onclickaShow().then(() => reportAdWatched(networkKey)).catch(() => {});
+    return;
+  }
+  if (networkKey === 'monetag'){
+    if (typeof window.show_11739436 !== 'function'){ alert('Ad SDK not loaded — try again in a moment.'); return; }
+    window.show_11739436().then(() => reportAdWatched(networkKey)).catch(() => {});
     return;
   }
 }
