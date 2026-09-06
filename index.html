@@ -1272,6 +1272,22 @@ async function submitWithdraw(){
    INIT
    ============================================================ */
 loadHome();
+
+// Monetag In-App Interstitial — passive, automatic ads (no button, no reward, no user action needed).
+// This is pure extra income on top of the rewarded ads/offerwall — it doesn't touch AP/UP at all.
+// Settings below: up to 10 ads per hour, 60s apart, first one 10s after the app opens.
+if (typeof window.show_11739436 === 'function') {
+  window.show_11739436({
+    type: 'inApp',
+    inAppSettings: {
+      frequency: 10,     // max ads shown
+      capping: 1,       // within this many hours
+      interval: 60,     // seconds between ads
+      timeout: 10,      // seconds before the first ad
+      everyPage: false  // keep the same session as the user moves between tabs
+    }
+  });
+}
 </script>
 </body>
 </html>
