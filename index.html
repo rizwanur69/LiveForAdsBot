@@ -6,7 +6,6 @@
 <title>Live For Ads</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-<script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
 <script src="//libtl.com/sdk.js" data-zone="11739436" data-sdk="show_11739436"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
@@ -89,6 +88,9 @@
   .earn-section-head .ssubtotal{font-size:13px; font-weight:700; font-family:'Space Grotesk',sans-serif;}
   .earn-section-head .ssubtotal.ap{color:var(--gold);}
   .earn-section-head .ssubtotal.up{color:var(--up-color);}
+  .earn-toggle{display:flex; gap:8px;}
+  .earn-toggle-btn{flex:1; background:var(--surface); border:1px solid var(--line); color:var(--text-muted); font-family:'Inter',sans-serif; font-weight:700; font-size:13.5px; padding:12px; border-radius:12px; cursor:pointer;}
+  .earn-toggle-btn.active{background:var(--gold); color:#1B1404; border-color:var(--gold);}
   .coming-soon-box{background:var(--surface); border:1px dashed var(--line); border-radius:14px; padding:24px 16px; text-align:center; color:var(--text-muted); font-size:12.5px; line-height:1.6;}
 
   /* AP/UP pill badges (leaderboard, profile) */
@@ -279,19 +281,28 @@
 
   <!-- ================= EARN (Offerwall + Ads) ================= -->
   <div class="page" id="page-ads">
-    <div class="earn-section-head" style="margin-top:16px;">
-      <div class="stitle">Offerwall</div>
-      <div class="ssubtotal up" id="offerwallSubtotal">0 UP</div>
+    <div class="earn-toggle" style="margin-top:16px;">
+      <button class="earn-toggle-btn active" id="earnTabOfferwall" onclick="setEarnSubTab('offerwall')">Reward Wall</button>
+      <button class="earn-toggle-btn" id="earnTabAds" onclick="setEarnSubTab('ads')">ADS</button>
     </div>
-    <div class="ads-note">Complete simple offers for real USD value. 100 UP = 1 USDT.</div>
-    <iframe id="offerwallFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px; margin-bottom:20px;" frameborder="0"></iframe>
 
-    <div class="earn-section-head">
-      <div class="stitle">Ads</div>
-      <div class="ssubtotal ap" id="adsSubtotal">0 AP</div>
+    <div class="earn-subpage" id="earnSubpage-offerwall">
+      <div class="earn-section-head">
+        <div class="stitle">Offerwall</div>
+        <div class="ssubtotal up" id="offerwallSubtotal">0 UP</div>
+      </div>
+      <div class="ads-note">Complete simple offers for real USD value. 100 UP = 1 USDT.</div>
+      <iframe id="offerwallFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px; margin-bottom:20px;" frameborder="0"></iframe>
     </div>
-    <div class="ads-note">Each ad gives 50 AP. Limited slots per day per network.</div>
-    <div id="adList"></div>
+
+    <div class="earn-subpage" id="earnSubpage-ads" style="display:none;">
+      <div class="earn-section-head">
+        <div class="stitle">Ads</div>
+        <div class="ssubtotal ap" id="adsSubtotal">0 AP</div>
+      </div>
+      <div class="ads-note">Each ad gives 50 AP. 5 ads per network, then a 3-hour cooldown.</div>
+      <div id="adList"></div>
+    </div>
   </div>
 
   <!-- ================= LEADERBOARD ================= -->
@@ -482,15 +493,19 @@ document.getElementById('lfaWhitepaperLink').href = LFA_WHITEPAPER_PDF_URL;
 document.getElementById('lfaTermsLink').href = LFA_TERMS_PDF_URL;
 
 const AdsgramController = window.Adsgram ? window.Adsgram.init({ blockId: "46466" }) : null;
-let onclickaShow = null;
-window.initCdTma?.({ id: 6145357 }).then(show => { onclickaShow = show; }).catch(e => console.log("OnClicka init failed:", e));
+function setEarnSubTab(tab){
+  document.getElementById('earnSubpage-offerwall').style.display = tab === 'offerwall' ? 'block' : 'none';
+  document.getElementById('earnSubpage-ads').style.display = tab === 'ads' ? 'block' : 'none';
+  document.getElementById('earnTabOfferwall').classList.toggle('active', tab === 'offerwall');
+  document.getElementById('earnTabAds').classList.toggle('active', tab === 'ads');
+}
 
 const AD_NETWORKS = [
   { key:"adsgram", name:"Adsgram", icon:"▲" },
-  { key:"onclicka", name:"OnClicka", icon:"◆" },
   { key:"monetag", name:"Monetag", icon:"●" }
 ];
-const AD_DAILY_LIMIT = 10;
+const AD_WATCH_LIMIT = 5;
+const AD_COOLDOWN_HOURS = 3;
 const POINTS_PER_AD = 50;
 const REFERRAL_ELIGIBILITY_ADS = 25;
 
@@ -559,7 +574,7 @@ async function loadUserFromServer(){
     state.apFromCheckin = data.apFromCheckin || 0;
     state.theme = data.theme || 'dark';
     applyTheme(state.theme);
-    state.adsToday = data.adsWatchedToday || {};
+    state.adsToday = data.adsWatched || {};
     state.tasksCompleted = data.tasksCompleted || {};
     state.checkin = data.checkin || { lastDate: null, streak: 0 };
     state.checkinHistory = data.checkinHistory || {};
@@ -756,25 +771,58 @@ function renderEarn(){
   renderAds();
 }
 
+let adsCountdownInterval = null;
+
+function formatCountdown(ms){
+  const total = Math.max(0, Math.floor(ms/1000));
+  const hh = String(Math.floor(total/3600)).padStart(2,'0');
+  const mm = String(Math.floor((total%3600)/60)).padStart(2,'0');
+  const ss = String(total%60).padStart(2,'0');
+  return `${hh}:${mm}:${ss}`;
+}
+
 function renderAds(){
   const adList = document.getElementById('adList');
-  adList.innerHTML = '';
-  AD_NETWORKS.forEach(net=>{
-    const watched = state.adsToday[net.key] || 0;
-    const pct = Math.min(100, (watched/AD_DAILY_LIMIT)*100);
-    const maxed = watched >= AD_DAILY_LIMIT || state.banned;
-    adList.innerHTML += `
+  const now = Date.now();
+  let anyLocked = false;
+
+  adList.innerHTML = AD_NETWORKS.map(net=>{
+    const slot = state.adsToday[net.key] || { count: 0, unlockAt: null };
+    const stillLocked = slot.unlockAt && now < slot.unlockAt;
+    const count = stillLocked ? slot.count : (slot.unlockAt && now >= slot.unlockAt ? 0 : slot.count);
+    const pct = Math.min(100, (count/AD_WATCH_LIMIT)*100);
+
+    if (stillLocked) anyLocked = true;
+
+    let buttonHtml;
+    if (state.banned){
+      buttonHtml = `<button class="watch-btn" disabled>Suspended</button>`;
+    } else if (stillLocked){
+      buttonHtml = `<button class="watch-btn" disabled style="min-width:78px;">${formatCountdown(slot.unlockAt - now)}</button>`;
+    } else {
+      buttonHtml = `<button class="watch-btn" onclick="watchAd('${net.key}')">Watch</button>`;
+    }
+
+    return `
       <div class="ad-row">
         <div class="icon">${net.icon}</div>
         <div class="info">
           <div class="name">${net.name}</div>
           <div class="sub">+${POINTS_PER_AD} points per ad</div>
           <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-          <div class="count">${watched}/${AD_DAILY_LIMIT} watched today</div>
+          <div class="count">${stillLocked ? `Cooldown — resets in ${formatCountdown(slot.unlockAt - now)}` : `${count}/${AD_WATCH_LIMIT} watched`}</div>
         </div>
-        <button class="watch-btn" ${maxed?'disabled':''} onclick="watchAd('${net.key}')">${state.banned?'Suspended':(watched>=AD_DAILY_LIMIT?'Limit reached':'Watch')}</button>
+        ${buttonHtml}
       </div>`;
-  });
+  }).join('');
+
+  // Keep the countdowns ticking every second while any slot is on cooldown
+  if (anyLocked && !adsCountdownInterval){
+    adsCountdownInterval = setInterval(renderAds, 1000);
+  } else if (!anyLocked && adsCountdownInterval){
+    clearInterval(adsCountdownInterval);
+    adsCountdownInterval = null;
+  }
 }
 
 function watchAd(networkKey){
@@ -782,11 +830,6 @@ function watchAd(networkKey){
   if (networkKey === 'adsgram'){
     if (!AdsgramController){ alert('Ad SDK not loaded — try again in a moment.'); return; }
     AdsgramController.show().then(() => reportAdWatched(networkKey)).catch(() => {});
-    return;
-  }
-  if (networkKey === 'onclicka'){
-    if (!onclickaShow){ alert('Ad SDK not loaded — try again in a moment.'); return; }
-    onclickaShow().then(() => reportAdWatched(networkKey)).catch(() => {});
     return;
   }
   if (networkKey === 'monetag'){
@@ -797,7 +840,6 @@ function watchAd(networkKey){
 }
 
 async function reportAdWatched(networkKey){
-  if ((state.adsToday[networkKey]||0) >= AD_DAILY_LIMIT) return;
   try{
     const res = await fetch(`${API_BASE}/ad-watched`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -805,11 +847,11 @@ async function reportAdWatched(networkKey){
     });
     const result = await res.json();
     if (!result.success){
-      if (result.reason === 'daily_limit_reached') alert('Daily limit reached for this network.');
+      if (result.reason === 'cooldown') alert('This network is on cooldown right now.');
       if (result.reason === 'banned') alert('Your account is suspended.');
       return;
     }
-    state.adsToday[networkKey] = (state.adsToday[networkKey]||0) + 1;
+    state.adsToday[networkKey] = { count: result.count, unlockAt: result.unlockAt };
     state.totalPoints += result.pointsEarned || POINTS_PER_AD;
     state.apFromAds += result.pointsEarned || POINTS_PER_AD;
   } catch(e){ console.error("ad-watched failed:", e); alert("Couldn't reach the server."); return; }
@@ -937,7 +979,7 @@ function renderProfile(){
   const avatarUrl = state.pendingAvatarDataUrl || state.avatarUrl || state.telegramAvatarUrl;
   document.getElementById('profileAvatar').innerHTML = avatarUrl ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
 
-  document.getElementById('statAds').textContent = Object.values(state.adsToday).reduce((a,b)=>a+b,0);
+  document.getElementById('statAds').textContent = Object.values(state.adsToday).reduce((a,b)=>a+(b.count||0),0);
   document.getElementById('statTasks').textContent = (state.checkin.streak||0) + ' 🔥';
   document.getElementById('statRef').textContent = state.refEarnedPoints;
 
