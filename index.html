@@ -509,8 +509,17 @@ const AD_COOLDOWN_HOURS = 3;
 const POINTS_PER_AD = 50;
 const REFERRAL_ELIGIBILITY_ADS = 25;
 
+function getGuestId(){
+  let id = localStorage.getItem('lfa_guest_id');
+  if (!id){
+    id = 'guest_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('lfa_guest_id', id);
+  }
+  return id;
+}
+
 let state = {
-  user: { id: tg?.initDataUnsafe?.user?.id || "000000", name: tg?.initDataUnsafe?.user?.first_name || "User" },
+  user: { id: tg?.initDataUnsafe?.user?.id || getGuestId(), name: tg?.initDataUnsafe?.user?.first_name || "Guest" },
   totalPoints: 0,
   up: 0,
   apFromAds: 0,
@@ -1272,6 +1281,22 @@ async function submitWithdraw(){
    INIT
    ============================================================ */
 loadHome();
+
+// Monetag In-App Interstitial — passive, automatic ads (no button, no reward, no user action needed).
+// This is pure extra income on top of the rewarded ads/offerwall — it doesn't touch AP/UP at all.
+// Settings below: up to 3 ads per hour, 60s apart, first one 10s after the app opens.
+if (typeof window.show_11739436 === 'function') {
+  window.show_11739436({
+    type: 'inApp',
+    inAppSettings: {
+      frequency: 3,     // max ads shown
+      capping: 1,       // within this many hours
+      interval: 60,     // seconds between ads
+      timeout: 10,      // seconds before the first ad
+      everyPage: false  // keep the same session as the user moves between tabs
+    }
+  });
+}
 </script>
 </body>
 </html>
