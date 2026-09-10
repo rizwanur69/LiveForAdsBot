@@ -42,6 +42,20 @@
   .balance-hero .num{font-size:44px; font-weight:700; line-height:1; letter-spacing:-1px;}
   .balance-hero .num span{font-size:19px; color:var(--text-muted); font-weight:500; margin-left:6px;}
 
+  .home-header{display:flex; align-items:center; justify-content:space-between; padding:16px 4px 4px; gap:12px;}
+  .home-user{display:flex; align-items:center; gap:10px; min-width:0;}
+  .home-avatar{width:44px; height:44px; border-radius:50%; background:var(--surface-raised); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--gold); overflow:hidden; font-size:16px; border:1px solid var(--line);}
+  .home-avatar img{width:100%; height:100%; object-fit:cover;}
+  .home-name{font-size:15px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .home-balance-box{background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border:1px solid var(--line); border-radius:14px; padding:10px 16px; box-shadow:0 4px 14px rgba(0,0,0,0.18); flex-shrink:0;}
+  .hb-row{display:flex; align-items:center; justify-content:space-between; gap:14px; padding:2px 0;}
+  .hb-label{font-size:10.5px; font-weight:700; font-family:'Space Grotesk',sans-serif; letter-spacing:0.5px;}
+  .hb-label.ap{color:var(--gold);}
+  .hb-label.up{color:var(--up-color);}
+  .hb-val{font-size:16px; font-weight:700; font-family:'Space Grotesk',sans-serif;}
+  .hb-val.ap{color:var(--gold);}
+  .hb-val.up{color:var(--up-color);}
+
   .section-label{font-size:13px; color:var(--text-muted); margin:22px 0 12px; font-weight:500;}
 
   /* Check-in box */
@@ -91,6 +105,13 @@
   .earn-toggle{display:flex; gap:8px;}
   .earn-toggle-btn{flex:1; background:var(--surface); border:1px solid var(--line); color:var(--text-muted); font-family:'Inter',sans-serif; font-weight:700; font-size:13.5px; padding:12px; border-radius:12px; cursor:pointer;}
   .earn-toggle-btn.active{background:var(--gold); color:#1B1404; border-color:var(--gold);}
+  .earn-section-head-premium{display:flex; align-items:center; justify-content:space-between; background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border:1px solid var(--line); border-radius:14px; padding:14px 18px; margin:18px 0 10px; box-shadow:0 4px 14px rgba(0,0,0,0.18);}
+  .earn-section-head-premium .eshp-title{font-size:13px; color:var(--text-muted); font-weight:600;}
+  .earn-section-head-premium .eshp-val{font-size:18px; font-weight:700; font-family:'Space Grotesk',sans-serif;}
+  .earn-section-head-premium.ap{border-color:var(--gold-dim);}
+  .earn-section-head-premium.ap .eshp-val{color:var(--gold);}
+  .earn-section-head-premium.up{border-color:var(--up-dim);}
+  .earn-section-head-premium.up .eshp-val{color:var(--up-color);}
   .coming-soon-box{background:var(--surface); border:1px dashed var(--line); border-radius:14px; padding:24px 16px; text-align:center; color:var(--text-muted); font-size:12.5px; line-height:1.6;}
 
   /* AP/UP pill badges (leaderboard, profile) */
@@ -237,6 +258,61 @@
   .nav-item .icon{font-size:17px; line-height:1;}
   .nav-item.active{color:var(--gold);}
 
+  /* Profile premium AP/UP balance box */
+  .profile-balance-premium{display:flex; align-items:center; margin-top:18px; padding-top:18px; border-top:1px solid var(--line); background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border-radius:14px; padding:16px; margin-top:16px; border-top:none;}
+  .pbp-item{flex:1; text-align:center;}
+  .pbp-label{font-size:11px; font-weight:700; letter-spacing:0.5px; font-family:'Space Grotesk',sans-serif;}
+  .pbp-item.ap .pbp-label{color:var(--gold);}
+  .pbp-item.up .pbp-label{color:var(--up-color);}
+  .pbp-val{font-size:24px; font-weight:700; font-family:'Space Grotesk',sans-serif; margin-top:4px;}
+  .pbp-item.ap .pbp-val{color:var(--gold);}
+  .pbp-item.up .pbp-val{color:var(--up-color);}
+  .pbp-divider{width:1px; height:38px; background:var(--line);}
+
+  /* Withdraw premium clickable box (opens hidden withdraw page) */
+  .withdraw-premium-box{display:flex; align-items:center; justify-content:space-between; background:linear-gradient(155deg, var(--indigo-bg), var(--surface)); border:1px solid var(--indigo); border-radius:14px; padding:16px 18px; margin-top:12px; cursor:pointer; box-shadow:0 4px 16px rgba(99,102,241,0.15);}
+  .wpb-title{font-size:14.5px; font-weight:700;}
+  .wpb-sub{font-size:11.5px; color:var(--text-muted); margin-top:2px;}
+  .wpb-arrow{font-size:22px; color:var(--indigo);}
+
+  /* Withdraw page (hidden, not in bottom nav) */
+  .withdraw-page-header{display:flex; align-items:center; gap:14px; padding:18px 0 6px;}
+  .wp-back{background:none; border:none; color:var(--text-muted); font-size:13.5px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;}
+  .wp-title{font-size:17px; font-weight:700;}
+  .wd-balance-row{display:flex; gap:10px; margin:16px 0;}
+  .wd-balance-item{flex:1; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center;}
+  .wd-label{font-size:10.5px; font-weight:700; font-family:'Space Grotesk',sans-serif;}
+  .wd-balance-item.ap .wd-label{color:var(--gold);}
+  .wd-balance-item.up .wd-label{color:var(--up-color);}
+  .wd-val{font-size:20px; font-weight:700; margin-top:4px; font-family:'Space Grotesk',sans-serif;}
+  .wd-balance-item.ap .wd-val{color:var(--gold);}
+  .wd-balance-item.up .wd-val{color:var(--up-color);}
+  .wd-section{margin-bottom:18px;}
+  .wd-section-title{font-size:12.5px; color:var(--text-muted); font-weight:600; margin-bottom:8px;}
+  .wd-allocation-box{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px; text-align:center;}
+  .wd-alloc-formula{font-size:10.5px; color:var(--text-muted); margin-bottom:6px;}
+  .wd-alloc-amount{font-size:22px; font-weight:700; color:var(--gold); font-family:'Space Grotesk',sans-serif;}
+  .wd-swap-box{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px;}
+  .wd-swap-row{display:flex; align-items:center; gap:8px;}
+  .wd-swap-row input{flex:1; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:16px; font-weight:700; padding:10px 12px; border-radius:10px; font-family:'Space Grotesk',sans-serif;}
+  .wd-swap-unit{font-size:12.5px; color:var(--up-color); font-weight:700;}
+  .wd-max-btn{background:var(--up-dim); color:var(--up-color); border:1px solid var(--up-color); font-size:11px; font-weight:700; padding:8px 10px; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .wd-swap-arrow{text-align:center; font-size:16px; color:var(--text-muted); margin:8px 0;}
+  .wd-swap-result{text-align:center; font-size:18px; font-weight:700; color:var(--up-color); font-family:'Space Grotesk',sans-serif;}
+  .wd-total-box{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px;}
+  .wd-total-row{display:flex; justify-content:space-between; font-size:12.5px; color:var(--text-muted); padding:5px 0;}
+  .wd-total-row.grand{font-size:15px; font-weight:700; color:var(--text);}
+  .wd-total-divider{height:1px; background:var(--line); margin:6px 0;}
+
+  /* Season boxes — expandable participants */
+  .season-box-toggle{display:flex; align-items:center; justify-content:center; gap:6px; margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.08); font-size:11.5px; color:var(--text-muted); cursor:pointer;}
+  .season-box-toggle .arrow{transition:transform 0.2s;}
+  .season-box-toggle.expanded .arrow{transform:rotate(180deg);}
+  .season-participants{display:none; margin-top:10px;}
+  .season-participants.expanded{display:block;}
+  .sp-row{display:flex; justify-content:space-between; font-size:11.5px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.06);}
+  .sp-row .sp-addr{font-family:monospace; color:var(--text-muted);}
+
   /* Crop modal */
   .crop-overlay{position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:none; align-items:center; justify-content:center; flex-direction:column;}
   .crop-overlay.active{display:flex;}
@@ -260,9 +336,15 @@
 
   <!-- ================= HOME ================= -->
   <div class="page active" id="page-home">
-    <div class="balance-hero">
-      <div class="label">Your AP (Ad Points)</div>
-      <div class="num" id="totalPoints">0 <span>AP</span></div>
+    <div class="home-header">
+      <div class="home-user">
+        <div class="home-avatar" id="homeAvatar">U</div>
+        <div class="home-name" id="homeName">User</div>
+      </div>
+      <div class="home-balance-box">
+        <div class="hb-row"><span class="hb-label ap">AP</span><span class="hb-val ap" id="homeAp">0</span></div>
+        <div class="hb-row"><span class="hb-label up">UP</span><span class="hb-val up" id="homeUp">0</span></div>
+      </div>
     </div>
 
     <div class="checkin-box">
@@ -282,14 +364,14 @@
   <!-- ================= EARN (Offerwall + Ads) ================= -->
   <div class="page" id="page-ads">
     <div class="earn-toggle" style="margin-top:16px;">
-      <button class="earn-toggle-btn" id="earnTabOfferwall" onclick="setEarnSubTab('offerwall')">Reward Wall</button>
-      <button class="earn-toggle-btn active" id="earnTabAds" onclick="setEarnSubTab('ads')">ADS</button>
+      <button class="earn-toggle-btn active" id="earnTabOfferwall" onclick="setEarnSubTab('offerwall')">Reward Wall</button>
+      <button class="earn-toggle-btn" id="earnTabAds" onclick="setEarnSubTab('ads')">ADS</button>
     </div>
 
-    <div class="earn-subpage" id="earnSubpage-offerwall" style="display:none;">
-      <div class="earn-section-head">
-        <div class="stitle">Offerwall</div>
-        <div class="ssubtotal up" id="offerwallSubtotal">0 UP</div>
+    <div class="earn-subpage" id="earnSubpage-offerwall">
+      <div class="earn-section-head-premium up">
+        <div class="eshp-title">Offerwall</div>
+        <div class="eshp-val" id="offerwallSubtotal">0 UP</div>
       </div>
       <div class="ads-note">Complete simple offers for real USD value. 100 UP = 1 USDT.</div>
       <iframe id="offerwallFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
@@ -300,10 +382,10 @@
       </div>
     </div>
 
-    <div class="earn-subpage" id="earnSubpage-ads">
-      <div class="earn-section-head">
-        <div class="stitle">Ads</div>
-        <div class="ssubtotal ap" id="adsSubtotal">0 AP</div>
+    <div class="earn-subpage" id="earnSubpage-ads" style="display:none;">
+      <div class="earn-section-head-premium ap">
+        <div class="eshp-title">Ads</div>
+        <div class="eshp-val" id="adsSubtotal">0 AP</div>
       </div>
       <div class="ads-note">Each ad gives 50 AP. 5 ads per network, then a 3-hour cooldown.</div>
       <div id="adList"></div>
@@ -312,7 +394,12 @@
 
   <!-- ================= LEADERBOARD ================= -->
   <div class="page" id="page-leaderboard">
-    <div class="section-label" style="margin-top:16px;">Top 20 earners</div>
+    <div class="earn-toggle" style="margin-top:16px;">
+      <button class="earn-toggle-btn active" id="lbTabAll" onclick="setLeaderboardTab('all')">All Time</button>
+      <button class="earn-toggle-btn" id="lbTabAp" onclick="setLeaderboardTab('ap')">AP</button>
+      <button class="earn-toggle-btn" id="lbTabUp" onclick="setLeaderboardTab('up')">UP</button>
+    </div>
+    <div class="section-label">Top 20 earners</div>
     <div class="podium" id="podium"></div>
     <div id="lbList"></div>
     <div id="lbYou"></div>
@@ -358,31 +445,28 @@
   <div class="page" id="page-profile">
     <div class="profile-card" id="profileCard">
       <div class="settings-gear" id="settingsGear" onclick="openSettings()">⚙</div>
-      <div class="profile-head" id="profileHead">
+      <div class="profile-head">
         <div class="avatar-wrap">
           <div class="avatar" id="profileAvatar">U</div>
-          <div class="avatar-change-overlay" id="avatarChangeOverlay" onclick="triggerAvatarPick()">Change</div>
         </div>
         <div style="flex:1;">
           <div class="name" id="profileName">User</div>
-          <input class="name-input" id="profileNameInput" type="text">
           <div class="id" id="profileId">ID: —</div>
         </div>
       </div>
 
-      <div class="profile-breakdown" id="profileBreakdown">
-        <div class="pb-row ap"><span class="pbl">Total AP</span><span class="pbv" id="pbTotalAp">0</span></div>
-        <div class="pb-row"><span class="pbl">— from check-in</span><span class="pbv" id="pbApCheckin">0</span></div>
-        <div class="pb-row"><span class="pbl">— from tasks</span><span class="pbv" id="pbApTasks">0</span></div>
-        <div class="pb-row"><span class="pbl">— from ads</span><span class="pbv" id="pbApAds">0</span></div>
-        <div class="pb-row"><span class="pbl">— from referrals</span><span class="pbv" id="pbApReferral">0</span></div>
-        <div class="pb-divider"></div>
-        <div class="pb-row up"><span class="pbl">Total UP (offerwall)</span><span class="pbv" id="pbTotalUp">0</span></div>
+      <div class="profile-balance-premium">
+        <div class="pbp-item ap">
+          <div class="pbp-label">Total AP</div>
+          <div class="pbp-val" id="pbTotalAp">0</div>
+        </div>
+        <div class="pbp-divider"></div>
+        <div class="pbp-item up">
+          <div class="pbp-label">Total UP</div>
+          <div class="pbp-val" id="pbTotalUp">0</div>
+        </div>
       </div>
-
-      <button class="edit-toggle-btn" id="editBtn" onclick="toggleEdit()">Save profile</button>
     </div>
-    <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="onAvatarFileChosen(event)">
 
     <div class="stat-grid">
       <div class="stat-card"><div class="num" id="statAds">0</div><div class="label">Ads watched</div></div>
@@ -398,11 +482,11 @@
 
     <div class="chart-box">
       <div style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Activity</div>
-      <svg id="chartSvg" width="100%" height="120" viewBox="0 0 320 120"></svg>
+      <svg id="chartSvg" width="100%" height="150" viewBox="0 0 320 150"></svg>
       <div id="chartLoading" class="chart-loading" style="display:none;">Loading…</div>
       <div class="chart-legend">
-        <span><i class="dot" style="background:#2DD4BF"></i>Ads</span>
-        <span><i class="dot" style="background:#F2B33D"></i>Points</span>
+        <span><i class="dot" style="background:var(--gold)"></i>AP</span>
+        <span><i class="dot" style="background:var(--up-color)"></i>UP</span>
       </div>
     </div>
 
@@ -410,20 +494,74 @@
       <div class="withdraw-notice-track" id="withdrawNoticeText"></div>
     </div>
 
-    <div class="withdraw-box">
-      <div class="title">Withdraw</div>
-      <div class="sub" id="withdrawSub">Loading withdrawal info...</div>
-      <select id="withdrawNetwork">
-        <option value="bep20">USDT — BEP20</option>
-        <option value="polygon">USDT — Polygon</option>
-      </select>
-      <input type="text" id="withdrawAddress" placeholder="Wallet address">
-      <button class="withdraw-submit" id="withdrawBtn" onclick="submitWithdraw()">Submit request</button>
-      <div class="withdraw-note" id="withdrawStatus"></div>
+    <div class="withdraw-premium-box" onclick="showPage('withdraw', null)">
+      <div class="wpb-left">
+        <div class="wpb-title">Withdraw</div>
+        <div class="wpb-sub" id="withdrawSub">Loading withdrawal info...</div>
+      </div>
+      <div class="wpb-arrow">›</div>
     </div>
 
     <div class="payouts-section-title">Payouts</div>
     <div id="seasonBoxesList"></div>
+  </div>
+
+  <!-- ================= WITHDRAW (hidden page, not in bottom nav) ================= -->
+  <div class="page" id="page-withdraw">
+    <div class="withdraw-page-header">
+      <button class="wp-back" onclick="showPage('profile', document.querySelectorAll('.nav-item')[5])">‹ Back</button>
+      <div class="wp-title">Withdraw</div>
+    </div>
+
+    <div class="wd-balance-row">
+      <div class="wd-balance-item ap"><div class="wd-label">AP</div><div class="wd-val" id="wdApTotal">0</div></div>
+      <div class="wd-balance-item up"><div class="wd-label">UP</div><div class="wd-val" id="wdUpTotal">0</div></div>
+    </div>
+
+    <div class="wd-section">
+      <div class="wd-section-title">AP Allocation</div>
+      <div class="wd-allocation-box">
+        <div class="wd-alloc-formula" id="wdAllocFormula">Ad revenue pool ÷ Total AP × Your AP</div>
+        <div class="wd-alloc-amount" id="wdApAllocation">$0.00</div>
+      </div>
+    </div>
+
+    <div class="wd-section">
+      <div class="wd-section-title">Convert UP → USDT</div>
+      <div class="wd-swap-box">
+        <div class="wd-swap-row">
+          <input type="number" id="upConvertInput" placeholder="0" min="0" oninput="onUpConvertInput()">
+          <span class="wd-swap-unit">UP</span>
+          <button class="wd-max-btn" onclick="setMaxUp()">MAX</button>
+        </div>
+        <div class="wd-swap-arrow">↓</div>
+        <div class="wd-swap-result" id="upConvertResult">$0.00 USDT</div>
+      </div>
+    </div>
+
+    <div class="wd-section">
+      <div class="wd-section-title">Withdraw Amount</div>
+      <div class="wd-total-box">
+        <div class="wd-total-row"><span>From AP allocation</span><span id="wdFromAp">$0.00</span></div>
+        <div class="wd-total-row"><span>From UP conversion</span><span id="wdFromUp">$0.00</span></div>
+        <div class="wd-total-divider"></div>
+        <div class="wd-total-row grand"><span>Total</span><span id="wdGrandTotal">$0.00</span></div>
+      </div>
+    </div>
+
+    <div class="wd-section">
+      <div class="wd-section-title">Wallet Address</div>
+      <div class="withdraw-box" style="margin-top:0;">
+        <div class="sub" id="wdWindowNote">Checking withdrawal window...</div>
+        <select id="withdrawNetwork">
+          <option value="bep20">USDT — BEP20</option>
+          <option value="polygon">USDT — Polygon</option>
+        </select>
+        <input type="text" id="withdrawAddress" placeholder="Wallet address">
+        <button class="withdraw-submit" id="withdrawBtn" onclick="submitWithdraw()">Submit request</button>
+        <div class="withdraw-note" id="withdrawStatus"></div>
+      </div>
+    </div>
   </div>
 
   <div class="bottom-nav">
@@ -441,10 +579,9 @@
       <h3>Settings</h3>
       <div class="settings-row">
         <div>
-          <div class="slabel">Edit Profile</div>
-          <div class="shint">Change your name and photo</div>
+          <div class="slabel">Profile photo & name</div>
+          <div class="shint">Synced automatically from your Telegram account</div>
         </div>
-        <button class="settings-btn" onclick="startEditFromSettings()">Edit</button>
       </div>
       <div class="settings-row">
         <div>
@@ -464,21 +601,6 @@
         <button class="settings-btn" disabled style="opacity:0.5;">Coming soon</button>
       </div>
       <button class="settings-close" onclick="closeSettings()">Close</button>
-    </div>
-  </div>
-
-  <!-- ================= AVATAR CROP MODAL ================= -->
-  <div class="crop-overlay" id="cropOverlay">
-    <div class="crop-frame" id="cropFrame">
-      <img id="cropImg" src="" alt="">
-    </div>
-    <div class="crop-controls">
-      <input type="range" id="cropZoom" min="100" max="300" value="100">
-    </div>
-    <div class="crop-hint">Drag to reposition · slide to zoom</div>
-    <div class="crop-actions">
-      <button class="cancel-btn" onclick="cancelCrop()">Cancel</button>
-      <button class="confirm-btn" onclick="confirmCrop()">Use photo</button>
     </div>
   </div>
 
@@ -512,7 +634,8 @@ const AD_NETWORKS = [
 const AD_WATCH_LIMIT = 5;
 const AD_COOLDOWN_HOURS = 3;
 const POINTS_PER_AD = 50;
-const REFERRAL_ELIGIBILITY_ADS = 25;
+const REFERRAL_ELIGIBILITY_ADS = 100;
+const REFERRAL_ELIGIBILITY_CHECKINS = 7;
 
 function getInitData(){
   return tg && tg.initData ? tg.initData : null;
@@ -560,8 +683,10 @@ let countdownInterval = null;
 function showPage(name, el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  el.classList.add('active');
+  if (el){
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    el.classList.add('active');
+  }
 
   if (countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
 
@@ -575,6 +700,10 @@ function showPage(name, el){
     loadSettings().then(renderWithdrawInfo);
     loadSeasonBoxes();
     loadStats();
+  }
+  if (name === 'withdraw') {
+    loadUserFromServer().then(renderProfile);
+    loadWithdrawPage();
   }
 }
 
@@ -623,12 +752,21 @@ async function loadSettings(){
 /* ============================================================
    HOME — check-in + tasks
    ============================================================ */
+function renderHomeHeader(){
+  const name = state.user.name;
+  document.getElementById('homeName').textContent = name;
+  document.getElementById('homeAvatar').innerHTML = state.telegramAvatarUrl
+    ? `<img src="${state.telegramAvatarUrl}">` : (name[0]||'U').toUpperCase();
+  document.getElementById('homeAp').textContent = state.totalPoints;
+  document.getElementById('homeUp').textContent = state.up;
+}
+
 async function loadHome(){
   await loadUserFromServer();
   await loadSettings();
   renderCheckin();
   await loadTasks();
-  document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>AP</span>';
+  renderHomeHeader();
 
   if (state.banned){
     document.getElementById('checkinBtn').disabled = true;
@@ -715,7 +853,7 @@ async function doCheckin(){
     if (result.success){
       await loadUserFromServer(); // re-pull full checkinHistory so the week box is accurate
       state.totalPoints += 0; // already included from loadUserFromServer
-      document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>AP</span>';
+      renderHomeHeader();
       renderCheckin();
       if (tg) tg.HapticFeedback?.notificationOccurred('success');
     } else {
@@ -771,7 +909,7 @@ async function claimTask(taskId){
       state.tasksCompleted[taskId] = true;
       state.totalPoints += result.pointsEarned;
       state.apFromTasks += result.pointsEarned;
-      document.getElementById('totalPoints').innerHTML = state.totalPoints + ' <span>AP</span>';
+      renderHomeHeader();
       renderTasks();
     }
   } catch(e){ console.error("Task claim failed:", e); }
@@ -865,7 +1003,7 @@ function renderAds(){
           <div class="name">${net.name}</div>
           <div class="sub">+${POINTS_PER_AD} points per ad</div>
           <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-          <div class="count">${stillLocked ? `Cooldown — resets in ${formatCountdown(slot.unlockAt - now)}` : `${count}/${AD_WATCH_LIMIT} watched`}</div>
+          <div class="count">${count}/${AD_WATCH_LIMIT} watched</div>
         </div>
         ${buttonHtml}
       </div>`;
@@ -889,7 +1027,15 @@ function watchAd(networkKey){
   }
   if (networkKey === 'monetag'){
     if (typeof window.show_11739436 !== 'function'){ alert('Ad SDK not loaded — try again in a moment.'); return; }
-    window.show_11739436().then(() => reportAdWatched(networkKey)).catch(() => {});
+    const startedAt = Date.now();
+    window.show_11739436().then(() => {
+      const watchedMs = Date.now() - startedAt;
+      if (watchedMs < 13000){
+        // Ad was closed too early (under 13s) — don't credit, per anti-fraud rule
+        return;
+      }
+      reportAdWatched(networkKey);
+    }).catch(() => {});
     return;
   }
 }
@@ -917,9 +1063,20 @@ async function reportAdWatched(networkKey){
 /* ============================================================
    LEADERBOARD
    ============================================================ */
+let leaderboardTab = 'all';
+
+function setLeaderboardTab(tab){
+  leaderboardTab = tab;
+  document.getElementById('lbTabAll').classList.toggle('active', tab === 'all');
+  document.getElementById('lbTabAp').classList.toggle('active', tab === 'ap');
+  document.getElementById('lbTabUp').classList.toggle('active', tab === 'up');
+  loadLeaderboard();
+}
+
 async function loadLeaderboard(){
   try{
-    const res = await fetch(`${API_BASE}/leaderboard/${state.user.id}`);
+    const sortBy = leaderboardTab === 'up' ? 'up' : 'points'; // "all" and "ap" both rank by AP
+    const res = await fetch(`${API_BASE}/leaderboard/${state.user.id}?sortBy=${sortBy}`);
     const data = await res.json();
     renderLeaderboard(data);
   } catch(e){ console.error("Could not load leaderboard:", e); }
@@ -935,6 +1092,9 @@ function renderLeaderboard(data){
   const top = data.top || [];
   const top3 = top.slice(0,3);
   const rest = top.slice(3);
+  const showStreak = leaderboardTab === 'all';
+  const primaryStat = (u) => leaderboardTab === 'up' ? `${u.up||0} UP` : `${u.points} AP`;
+  const secondaryStat = (u) => leaderboardTab === 'up' ? `${u.points} AP` : `${u.up||0} UP`;
 
   const hats = {1:'👑',2:'🥈',3:'🥉'};
   const order = {1:'gold',2:'silver',3:'bronze'};
@@ -943,8 +1103,11 @@ function renderLeaderboard(data){
       <div class="podium-hat">${hats[u.rank]}</div>
       <div class="podium-avatar">${avatarHtml(u)}</div>
       <div class="pname">${u.name}</div>
-      <div class="ppts">${u.points} AP</div>
-      <div style="margin-top:2px;"><span class="up-tag">${u.up||0} UP</span></div>
+      <div class="ppts">${primaryStat(u)}</div>
+      <div style="margin-top:2px; display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+        <span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(u)}</span>
+        ${showStreak ? `<span class="ap-tag">🔥 ${u.streak||0}</span>` : ''}
+      </div>
     </div>`).join('');
 
   document.getElementById('lbList').innerHTML = rest.map(u=>`
@@ -952,8 +1115,9 @@ function renderLeaderboard(data){
       <div class="rank">${u.rank}</div>
       <div class="avatar">${avatarHtml(u)}</div>
       <div class="name">${u.name}</div>
-      <span class="ap-tag">${u.points} AP</span>&nbsp;
-      <span class="up-tag">${u.up||0} UP</span>
+      <span class="${leaderboardTab==='up'?'up-tag':'ap-tag'}">${primaryStat(u)}</span>&nbsp;
+      <span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(u)}</span>
+      ${showStreak ? `&nbsp;<span class="ap-tag">🔥${u.streak||0}</span>` : ''}
     </div>`).join('');
 
   const you = data.you;
@@ -964,8 +1128,9 @@ function renderLeaderboard(data){
         <div class="rank">${you.rank}</div>
         <div class="avatar">${avatarHtml(you)}</div>
         <div class="name">${you.name} (You)</div>
-        <span class="ap-tag">${you.points} AP</span>&nbsp;
-        <span class="up-tag">${you.up||0} UP</span>
+        <span class="${leaderboardTab==='up'?'up-tag':'ap-tag'}">${primaryStat(you)}</span>&nbsp;
+        <span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(you)}</span>
+        ${showStreak ? `&nbsp;<span class="ap-tag">🔥${you.streak||0}</span>` : ''}
       </div>`;
   } else {
     youBox.innerHTML = '';
@@ -992,13 +1157,15 @@ function renderReferral(){
     return;
   }
   refList.innerHTML = state.referrals.map(r=>{
-    const pct = Math.min(100, (r.ads/REFERRAL_ELIGIBILITY_ADS)*100);
+    const adsPct = Math.min(100, (r.ads/REFERRAL_ELIGIBILITY_ADS)*100);
+    const checkinsPct = Math.min(100, ((r.checkins||0)/REFERRAL_ELIGIBILITY_CHECKINS)*100);
+    const pct = Math.min(adsPct, checkinsPct); // both conditions must be met
     return `<div class="ref-user">
       <div class="ref-user-top">
         <div class="avatar">${r.name[0]}</div>
         <div class="info">
           <div class="name">${r.name}</div>
-          <div class="sub">${r.ads}/${REFERRAL_ELIGIBILITY_ADS} ads watched</div>
+          <div class="sub">${r.ads}/${REFERRAL_ELIGIBILITY_ADS} ads · ${r.checkins||0}/${REFERRAL_ELIGIBILITY_CHECKINS} check-ins</div>
         </div>
         <span class="badge ${r.eligible?'eligible':'pending'}">${r.eligible?'Eligible':'Pending'}</span>
       </div>
@@ -1027,44 +1194,17 @@ function loadLfaFrame(){
    PROFILE
    ============================================================ */
 function renderProfile(){
-  const name = state.displayName || state.user.name;
+  const name = state.user.name;
   document.getElementById('profileName').textContent = name;
-  document.getElementById('profileNameInput').value = name;
   document.getElementById('profileId').textContent = 'ID: ' + state.user.id;
-  const avatarUrl = state.pendingAvatarDataUrl || state.avatarUrl || state.telegramAvatarUrl;
-  document.getElementById('profileAvatar').innerHTML = avatarUrl ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
+  document.getElementById('profileAvatar').innerHTML = state.telegramAvatarUrl ? `<img src="${state.telegramAvatarUrl}">` : (name[0]||'U').toUpperCase();
 
   document.getElementById('statAds').textContent = Object.values(state.adsToday).reduce((a,b)=>a+(b.count||0),0);
   document.getElementById('statTasks').textContent = (state.checkin.streak||0) + ' 🔥';
   document.getElementById('statRef').textContent = state.refEarnedPoints;
 
   document.getElementById('pbTotalAp').textContent = state.totalPoints;
-  document.getElementById('pbApCheckin').textContent = state.apFromCheckin;
-  document.getElementById('pbApTasks').textContent = state.apFromTasks;
-  document.getElementById('pbApAds').textContent = state.apFromAds;
-  document.getElementById('pbApReferral').textContent = state.refEarnedPoints;
   document.getElementById('pbTotalUp').textContent = state.up;
-}
-
-function enterEditMode(){
-  state.editing = true;
-  document.getElementById('profileCard').classList.add('editing', 'editing-mode');
-}
-
-function exitEditMode(){
-  state.editing = false;
-  document.getElementById('profileCard').classList.remove('editing', 'editing-mode');
-}
-
-function startEditFromSettings(){
-  closeSettings();
-  enterEditMode();
-}
-
-function toggleEdit(){
-  // The "Save profile" button — only visible while in edit mode
-  exitEditMode();
-  saveProfile();
 }
 
 /* ---------- Settings sheet ---------- */
@@ -1085,128 +1225,13 @@ async function setTheme(theme){
   try{
     await fetch(`${API_BASE}/user/${state.user.id}/profile`, {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ theme })
+      body: JSON.stringify({ theme, initData: getInitData() })
     });
   } catch(e){ console.error("Could not save theme:", e); }
 }
 
 function applyTheme(theme){
   document.body.classList.toggle('light-theme', theme === 'light');
-}
-
-function triggerAvatarPick(){
-  document.getElementById('avatarFileInput').click();
-}
-
-/* ---------- Avatar crop modal ---------- */
-let cropState = { img: null, baseScale: 1, zoom: 1, offsetX: 0, offsetY: 0, dragging: false, lastX: 0, lastY: 0 };
-const CROP_SIZE = 280;
-
-function onAvatarFileChosen(event){
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const img = new Image();
-    img.onload = () => {
-      cropState.img = img;
-      cropState.baseScale = Math.max(CROP_SIZE/img.width, CROP_SIZE/img.height);
-      cropState.zoom = 1;
-      cropState.offsetX = (CROP_SIZE - img.width*cropState.baseScale)/2;
-      cropState.offsetY = (CROP_SIZE - img.height*cropState.baseScale)/2;
-      document.getElementById('cropImg').src = e.target.result;
-      document.getElementById('cropZoom').value = 100;
-      applyCropTransform();
-      document.getElementById('cropOverlay').classList.add('active');
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-  event.target.value = ''; // allow picking the same file again later
-}
-
-function applyCropTransform(){
-  const img = document.getElementById('cropImg');
-  const scale = cropState.baseScale * cropState.zoom;
-  img.style.width = (cropState.img.width*scale)+'px';
-  img.style.height = (cropState.img.height*scale)+'px';
-  img.style.transform = `translate(${cropState.offsetX}px, ${cropState.offsetY}px)`;
-}
-
-function clampOffsets(){
-  const scale = cropState.baseScale * cropState.zoom;
-  const w = cropState.img.width*scale, h = cropState.img.height*scale;
-  cropState.offsetX = Math.min(0, Math.max(CROP_SIZE - w, cropState.offsetX));
-  cropState.offsetY = Math.min(0, Math.max(CROP_SIZE - h, cropState.offsetY));
-}
-
-document.getElementById('cropZoom').addEventListener('input', (e)=>{
-  const oldScale = cropState.baseScale * cropState.zoom;
-  const cx = CROP_SIZE/2, cy = CROP_SIZE/2;
-  // keep the center point stable while zooming
-  const imgCx = (cx - cropState.offsetX) / oldScale;
-  const imgCy = (cy - cropState.offsetY) / oldScale;
-  cropState.zoom = e.target.value / 100;
-  const newScale = cropState.baseScale * cropState.zoom;
-  cropState.offsetX = cx - imgCx*newScale;
-  cropState.offsetY = cy - imgCy*newScale;
-  clampOffsets();
-  applyCropTransform();
-});
-
-const cropFrame = document.getElementById('cropFrame');
-cropFrame.addEventListener('pointerdown', (e)=>{
-  cropState.dragging = true;
-  cropState.lastX = e.clientX; cropState.lastY = e.clientY;
-  cropFrame.setPointerCapture(e.pointerId);
-});
-cropFrame.addEventListener('pointermove', (e)=>{
-  if (!cropState.dragging) return;
-  cropState.offsetX += e.clientX - cropState.lastX;
-  cropState.offsetY += e.clientY - cropState.lastY;
-  cropState.lastX = e.clientX; cropState.lastY = e.clientY;
-  clampOffsets();
-  applyCropTransform();
-});
-cropFrame.addEventListener('pointerup', ()=>{ cropState.dragging = false; });
-cropFrame.addEventListener('pointercancel', ()=>{ cropState.dragging = false; });
-
-function cancelCrop(){
-  document.getElementById('cropOverlay').classList.remove('active');
-}
-
-function confirmCrop(){
-  const canvas = document.createElement('canvas');
-  const OUT = 240;
-  canvas.width = OUT; canvas.height = OUT;
-  const ctx = canvas.getContext('2d');
-  const scale = cropState.baseScale * cropState.zoom;
-  const drawScale = OUT / CROP_SIZE;
-  ctx.drawImage(
-    cropState.img,
-    0, 0, cropState.img.width, cropState.img.height,
-    cropState.offsetX*drawScale, cropState.offsetY*drawScale,
-    cropState.img.width*scale*drawScale, cropState.img.height*scale*drawScale
-  );
-  state.pendingAvatarDataUrl = canvas.toDataURL('image/jpeg', 0.82);
-  document.getElementById('cropOverlay').classList.remove('active');
-  renderProfile();
-  enterEditMode();
-}
-
-async function saveProfile(){
-  const newName = document.getElementById('profileNameInput').value.trim() || state.user.name;
-  const newAvatar = state.pendingAvatarDataUrl || state.avatarUrl;
-  try{
-    await fetch(`${API_BASE}/user/${state.user.id}/profile`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ displayName: newName, avatarUrl: newAvatar, initData: getInitData() })
-    });
-    state.displayName = newName;
-    state.avatarUrl = newAvatar;
-    state.pendingAvatarDataUrl = null;
-    renderProfile();
-  } catch(e){ console.error("Could not save profile:", e); }
 }
 
 function setStatsRange(range, el){
@@ -1225,9 +1250,9 @@ async function loadStats(){
     const res = await fetch(`${API_BASE}/user/${state.user.id}/stats?range=${state.statsRange}`);
     const data = await res.json();
     if (state.statsRange === 'all'){
-      drawChart((data.buckets||[]).map(b=>({date:b.label, ads:b.ads, points:b.points})));
+      drawChart((data.buckets||[]).map(b=>({date:b.label, points:b.points, up:b.up||0})));
     } else {
-      drawChart(data.days || []);
+      drawChart((data.days || []).map(d=>({date:d.date, points:d.points, up:d.up||0})));
     }
   } catch(e){ console.error("Could not load stats:", e); }
   loading.style.display = 'none';
@@ -1237,24 +1262,28 @@ async function loadStats(){
 function drawChart(data){
   const svg = document.getElementById('chartSvg');
   if (!data || data.length === 0){ svg.innerHTML = ''; return; }
-  const w = 320, h = 120, pad = 10;
-  const maxAds = Math.max(...data.map(d=>d.ads), 1);
-  const maxPts = Math.max(...data.map(d=>d.points), 1);
-  const stepX = (w - pad*2) / Math.max(data.length - 1, 1);
-
-  function pointsFor(key, max){
-    return data.map((d,i) => {
-      const x = pad + i*stepX;
-      const y = h - pad - (d[key]/max)*(h - pad*2);
-      return `${x},${y}`;
-    }).join(' ');
-  }
+  const w = 320, h = 150, padBottom = 18, padTop = 8;
+  const maxVal = Math.max(...data.map(d=>Math.max(d.points, d.up)), 1);
+  const groupWidth = w / data.length;
+  const barWidth = Math.min(14, groupWidth/2 - 3);
   const showLabels = data.length <= 12;
-  svg.innerHTML = `
-    <polyline points="${pointsFor('ads',maxAds)}" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <polyline points="${pointsFor('points',maxPts)}" fill="none" stroke="#F2B33D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    ${showLabels ? data.map((d,i)=>`<text x="${pad+i*stepX}" y="${h-1}" font-size="8" fill="#8FA3A1" text-anchor="middle" font-family="Inter">${(d.date||'').slice(-5)}</text>`).join('') : ''}
-  `;
+  const scaleH = h - padBottom - padTop;
+
+  const bars = data.map((d,i) => {
+    const groupCenter = groupWidth*i + groupWidth/2;
+    const apX = groupCenter - barWidth - 2;
+    const upX = groupCenter + 2;
+    const apH = (d.points/maxVal)*scaleH;
+    const upH = (d.up/maxVal)*scaleH;
+    const label = showLabels ? `<text x="${groupCenter}" y="${h-3}" font-size="8" fill="#8FA3A1" text-anchor="middle" font-family="Inter">${(d.date||'').slice(-5)}</text>` : '';
+    return `
+      <rect x="${apX}" y="${h-padBottom-apH}" width="${barWidth}" height="${apH}" rx="2" fill="var(--gold)"/>
+      <rect x="${upX}" y="${h-padBottom-upH}" width="${barWidth}" height="${upH}" rx="2" fill="var(--up-color)"/>
+      ${label}
+    `;
+  }).join('');
+
+  svg.innerHTML = `<line x1="0" y1="${h-padBottom}" x2="${w}" y2="${h-padBottom}" stroke="#24393D" stroke-width="1"/>${bars}`;
 }
 
 /* ============================================================
@@ -1262,7 +1291,6 @@ function drawChart(data){
    ============================================================ */
 function renderWithdrawInfo(){
   const sub = document.getElementById('withdrawSub');
-  const btn = document.getElementById('withdrawBtn');
   const noticeBox = document.getElementById('withdrawNoticeBox');
   const noticeText = document.getElementById('withdrawNoticeText');
 
@@ -1273,13 +1301,56 @@ function renderWithdrawInfo(){
     noticeBox.style.display = 'none';
   }
 
-  if (state.settings.withdrawOpen){
-    sub.textContent = `Withdrawals for ${state.settings.seasonName} are open now. Requests are reviewed and paid between the 3rd–5th of next month.`;
+  sub.textContent = state.settings.withdrawOpen
+    ? `Withdrawals are open now for ${state.settings.seasonName}. Tap to view details.`
+    : `${state.settings.seasonName} payout window is currently closed.`;
+}
+
+let withdrawInfo = { ap:0, up:0, apAllocationUsdt:0, upToUsdtRate:100, withdrawOpen:false, seasonName:'' };
+
+async function loadWithdrawPage(){
+  try{
+    const res = await fetch(`${API_BASE}/withdraw-info/${state.user.id}`);
+    withdrawInfo = await res.json();
+  } catch(e){ console.error("Could not load withdraw info:", e); }
+
+  document.getElementById('wdApTotal').textContent = withdrawInfo.ap;
+  document.getElementById('wdUpTotal').textContent = withdrawInfo.up;
+  document.getElementById('wdApAllocation').textContent = `$${(withdrawInfo.apAllocationUsdt||0).toFixed(2)}`;
+  document.getElementById('upConvertInput').value = '';
+  document.getElementById('upConvertInput').max = withdrawInfo.up;
+
+  const note = document.getElementById('wdWindowNote');
+  const btn = document.getElementById('withdrawBtn');
+  if (withdrawInfo.withdrawOpen){
+    note.textContent = `Withdrawals for ${withdrawInfo.seasonName} are open now. Requests are reviewed and paid between the 3rd–5th of next month.`;
     btn.disabled = state.banned;
   } else {
-    sub.textContent = `${state.settings.seasonName} payout window opens once this season ends. Exact dates are set by the team and shown here when withdrawals are active.`;
+    note.textContent = `The withdrawal window opens on the 1st–2nd every two months (next: Nov 1–2, Jan 1–2, etc., 00:00–23:59 UTC). It's currently closed.`;
     btn.disabled = true;
   }
+  updateWithdrawTotals();
+}
+
+function onUpConvertInput(){
+  let val = parseInt(document.getElementById('upConvertInput').value) || 0;
+  val = Math.max(0, Math.min(val, withdrawInfo.up));
+  updateWithdrawTotals();
+}
+
+function setMaxUp(){
+  document.getElementById('upConvertInput').value = withdrawInfo.up;
+  updateWithdrawTotals();
+}
+
+function updateWithdrawTotals(){
+  const upToConvert = Math.max(0, Math.min(parseInt(document.getElementById('upConvertInput').value) || 0, withdrawInfo.up));
+  const upUsdt = upToConvert / (withdrawInfo.upToUsdtRate || 100);
+  const apUsdt = withdrawInfo.apAllocationUsdt || 0;
+  document.getElementById('upConvertResult').textContent = `$${upUsdt.toFixed(2)} USDT`;
+  document.getElementById('wdFromAp').textContent = `$${apUsdt.toFixed(2)}`;
+  document.getElementById('wdFromUp').textContent = `$${upUsdt.toFixed(2)}`;
+  document.getElementById('wdGrandTotal').textContent = `$${(apUsdt+upUsdt).toFixed(2)}`;
 }
 
 async function loadSeasonBoxes(){
@@ -1297,23 +1368,59 @@ async function loadSeasonBoxes(){
         <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}</div>
         <div class="srow">
           <div class="sstat"><div class="snum">${b.participants||0}</div><div class="slabel">Participants</div></div>
-          <div class="sstat"><div class="snum">${b.totalPointsEarned||0}</div><div class="slabel">Points earned</div></div>
-          <div class="sstat"><div class="snum">$${b.totalUsdtPaid||0}</div><div class="slabel">USDT paid</div></div>
+          <div class="sstat"><div class="snum">${b.totalPointsEarned||0}</div><div class="slabel">Total AP</div></div>
+          <div class="sstat"><div class="snum">$${(b.apAllocation||0).toFixed(2)}</div><div class="slabel">AP Allocation</div></div>
         </div>
+        <div class="srow" style="margin-top:8px;">
+          <div class="sstat"><div class="snum">${b.totalUp||0}</div><div class="slabel">Total UP</div></div>
+          <div class="sstat"><div class="snum">$${((b.totalUp||0)/100).toFixed(2)}</div><div class="slabel">UP in USDT</div></div>
+          <div class="sstat"><div class="snum">$${(b.totalUsdtPaid||0).toFixed(2)}</div><div class="slabel">Total Paid</div></div>
+        </div>
+        <div class="season-box-toggle" onclick="toggleSeasonParticipants('${b.id}', this)">
+          <span>View participants</span><span class="arrow">▾</span>
+        </div>
+        <div class="season-participants" id="sp-${b.id}"></div>
       </div>`).join('');
   } catch(e){ console.error("Could not load season boxes:", e); }
+}
+
+function maskAddress(addr){
+  if (!addr || addr.length <= 10) return addr || '';
+  return addr.slice(0,5) + '•••' + addr.slice(-5);
+}
+
+async function toggleSeasonParticipants(boxId, el){
+  const panel = document.getElementById(`sp-${boxId}`);
+  const isOpen = panel.classList.contains('expanded');
+  if (isOpen){
+    panel.classList.remove('expanded');
+    el.classList.remove('expanded');
+    return;
+  }
+  el.classList.add('expanded');
+  panel.classList.add('expanded');
+  if (panel.dataset.loaded) return;
+  try{
+    const res = await fetch(`${API_BASE}/season-boxes/${boxId}/participants`);
+    const list = await res.json();
+    panel.innerHTML = list.length === 0
+      ? `<div style="font-size:11.5px;color:var(--text-muted);padding:8px 0;">No payouts recorded yet.</div>`
+      : list.map(p=>`<div class="sp-row"><span>${p.name}</span><span class="sp-addr">${p.maskedAddress}</span><span>$${(p.totalUsdt||0).toFixed(2)}</span></div>`).join('');
+    panel.dataset.loaded = '1';
+  } catch(e){ panel.innerHTML = `<div style="font-size:11.5px;color:var(--red);">Could not load participants.</div>`; }
 }
 
 async function submitWithdraw(){
   const network = document.getElementById('withdrawNetwork').value;
   const addr = document.getElementById('withdrawAddress').value.trim();
   const status = document.getElementById('withdrawStatus');
-  if (!state.settings.withdrawOpen){ status.textContent = "Withdrawals are currently closed."; return; }
+  const upToConvert = Math.max(0, Math.min(parseInt(document.getElementById('upConvertInput').value) || 0, withdrawInfo.up));
+  if (!withdrawInfo.withdrawOpen){ status.textContent = "Withdrawals are currently closed."; return; }
   if (!addr){ status.textContent = "Enter a wallet address first."; return; }
   try{
     const res = await fetch(`${API_BASE}/withdraw`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: state.user.id, network, address: addr, initData: getInitData() })
+      body: JSON.stringify({ userId: state.user.id, network, address: addr, upToConvert, initData: getInitData() })
     });
     const result = await res.json();
     if (!result.success){ status.textContent = "Something went wrong — try again."; return; }
