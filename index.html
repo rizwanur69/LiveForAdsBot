@@ -14,13 +14,13 @@
     --bg:#0F1A1C; --surface:#16262A; --surface-raised:#1C2E32; --line:#24393D;
     --text:#EAF2F1; --text-muted:#8FA3A1;
     --gold:#F2B33D; --gold-dim:#5A4523; --teal:#2DD4BF; --red:#E8604C; --green:#4ADE80;
-    --indigo:#6366F1; --indigo-bg:#1E1F3B;
+    --indigo:#6366F1; --indigo-bg:#1E1F3B; --indigo-text:#C7C9FB;
     --up-color:#4ADE80; --up-dim:#1F4A33;
   }
   body.light-theme{
     --bg:#F4F6F5; --surface:#FFFFFF; --surface-raised:#EEF2F1; --line:#DCE3E1;
     --text:#152321; --text-muted:#647572;
-    --indigo-bg:#E9EAFB;
+    --indigo-bg:#E9EAFB; --indigo-text:#3730A3;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{
@@ -224,7 +224,7 @@
 
   /* Withdraw notice marquee */
   .withdraw-notice{background:var(--indigo-bg); border:1px solid var(--indigo); border-radius:12px; padding:10px 0; margin-top:16px; overflow:hidden; white-space:nowrap;}
-  .withdraw-notice-track{display:inline-block; padding-left:100%; animation:marquee 18s linear infinite; font-size:12.5px; color:#C7C9FB; font-weight:500;}
+  .withdraw-notice-track{display:inline-block; padding-left:100%; animation:marquee 18s linear infinite; font-size:12.5px; color:var(--indigo-text); font-weight:500;}
   @keyframes marquee{ from{transform:translateX(0);} to{transform:translateX(-100%);} }
 
   .withdraw-box{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 16px 18px; margin-top:12px;}
@@ -277,7 +277,7 @@
 
   /* Withdraw page (hidden, not in bottom nav) */
   .withdraw-page-header{display:flex; align-items:center; gap:14px; padding:18px 0 6px;}
-  .wp-back{background:none; border:none; color:var(--text-muted); font-size:13.5px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;}
+  .wp-back{background:var(--surface); border:1px solid var(--line); color:var(--text); font-size:13px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; padding:8px 14px; border-radius:10px;}
   .wp-title{font-size:17px; font-weight:700;}
   .wd-balance-row{display:flex; gap:10px; margin:16px 0;}
   .wd-balance-item{flex:1; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center;}
@@ -439,34 +439,56 @@
       <div class="label">Terms & Privacy Policy (PDF)</div>
       <div class="arrow">›</div>
     </a>
+
+    <div class="section-label">Season History (LFA Token snapshot)</div>
+    <div id="lfaSeasonHistory"></div>
   </div>
 
   <!-- ================= PROFILE ================= -->
   <div class="page" id="page-profile">
     <div class="profile-card" id="profileCard">
       <div class="settings-gear" id="settingsGear" onclick="openSettings()">⚙</div>
-      <div class="profile-head">
+      <div class="profile-head" id="profileHead">
         <div class="avatar-wrap">
           <div class="avatar" id="profileAvatar">U</div>
+          <div class="avatar-change-overlay" id="avatarChangeOverlay" onclick="triggerAvatarPick()">Change</div>
         </div>
         <div style="flex:1;">
           <div class="name" id="profileName">User</div>
+          <input class="name-input" id="profileNameInput" type="text">
           <div class="id" id="profileId">ID: —</div>
         </div>
       </div>
+      <button class="edit-toggle-btn" id="editBtn" onclick="toggleEdit()" style="display:none;">Save profile</button>
+      <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="onAvatarFileChosen(event)">
 
       <div class="profile-balance-premium">
-        <div class="pbp-item ap">
-          <div class="pbp-label">Total AP</div>
+        <div class="pbp-item ap" onclick="showPage('ap-history', null)" style="cursor:pointer;">
+          <div class="pbp-label">Total AP ›</div>
           <div class="pbp-val" id="pbTotalAp">0</div>
         </div>
         <div class="pbp-divider"></div>
-        <div class="pbp-item up">
-          <div class="pbp-label">Total UP</div>
+        <div class="pbp-item up" onclick="showPage('up-history', null)" style="cursor:pointer;">
+          <div class="pbp-label">Total UP ›</div>
           <div class="pbp-val" id="pbTotalUp">0</div>
         </div>
       </div>
     </div>
+
+  <!-- ================= AVATAR CROP MODAL ================= -->
+  <div class="crop-overlay" id="cropOverlay">
+    <div class="crop-frame" id="cropFrame">
+      <img id="cropImg" src="" alt="">
+    </div>
+    <div class="crop-controls">
+      <input type="range" id="cropZoom" min="100" max="300" value="100">
+    </div>
+    <div class="crop-hint">Drag to reposition · slide to zoom</div>
+    <div class="crop-actions">
+      <button class="cancel-btn" onclick="cancelCrop()">Cancel</button>
+      <button class="confirm-btn" onclick="confirmCrop()">Use photo</button>
+    </div>
+  </div>
 
     <div class="stat-grid">
       <div class="stat-card"><div class="num" id="statAds">0</div><div class="label">Ads watched</div></div>
@@ -530,17 +552,20 @@
       <div class="wd-section-title">Convert UP → USDT</div>
       <div class="wd-swap-box">
         <div class="wd-swap-row">
-          <input type="number" id="upConvertInput" placeholder="0" min="0" oninput="onUpConvertInput()">
+          <input type="number" id="upConvertInput" placeholder="0" min="0">
           <span class="wd-swap-unit">UP</span>
-          <button class="wd-max-btn" onclick="setMaxUp()">MAX</button>
+          <button class="wd-max-btn" id="wdMaxBtn" onclick="setMaxUp()">MAX</button>
         </div>
         <div class="wd-swap-arrow">↓</div>
         <div class="wd-swap-result" id="upConvertResult">$0.00 USDT</div>
+        <button class="checkin-btn" id="wdConvertBtn" style="margin-top:10px;" onclick="applyUpConversion()">Convert</button>
+        <div class="wd-alloc-formula" id="wdConvertClosedNote" style="display:none; margin-top:8px;">Conversion is only available during the withdrawal window (1st–2nd of Jan, Mar, May, Jul, Sep, Nov).</div>
       </div>
     </div>
 
     <div class="wd-section">
       <div class="wd-section-title">Withdraw Amount</div>
+    
       <div class="wd-total-box">
         <div class="wd-total-row"><span>From AP allocation</span><span id="wdFromAp">$0.00</span></div>
         <div class="wd-total-row"><span>From UP conversion</span><span id="wdFromUp">$0.00</span></div>
@@ -564,6 +589,24 @@
     </div>
   </div>
 
+  <!-- ================= AP HISTORY (hidden page) ================= -->
+  <div class="page" id="page-ap-history">
+    <div class="withdraw-page-header">
+      <button class="wp-back" onclick="showPage('profile', document.querySelectorAll('.nav-item')[5])">‹ Back</button>
+      <div class="wp-title">AP History</div>
+    </div>
+    <div id="apHistoryList" style="margin-top:14px;"></div>
+  </div>
+
+  <!-- ================= UP HISTORY (hidden page) ================= -->
+  <div class="page" id="page-up-history">
+    <div class="withdraw-page-header">
+      <button class="wp-back" onclick="showPage('profile', document.querySelectorAll('.nav-item')[5])">‹ Back</button>
+      <div class="wp-title">UP History</div>
+    </div>
+    <div id="upHistoryList" style="margin-top:14px;"></div>
+  </div>
+
   <div class="bottom-nav">
     <button class="nav-item active" onclick="showPage('home', this)"><span class="icon">▣</span>Home</button>
     <button class="nav-item" onclick="showPage('ads', this)"><span class="icon">▶</span>Earn</button>
@@ -579,9 +622,10 @@
       <h3>Settings</h3>
       <div class="settings-row">
         <div>
-          <div class="slabel">Profile photo & name</div>
-          <div class="shint">Synced automatically from your Telegram account</div>
+          <div class="slabel">Edit Profile</div>
+          <div class="shint">Change your name and photo</div>
         </div>
+        <button class="settings-btn" onclick="startEditFromSettings()">Edit</button>
       </div>
       <div class="settings-row">
         <div>
@@ -703,8 +747,10 @@ function showPage(name, el){
   }
   if (name === 'withdraw') {
     loadUserFromServer().then(renderProfile);
-    loadWithdrawPage();
+    loadSettings().then(loadWithdrawPage);
   }
+  if (name === 'ap-history') loadHistoryPage('ap');
+  if (name === 'up-history') loadHistoryPage('up');
 }
 
 /* ============================================================
@@ -753,10 +799,11 @@ async function loadSettings(){
    HOME — check-in + tasks
    ============================================================ */
 function renderHomeHeader(){
-  const name = state.user.name;
+  const name = state.displayName || state.user.name;
+  const avatarUrl = state.avatarUrl || state.telegramAvatarUrl;
   document.getElementById('homeName').textContent = name;
-  document.getElementById('homeAvatar').innerHTML = state.telegramAvatarUrl
-    ? `<img src="${state.telegramAvatarUrl}">` : (name[0]||'U').toUpperCase();
+  document.getElementById('homeAvatar').innerHTML = avatarUrl
+    ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
   document.getElementById('homeAp').textContent = state.totalPoints;
   document.getElementById('homeUp').textContent = state.up;
 }
@@ -1093,6 +1140,7 @@ function renderLeaderboard(data){
   const top3 = top.slice(0,3);
   const rest = top.slice(3);
   const showStreak = leaderboardTab === 'all';
+  const showSecondary = leaderboardTab === 'all';
   const primaryStat = (u) => leaderboardTab === 'up' ? `${u.up||0} UP` : `${u.points} AP`;
   const secondaryStat = (u) => leaderboardTab === 'up' ? `${u.points} AP` : `${u.up||0} UP`;
 
@@ -1104,10 +1152,10 @@ function renderLeaderboard(data){
       <div class="podium-avatar">${avatarHtml(u)}</div>
       <div class="pname">${u.name}</div>
       <div class="ppts">${primaryStat(u)}</div>
-      <div style="margin-top:2px; display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
-        <span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(u)}</span>
+      ${(showSecondary || showStreak) ? `<div style="margin-top:2px; display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+        ${showSecondary ? `<span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(u)}</span>` : ''}
         ${showStreak ? `<span class="ap-tag">🔥 ${u.streak||0}</span>` : ''}
-      </div>
+      </div>` : ''}
     </div>`).join('');
 
   document.getElementById('lbList').innerHTML = rest.map(u=>`
@@ -1115,8 +1163,8 @@ function renderLeaderboard(data){
       <div class="rank">${u.rank}</div>
       <div class="avatar">${avatarHtml(u)}</div>
       <div class="name">${u.name}</div>
-      <span class="${leaderboardTab==='up'?'up-tag':'ap-tag'}">${primaryStat(u)}</span>&nbsp;
-      <span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(u)}</span>
+      <span class="${leaderboardTab==='up'?'up-tag':'ap-tag'}">${primaryStat(u)}</span>
+      ${showSecondary ? `&nbsp;<span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(u)}</span>` : ''}
       ${showStreak ? `&nbsp;<span class="ap-tag">🔥${u.streak||0}</span>` : ''}
     </div>`).join('');
 
@@ -1128,8 +1176,8 @@ function renderLeaderboard(data){
         <div class="rank">${you.rank}</div>
         <div class="avatar">${avatarHtml(you)}</div>
         <div class="name">${you.name} (You)</div>
-        <span class="${leaderboardTab==='up'?'up-tag':'ap-tag'}">${primaryStat(you)}</span>&nbsp;
-        <span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(you)}</span>
+        <span class="${leaderboardTab==='up'?'up-tag':'ap-tag'}">${primaryStat(you)}</span>
+        ${showSecondary ? `&nbsp;<span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(you)}</span>` : ''}
         ${showStreak ? `&nbsp;<span class="ap-tag">🔥${you.streak||0}</span>` : ''}
       </div>`;
   } else {
@@ -1188,16 +1236,39 @@ function copyRefLink(){
 function loadLfaFrame(){
   const frame = document.getElementById('lfaFrame');
   if (frame.src !== LFA_WEBPAGE_URL) frame.src = LFA_WEBPAGE_URL;
+  loadLfaSeasonHistory();
+}
+
+async function loadLfaSeasonHistory(){
+  const list = document.getElementById('lfaSeasonHistory');
+  try{
+    const res = await fetch(`${API_BASE}/season-boxes`);
+    const boxes = await res.json();
+    if (boxes.length === 0){
+      list.innerHTML = `<div style="font-size:12px;color:var(--text-muted);">No season history yet.</div>`;
+      return;
+    }
+    list.innerHTML = boxes.map(b=>`
+      <div class="season-box">
+        <div class="sname">${b.seasonName} ${b.isCurrent ? '(current)' : ''}</div>
+        <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}</div>
+        <div class="srow" style="margin-top:8px;">
+          <div class="sstat"><div class="snum">${b.totalPointsEarned||0}</div><div class="slabel">Season Total AP</div></div>
+        </div>
+      </div>`).join('');
+  } catch(e){ list.innerHTML = `<div style="font-size:12px;color:var(--red);">Could not load season history.</div>`; }
 }
 
 /* ============================================================
    PROFILE
    ============================================================ */
 function renderProfile(){
-  const name = state.user.name;
+  const name = state.displayName || state.user.name;
   document.getElementById('profileName').textContent = name;
+  document.getElementById('profileNameInput').value = name;
   document.getElementById('profileId').textContent = 'ID: ' + state.user.id;
-  document.getElementById('profileAvatar').innerHTML = state.telegramAvatarUrl ? `<img src="${state.telegramAvatarUrl}">` : (name[0]||'U').toUpperCase();
+  const avatarUrl = state.pendingAvatarDataUrl || state.avatarUrl || state.telegramAvatarUrl;
+  document.getElementById('profileAvatar').innerHTML = avatarUrl ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
 
   document.getElementById('statAds').textContent = Object.values(state.adsToday).reduce((a,b)=>a+(b.count||0),0);
   document.getElementById('statTasks').textContent = (state.checkin.streak||0) + ' 🔥';
@@ -1208,6 +1279,143 @@ function renderProfile(){
 }
 
 /* ---------- Settings sheet ---------- */
+function enterEditMode(){
+  state.editing = true;
+  document.getElementById('profileHead').classList.add('editing');
+  document.getElementById('editBtn').style.display = 'block';
+  document.getElementById('profileNameInput').value = state.displayName || state.user.name;
+}
+
+function exitEditMode(){
+  state.editing = false;
+  document.getElementById('profileHead').classList.remove('editing');
+  document.getElementById('editBtn').style.display = 'none';
+}
+
+function startEditFromSettings(){
+  closeSettings();
+  enterEditMode();
+}
+
+function toggleEdit(){
+  exitEditMode();
+  saveProfile();
+}
+
+function triggerAvatarPick(){
+  document.getElementById('avatarFileInput').click();
+}
+
+/* ---------- Avatar crop modal ---------- */
+let cropState = { img: null, baseScale: 1, zoom: 1, offsetX: 0, offsetY: 0, dragging: false, lastX: 0, lastY: 0 };
+const CROP_SIZE = 280;
+
+function onAvatarFileChosen(event){
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      cropState.img = img;
+      cropState.baseScale = Math.max(CROP_SIZE/img.width, CROP_SIZE/img.height);
+      cropState.zoom = 1;
+      cropState.offsetX = (CROP_SIZE - img.width*cropState.baseScale)/2;
+      cropState.offsetY = (CROP_SIZE - img.height*cropState.baseScale)/2;
+      document.getElementById('cropImg').src = e.target.result;
+      document.getElementById('cropZoom').value = 100;
+      applyCropTransform();
+      document.getElementById('cropOverlay').classList.add('active');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+function applyCropTransform(){
+  const img = document.getElementById('cropImg');
+  const scale = cropState.baseScale * cropState.zoom;
+  img.style.width = (cropState.img.width*scale)+'px';
+  img.style.height = (cropState.img.height*scale)+'px';
+  img.style.transform = `translate(${cropState.offsetX}px, ${cropState.offsetY}px)`;
+}
+
+function clampOffsets(){
+  const scale = cropState.baseScale * cropState.zoom;
+  const w = cropState.img.width*scale, h = cropState.img.height*scale;
+  cropState.offsetX = Math.min(0, Math.max(CROP_SIZE - w, cropState.offsetX));
+  cropState.offsetY = Math.min(0, Math.max(CROP_SIZE - h, cropState.offsetY));
+}
+
+document.getElementById('cropZoom').addEventListener('input', (e)=>{
+  const oldScale = cropState.baseScale * cropState.zoom;
+  const cx = CROP_SIZE/2, cy = CROP_SIZE/2;
+  const imgCx = (cx - cropState.offsetX) / oldScale;
+  const imgCy = (cy - cropState.offsetY) / oldScale;
+  cropState.zoom = e.target.value / 100;
+  const newScale = cropState.baseScale * cropState.zoom;
+  cropState.offsetX = cx - imgCx*newScale;
+  cropState.offsetY = cy - imgCy*newScale;
+  clampOffsets();
+  applyCropTransform();
+});
+
+const cropFrame = document.getElementById('cropFrame');
+cropFrame.addEventListener('pointerdown', (e)=>{
+  cropState.dragging = true;
+  cropState.lastX = e.clientX; cropState.lastY = e.clientY;
+  cropFrame.setPointerCapture(e.pointerId);
+});
+cropFrame.addEventListener('pointermove', (e)=>{
+  if (!cropState.dragging) return;
+  cropState.offsetX += e.clientX - cropState.lastX;
+  cropState.offsetY += e.clientY - cropState.lastY;
+  cropState.lastX = e.clientX; cropState.lastY = e.clientY;
+  clampOffsets();
+  applyCropTransform();
+});
+cropFrame.addEventListener('pointerup', ()=>{ cropState.dragging = false; });
+cropFrame.addEventListener('pointercancel', ()=>{ cropState.dragging = false; });
+
+function cancelCrop(){
+  document.getElementById('cropOverlay').classList.remove('active');
+}
+
+function confirmCrop(){
+  const canvas = document.createElement('canvas');
+  const OUT = 240;
+  canvas.width = OUT; canvas.height = OUT;
+  const ctx = canvas.getContext('2d');
+  const scale = cropState.baseScale * cropState.zoom;
+  const drawScale = OUT / CROP_SIZE;
+  ctx.drawImage(
+    cropState.img,
+    0, 0, cropState.img.width, cropState.img.height,
+    cropState.offsetX*drawScale, cropState.offsetY*drawScale,
+    cropState.img.width*scale*drawScale, cropState.img.height*scale*drawScale
+  );
+  state.pendingAvatarDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+  document.getElementById('cropOverlay').classList.remove('active');
+  document.getElementById('profileAvatar').innerHTML = `<img src="${state.pendingAvatarDataUrl}">`;
+  if (!state.editing) enterEditMode();
+}
+
+async function saveProfile(){
+  const newName = document.getElementById('profileNameInput').value.trim() || state.user.name;
+  const newAvatar = state.pendingAvatarDataUrl || state.avatarUrl;
+  try{
+    await fetch(`${API_BASE}/user/${state.user.id}/profile`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ displayName: newName, avatarUrl: newAvatar, initData: getInitData() })
+    });
+    state.displayName = newName;
+    state.avatarUrl = newAvatar;
+    state.pendingAvatarDataUrl = null;
+    renderProfile();
+  } catch(e){ console.error("Could not save profile:", e); }
+}
+
 function openSettings(){
   document.getElementById('settingsOverlay').classList.add('active');
   document.getElementById('themeDarkBtn').classList.toggle('active', state.theme !== 'light');
@@ -1262,7 +1470,7 @@ async function loadStats(){
 function drawChart(data){
   const svg = document.getElementById('chartSvg');
   if (!data || data.length === 0){ svg.innerHTML = ''; return; }
-  const w = 320, h = 150, padBottom = 18, padTop = 8;
+  const w = 320, h = 150, padBottom = 18, padTop = 16;
   const maxVal = Math.max(...data.map(d=>Math.max(d.points, d.up)), 1);
   const groupWidth = w / data.length;
   const barWidth = Math.min(14, groupWidth/2 - 3);
@@ -1275,11 +1483,15 @@ function drawChart(data){
     const upX = groupCenter + 2;
     const apH = (d.points/maxVal)*scaleH;
     const upH = (d.up/maxVal)*scaleH;
-    const label = showLabels ? `<text x="${groupCenter}" y="${h-3}" font-size="8" fill="#8FA3A1" text-anchor="middle" font-family="Inter">${(d.date||'').slice(-5)}</text>` : '';
+    const dateLabel = showLabels ? `<text x="${groupCenter}" y="${h-3}" font-size="8" fill="#8FA3A1" text-anchor="middle" font-family="Inter">${(d.date||'').slice(-5)}</text>` : '';
+    const apValLabel = (showLabels && d.points > 0) ? `<text x="${apX+barWidth/2}" y="${h-padBottom-apH-4}" font-size="7.5" fill="var(--gold)" text-anchor="middle" font-family="Space Grotesk">${d.points}</text>` : '';
+    const upValLabel = (showLabels && d.up > 0) ? `<text x="${upX+barWidth/2}" y="${h-padBottom-upH-4}" font-size="7.5" fill="var(--up-color)" text-anchor="middle" font-family="Space Grotesk">${d.up}</text>` : '';
     return `
       <rect x="${apX}" y="${h-padBottom-apH}" width="${barWidth}" height="${apH}" rx="2" fill="var(--gold)"/>
       <rect x="${upX}" y="${h-padBottom-upH}" width="${barWidth}" height="${upH}" rx="2" fill="var(--up-color)"/>
-      ${label}
+      ${apValLabel}
+      ${upValLabel}
+      ${dateLabel}
     `;
   }).join('');
 
@@ -1307,6 +1519,8 @@ function renderWithdrawInfo(){
 }
 
 let withdrawInfo = { ap:0, up:0, apAllocationUsdt:0, upToUsdtRate:100, withdrawOpen:false, seasonName:'' };
+let convertedUpUsdt = 0;
+let convertedUpAmount = 0;
 
 async function loadWithdrawPage(){
   try{
@@ -1319,38 +1533,49 @@ async function loadWithdrawPage(){
   document.getElementById('wdApAllocation').textContent = `$${(withdrawInfo.apAllocationUsdt||0).toFixed(2)}`;
   document.getElementById('upConvertInput').value = '';
   document.getElementById('upConvertInput').max = withdrawInfo.up;
+  convertedUpUsdt = 0;
+  convertedUpAmount = 0;
 
   const note = document.getElementById('wdWindowNote');
   const btn = document.getElementById('withdrawBtn');
-  if (withdrawInfo.withdrawOpen){
-    note.textContent = `Withdrawals for ${withdrawInfo.seasonName} are open now. Requests are reviewed and paid between the 3rd–5th of next month.`;
-    btn.disabled = state.banned;
-  } else {
-    note.textContent = `The withdrawal window opens on the 1st–2nd every two months (next: Nov 1–2, Jan 1–2, etc., 00:00–23:59 UTC). It's currently closed.`;
-    btn.disabled = true;
-  }
-  updateWithdrawTotals();
-}
+  const convertBtn = document.getElementById('wdConvertBtn');
+  const maxBtn = document.getElementById('wdMaxBtn');
+  const convertInput = document.getElementById('upConvertInput');
+  const closedNote = document.getElementById('wdConvertClosedNote');
 
-function onUpConvertInput(){
-  let val = parseInt(document.getElementById('upConvertInput').value) || 0;
-  val = Math.max(0, Math.min(val, withdrawInfo.up));
+  note.textContent = withdrawInfo.withdrawOpen
+    ? `Withdrawals for ${withdrawInfo.seasonName} are open now. Requests are reviewed and paid between the 3rd–5th of next month.`
+    : (state.settings.withdrawClosedNote || `The withdrawal window opens on the 1st–2nd of Jan, Mar, May, Jul, Sep, and Nov (00:00–23:59 UTC). It's currently closed.`);
+  btn.disabled = !withdrawInfo.withdrawOpen || state.banned;
+
+  // UP conversion is only allowed during the same withdrawal window
+  convertBtn.disabled = !withdrawInfo.withdrawOpen;
+  maxBtn.disabled = !withdrawInfo.withdrawOpen;
+  convertInput.disabled = !withdrawInfo.withdrawOpen;
+  closedNote.style.display = withdrawInfo.withdrawOpen ? 'none' : 'block';
+
   updateWithdrawTotals();
 }
 
 function setMaxUp(){
   document.getElementById('upConvertInput').value = withdrawInfo.up;
+}
+
+function applyUpConversion(){
+  if (!withdrawInfo.withdrawOpen) return;
+  const upToConvert = Math.max(0, Math.min(parseInt(document.getElementById('upConvertInput').value) || 0, withdrawInfo.up));
+  convertedUpAmount = upToConvert;
+  convertedUpUsdt = upToConvert / (withdrawInfo.upToUsdtRate || 100);
   updateWithdrawTotals();
+  if (tg) tg.HapticFeedback?.notificationOccurred('success');
 }
 
 function updateWithdrawTotals(){
-  const upToConvert = Math.max(0, Math.min(parseInt(document.getElementById('upConvertInput').value) || 0, withdrawInfo.up));
-  const upUsdt = upToConvert / (withdrawInfo.upToUsdtRate || 100);
   const apUsdt = withdrawInfo.apAllocationUsdt || 0;
-  document.getElementById('upConvertResult').textContent = `$${upUsdt.toFixed(2)} USDT`;
+  document.getElementById('upConvertResult').textContent = `$${convertedUpUsdt.toFixed(2)} USDT`;
   document.getElementById('wdFromAp').textContent = `$${apUsdt.toFixed(2)}`;
-  document.getElementById('wdFromUp').textContent = `$${upUsdt.toFixed(2)}`;
-  document.getElementById('wdGrandTotal').textContent = `$${(apUsdt+upUsdt).toFixed(2)}`;
+  document.getElementById('wdFromUp').textContent = `$${convertedUpUsdt.toFixed(2)}`;
+  document.getElementById('wdGrandTotal').textContent = `$${(apUsdt+convertedUpUsdt).toFixed(2)}`;
 }
 
 async function loadSeasonBoxes(){
@@ -1368,13 +1593,15 @@ async function loadSeasonBoxes(){
         <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}</div>
         <div class="srow">
           <div class="sstat"><div class="snum">${b.participants||0}</div><div class="slabel">Participants</div></div>
+          <div class="sstat"><div class="snum">$${(b.totalUsdtPaid||0).toFixed(2)}</div><div class="slabel">Total Paid</div></div>
+        </div>
+        <div class="srow" style="margin-top:8px;">
           <div class="sstat"><div class="snum">${b.totalPointsEarned||0}</div><div class="slabel">Total AP</div></div>
           <div class="sstat"><div class="snum">$${(b.apAllocation||0).toFixed(2)}</div><div class="slabel">AP Allocation</div></div>
         </div>
         <div class="srow" style="margin-top:8px;">
           <div class="sstat"><div class="snum">${b.totalUp||0}</div><div class="slabel">Total UP</div></div>
-          <div class="sstat"><div class="snum">$${((b.totalUp||0)/100).toFixed(2)}</div><div class="slabel">UP in USDT</div></div>
-          <div class="sstat"><div class="snum">$${(b.totalUsdtPaid||0).toFixed(2)}</div><div class="slabel">Total Paid</div></div>
+          <div class="sstat"><div class="snum">$${((b.totalUp||0)/100).toFixed(2)}</div><div class="slabel">UP Allocation</div></div>
         </div>
         <div class="season-box-toggle" onclick="toggleSeasonParticipants('${b.id}', this)">
           <span>View participants</span><span class="arrow">▾</span>
@@ -1410,11 +1637,43 @@ async function toggleSeasonParticipants(boxId, el){
   } catch(e){ panel.innerHTML = `<div style="font-size:11.5px;color:var(--red);">Could not load participants.</div>`; }
 }
 
+const AP_ACTIVITY_TYPES = ['ad','task','checkin','referral_bonus','referral_commission'];
+const UP_ACTIVITY_TYPES = ['offerwall'];
+const ACTIVITY_ICONS = { ad:'▶', task:'✓', checkin:'🔥', referral_bonus:'◎', referral_commission:'◎', offerwall:'$' };
+const ACTIVITY_LABELS = { ad:'Watched ad', task:'Completed task', checkin:'Daily check-in', referral_bonus:'Referral bonus', referral_commission:'Referral commission', offerwall:'Offerwall' };
+
+async function loadHistoryPage(kind){
+  const listEl = document.getElementById(kind === 'up' ? 'upHistoryList' : 'apHistoryList');
+  listEl.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:20px 0;">Loading…</div>`;
+  try{
+    const res = await fetch(`${API_BASE}/user/${state.user.id}/activity`);
+    const all = await res.json();
+    const types = kind === 'up' ? UP_ACTIVITY_TYPES : AP_ACTIVITY_TYPES;
+    const filtered = all.filter(a => types.includes(a.type));
+    if (filtered.length === 0){
+      listEl.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:20px 0;">No ${kind.toUpperCase()} activity yet.</div>`;
+      return;
+    }
+    const color = kind === 'up' ? 'var(--up-color)' : 'var(--gold)';
+    listEl.innerHTML = filtered.map(a=>`
+      <div class="ad-row">
+        <div class="icon">${ACTIVITY_ICONS[a.type]||'•'}</div>
+        <div class="info">
+          <div class="name">${ACTIVITY_LABELS[a.type]||a.type}</div>
+          <div class="sub">${a.detail||''} · ${a.createdAt ? new Date(a.createdAt).toLocaleString() : '—'}</div>
+        </div>
+        <div style="font-weight:700; color:${color}; font-family:'Space Grotesk',sans-serif;">+${a.points}</div>
+      </div>`).join('');
+  } catch(e){
+    listEl.innerHTML = `<div style="text-align:center; color:var(--red); font-size:12.5px; padding:20px 0;">Could not load history.</div>`;
+  }
+}
+
 async function submitWithdraw(){
   const network = document.getElementById('withdrawNetwork').value;
   const addr = document.getElementById('withdrawAddress').value.trim();
   const status = document.getElementById('withdrawStatus');
-  const upToConvert = Math.max(0, Math.min(parseInt(document.getElementById('upConvertInput').value) || 0, withdrawInfo.up));
+  const upToConvert = convertedUpAmount;
   if (!withdrawInfo.withdrawOpen){ status.textContent = "Withdrawals are currently closed."; return; }
   if (!addr){ status.textContent = "Enter a wallet address first."; return; }
   try{
