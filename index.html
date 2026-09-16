@@ -708,7 +708,7 @@ let state = {
   checkinHistory: {},
   displayName: null,
   avatarUrl: null,
-  telegramAvatarUrl: null,
+  telegramAvatarUrl: null, // computed proxy URL, see loadUserFromServer
   banned: false,
   referrals: [],
   refEarnedPoints: 0,
@@ -773,7 +773,7 @@ async function loadUserFromServer(){
     state.checkinHistory = data.checkinHistory || {};
     state.displayName = data.displayName;
     state.avatarUrl = data.avatarUrl;
-    state.telegramAvatarUrl = data.telegramAvatarUrl;
+    state.telegramAvatarUrl = data.telegramAvatarFileId ? `${API_BASE}/avatar/${state.user.id}` : null;
     state.banned = !!data.banned;
     state.refEarnedPoints = data.referralEarnings || 0;
   } catch(e){ console.error("Could not load user:", e); }
@@ -1131,7 +1131,8 @@ async function loadLeaderboard(){
 
 function initials(name){ return (name||'U')[0].toUpperCase(); }
 function avatarHtml(user){
-  if (user.avatarUrl) return `<img src="${user.avatarUrl}" alt="" onerror="this.parentElement.textContent='${initials(user.name)}'">`;
+  const src = user.avatarUrl || (user.hasTelegramAvatar ? `${API_BASE}/avatar/${user.tgId}` : null);
+  if (src) return `<img src="${src}" alt="" onerror="this.parentElement.textContent='${initials(user.name)}'">`;
   return initials(user.name);
 }
 
