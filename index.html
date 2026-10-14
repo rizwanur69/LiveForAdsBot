@@ -549,28 +549,10 @@
     </div>
 
     <div class="wd-section">
-      <div class="wd-section-title">Convert UP → USDT</div>
-      <div class="wd-swap-box">
-        <div class="wd-swap-row">
-          <input type="number" id="upConvertInput" placeholder="0" min="0">
-          <span class="wd-swap-unit">UP</span>
-          <button class="wd-max-btn" id="wdMaxBtn" onclick="setMaxUp()">MAX</button>
-        </div>
-        <div class="wd-swap-arrow">↓</div>
-        <div class="wd-swap-result" id="upConvertResult">$0.00 USDT</div>
-        <button class="checkin-btn" id="wdConvertBtn" style="margin-top:10px;" onclick="applyUpConversion()">Convert</button>
-        <div class="wd-alloc-formula" id="wdConvertClosedNote" style="display:none; margin-top:8px;">Conversion is only available during the withdrawal window (1st–2nd of Jan, Mar, May, Jul, Sep, Nov).</div>
-      </div>
-    </div>
-
-    <div class="wd-section">
-      <div class="wd-section-title">Withdraw Amount</div>
-    
-      <div class="wd-total-box">
-        <div class="wd-total-row"><span>From AP allocation</span><span id="wdFromAp">$0.00</span></div>
-        <div class="wd-total-row"><span>From UP conversion</span><span id="wdFromUp">$0.00</span></div>
-        <div class="wd-total-divider"></div>
-        <div class="wd-total-row grand"><span>Total</span><span id="wdGrandTotal">$0.00</span></div>
+      <div class="wd-section-title">UP Allocation</div>
+      <div class="wd-allocation-box">
+        <div class="wd-alloc-formula" id="wdUpFormula">Your UP ÷ 100 = USDT (converted automatically)</div>
+        <div class="wd-alloc-amount" id="wdUpAllocation">$0.00</div>
       </div>
     </div>
 
@@ -578,11 +560,19 @@
       <div class="wd-section-title">Wallet Address</div>
       <div class="withdraw-box" style="margin-top:0;">
         <div class="sub" id="wdWindowNote">Checking withdrawal window...</div>
+        <input type="text" id="withdrawAddress" placeholder="Wallet address">
         <select id="withdrawNetwork">
           <option value="bep20">USDT — BEP20</option>
           <option value="polygon">USDT — Polygon</option>
         </select>
-        <input type="text" id="withdrawAddress" placeholder="Wallet address">
+
+        <div class="wd-total-box" style="margin-top:12px;">
+          <div class="wd-total-row"><span>From AP allocation</span><span id="wdFromAp">$0.00</span></div>
+          <div class="wd-total-row"><span>From UP allocation</span><span id="wdFromUp">$0.00</span></div>
+          <div class="wd-total-divider"></div>
+          <div class="wd-total-row grand"><span>Total (USDT)</span><span id="wdGrandTotal">$0.00</span></div>
+        </div>
+
         <button class="withdraw-submit" id="withdrawBtn" onclick="submitWithdraw()">Submit request</button>
         <div class="withdraw-note" id="withdrawStatus"></div>
       </div>
@@ -1520,8 +1510,6 @@ function renderWithdrawInfo(){
 }
 
 let withdrawInfo = { ap:0, up:0, apAllocationUsdt:0, upToUsdtRate:100, withdrawOpen:false, seasonName:'' };
-let convertedUpUsdt = 0;
-let convertedUpAmount = 0;
 
 async function loadWithdrawPage(){
   try{
@@ -1532,51 +1520,31 @@ async function loadWithdrawPage(){
   document.getElementById('wdApTotal').textContent = withdrawInfo.ap;
   document.getElementById('wdUpTotal').textContent = withdrawInfo.up;
   document.getElementById('wdApAllocation').textContent = `$${(withdrawInfo.apAllocationUsdt||0).toFixed(2)}`;
-  document.getElementById('upConvertInput').value = '';
-  document.getElementById('upConvertInput').max = withdrawInfo.up;
-  convertedUpUsdt = 0;
-  convertedUpAmount = 0;
 
   const note = document.getElementById('wdWindowNote');
   const btn = document.getElementById('withdrawBtn');
-  const convertBtn = document.getElementById('wdConvertBtn');
-  const maxBtn = document.getElementById('wdMaxBtn');
-  const convertInput = document.getElementById('upConvertInput');
-  const closedNote = document.getElementById('wdConvertClosedNote');
-
   note.textContent = withdrawInfo.withdrawOpen
     ? `Withdrawals for ${withdrawInfo.seasonName} are open now. Requests are reviewed and paid between the 3rd–5th of next month.`
     : (state.settings.withdrawClosedNote || `The withdrawal window opens on the 1st–2nd of Jan, Mar, May, Jul, Sep, and Nov (00:00–23:59 UTC). It's currently closed.`);
   btn.disabled = !withdrawInfo.withdrawOpen || state.banned;
-
-  // UP conversion is only allowed during the same withdrawal window
-  convertBtn.disabled = !withdrawInfo.withdrawOpen;
-  maxBtn.disabled = !withdrawInfo.withdrawOpen;
-  convertInput.disabled = !withdrawInfo.withdrawOpen;
-  closedNote.style.display = withdrawInfo.withdrawOpen ? 'none' : 'block';
+  document.getElementById('withdrawStatus').textContent = '';
 
   updateWithdrawTotals();
 }
 
-function setMaxUp(){
-  document.getElementById('upConvertInput').value = withdrawInfo.up;
-}
-
-function applyUpConversion(){
-  if (!withdrawInfo.withdrawOpen) return;
-  const upToConvert = Math.max(0, Math.min(parseInt(document.getElementById('upConvertInput').value) || 0, withdrawInfo.up));
-  convertedUpAmount = upToConvert;
-  convertedUpUsdt = upToConvert / (withdrawInfo.upToUsdtRate || 100);
-  updateWithdrawTotals();
-  if (tg) tg.HapticFeedback?.notificationOccurred('success');
+// All UP is converted to USDT automatically — no manual convert step.
+function getUpUsdt(){
+  return (withdrawInfo.up || 0) / (withdrawInfo.upToUsdtRate || 100);
 }
 
 function updateWithdrawTotals(){
   const apUsdt = withdrawInfo.apAllocationUsdt || 0;
-  document.getElementById('upConvertResult').textContent = `$${convertedUpUsdt.toFixed(2)} USDT`;
+  const upUsdt = getUpUsdt();
+  document.getElementById('wdUpFormula').textContent = `${withdrawInfo.up || 0} UP ÷ ${withdrawInfo.upToUsdtRate || 100} = USDT (converted automatically)`;
+  document.getElementById('wdUpAllocation').textContent = `$${upUsdt.toFixed(2)}`;
   document.getElementById('wdFromAp').textContent = `$${apUsdt.toFixed(2)}`;
-  document.getElementById('wdFromUp').textContent = `$${convertedUpUsdt.toFixed(2)}`;
-  document.getElementById('wdGrandTotal').textContent = `$${(apUsdt+convertedUpUsdt).toFixed(2)}`;
+  document.getElementById('wdFromUp').textContent = `$${upUsdt.toFixed(2)}`;
+  document.getElementById('wdGrandTotal').textContent = `$${(apUsdt+upUsdt).toFixed(2)}`;
 }
 
 async function loadSeasonBoxes(){
@@ -1674,16 +1642,20 @@ async function submitWithdraw(){
   const network = document.getElementById('withdrawNetwork').value;
   const addr = document.getElementById('withdrawAddress').value.trim();
   const status = document.getElementById('withdrawStatus');
-  const upToConvert = convertedUpAmount;
   if (!withdrawInfo.withdrawOpen){ status.textContent = "Withdrawals are currently closed."; return; }
   if (!addr){ status.textContent = "Enter a wallet address first."; return; }
   try{
     const res = await fetch(`${API_BASE}/withdraw`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: state.user.id, network, address: addr, upToConvert, initData: getInitData() })
+      body: JSON.stringify({ userId: state.user.id, network, address: addr, initData: getInitData() })
     });
     const result = await res.json();
-    if (!result.success){ status.textContent = "Something went wrong — try again."; return; }
+    if (!result.success){
+      status.textContent = result.reason === 'nothing_to_withdraw' ? "You have nothing to withdraw yet."
+        : result.reason === 'withdraw_closed' ? "Withdrawals are currently closed."
+        : "Something went wrong — try again.";
+      return;
+    }
   } catch(e){ status.textContent = "Couldn't reach the server."; return; }
   status.textContent = "Request submitted. You'll be paid between the 3rd–5th if approved.";
   document.getElementById('withdrawBtn').disabled = true;
