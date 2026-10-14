@@ -2,803 +2,1810 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin — EarnApp</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Live For Ads</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+<script src="//libtl.com/sdk.js" data-zone="11739436" data-sdk="show_11739436"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
 
   :root{
-    --bg:#0C0F14;
-    --surface:#12161D;
-    --surface-raised:#191F29;
-    --line:#232B37;
-    --text:#E7EBF0;
-    --text-muted:#7C8798;
-    --cyan:#5EEAD4;
-    --blue:#60A5FA;
-    --amber:#F2B33D;
-    --red:#F0654E;
-    --green:#4ADE80;
+    --bg:#0F1A1C; --surface:#16262A; --surface-raised:#1C2E32; --line:#24393D;
+    --text:#EAF2F1; --text-muted:#8FA3A1;
+    --gold:#F2B33D; --gold-dim:#5A4523; --teal:#2DD4BF; --red:#E8604C; --green:#4ADE80;
+    --indigo:#6366F1; --indigo-bg:#1E1F3B; --indigo-text:#C7C9FB;
+    --up-color:#4ADE80; --up-dim:#1F4A33;
+  }
+  body.light-theme{
+    --bg:#F4F6F5; --surface:#FFFFFF; --surface-raised:#EEF2F1; --line:#DCE3E1;
+    --text:#152321; --text-muted:#647572;
+    --indigo-bg:#E9EAFB; --indigo-text:#3730A3;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{
-    background:var(--bg); color:var(--text);
-    font-family:'Inter',sans-serif;
-    min-height:100vh;
+    background:var(--bg); color:var(--text); font-family:'Inter',sans-serif;
+    max-width:480px; margin:0 auto; min-height:100vh; padding-bottom:84px;
+    -webkit-tap-highlight-color:transparent;
   }
-  h1,h2,.mono-num{font-family:'Space Grotesk',sans-serif;}
-  .mono{font-family:'IBM Plex Mono',monospace;}
+  h1,h2,h3,.num{font-family:'Space Grotesk',sans-serif;}
 
-  /* ---- Login gate ---- */
-  #loginGate{
-    display:flex; align-items:center; justify-content:center; min-height:100vh; flex-direction:column; gap:16px;
-  }
-  #loginGate h1{font-size:20px;}
-  #loginGate input{
-    background:var(--surface); border:1px solid var(--line); color:var(--text);
-    padding:12px 14px; border-radius:8px; font-size:14px; width:260px;
-  }
-  #loginGate button{
-    background:var(--cyan); border:none; color:#04201C; font-weight:600;
-    padding:12px 20px; border-radius:8px; cursor:pointer; width:260px; font-size:14px;
-  }
-  #loginError{color:var(--red); font-size:12.5px; min-height:16px;}
+  .topbar{display:flex; align-items:center; justify-content:space-between; padding:18px 20px 10px;}
+  .topbar .brand{font-size:15px; font-weight:600; color:var(--text-muted);}
+  .topbar .season{font-size:12px; color:var(--gold); background:rgba(242,179,61,0.1); padding:5px 10px; border-radius:20px; border:1px solid var(--gold-dim);}
 
-  /* ---- Shell ---- */
-  #dashboard{display:none;}
-  .shell{display:flex; min-height:100vh;}
-  .sidebar{
-    width:220px; background:var(--surface); border-right:1px solid var(--line);
-    padding:24px 16px; flex-shrink:0;
-  }
-  .sidebar .brand{font-size:16px; font-weight:700; margin-bottom:2px;}
-  .sidebar .brand-sub{font-size:11.5px; color:var(--text-muted); margin-bottom:28px;}
-  .sidebar nav button{
-    display:flex; align-items:center; gap:10px; width:100%; text-align:left;
-    background:none; border:none; color:var(--text-muted); font-family:'Inter',sans-serif;
-    font-size:13.5px; font-weight:500; padding:10px 12px; border-radius:8px; cursor:pointer; margin-bottom:2px;
-  }
-  .sidebar nav button.active{background:var(--surface-raised); color:var(--text);}
-  .sidebar .season-tag{
-    margin-top:24px; font-size:11px; color:var(--amber); background:rgba(242,179,61,0.08);
-    border:1px solid rgba(242,179,61,0.2); padding:8px 10px; border-radius:8px; line-height:1.5;
-  }
+  .page{display:none; padding:0 20px;}
+  .page.active{display:block;}
 
-  .main{flex:1; padding:28px 32px; max-width:1100px;}
-  .main .topline{display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;}
-  .main .topline h2{font-size:19px;}
-  .main .topline .sub{font-size:12.5px; color:var(--text-muted); margin-top:3px;}
+  .balance-hero{padding:16px 4px 4px;}
+  .balance-hero .label{font-size:13px; color:var(--text-muted); margin-bottom:6px;}
+  .balance-hero .num{font-size:44px; font-weight:700; line-height:1; letter-spacing:-1px;}
+  .balance-hero .num span{font-size:19px; color:var(--text-muted); font-weight:500; margin-left:6px;}
 
-  .kpi-row{display:flex; gap:14px; margin-bottom:28px; flex-wrap:wrap;}
-  .kpi{
-    flex:1; min-width:150px; background:var(--surface); border:1px solid var(--line);
-    border-radius:12px; padding:16px 18px;
+  .home-header{display:flex; align-items:center; justify-content:space-between; padding:16px 4px 4px; gap:12px;}
+  .home-user{display:flex; align-items:center; gap:10px; min-width:0;}
+  .home-avatar{width:44px; height:44px; border-radius:50%; background:var(--surface-raised); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--gold); overflow:hidden; font-size:16px; border:1px solid var(--line);}
+  .home-avatar img{width:100%; height:100%; object-fit:cover;}
+  .home-name{font-size:15px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .home-balance-box{background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border:1px solid var(--line); border-radius:14px; padding:10px 16px; box-shadow:0 4px 14px rgba(0,0,0,0.18); flex-shrink:0;}
+  .hb-row{display:flex; align-items:center; justify-content:space-between; gap:14px; padding:2px 0;}
+  .hb-label{font-size:10.5px; font-weight:700; font-family:'Space Grotesk',sans-serif; letter-spacing:0.5px;}
+  .hb-label.ap{color:var(--gold);}
+  .hb-label.up{color:var(--up-color);}
+  .hb-val{font-size:16px; font-weight:700; font-family:'Space Grotesk',sans-serif;}
+  .hb-val.ap{color:var(--gold);}
+  .hb-val.up{color:var(--up-color);}
+
+  .section-label{font-size:13px; color:var(--text-muted); margin:22px 0 12px; font-weight:500;}
+
+  /* Check-in box */
+  .checkin-box{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; margin-top:16px;}
+  .checkin-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .checkin-head .title{font-size:14.5px; font-weight:600;}
+  .checkin-head .streak{font-size:12.5px; color:var(--gold);}
+  .week-strip{display:flex; gap:6px; margin-bottom:14px;}
+  .week-day{flex:1; text-align:center;}
+  .week-day .dlabel{font-size:10px; color:var(--text-muted); margin-bottom:6px;}
+  .week-day .dcircle{width:100%; aspect-ratio:1; border-radius:10px; background:var(--surface-raised); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:14px;}
+  .week-day.done .dcircle{background:var(--gold); border-color:var(--gold); color:#1B1404; font-weight:700;}
+  .week-day.missed .dcircle{background:rgba(232,96,76,0.12); border-color:var(--red); color:var(--red); font-weight:700;}
+  .week-day.today .dcircle{border-color:var(--gold); border-width:2px;}
+  .week-day.today:not(.done) .dcircle{animation:glowPulse 1.6s ease-in-out infinite;}
+  @keyframes glowPulse{
+    0%,100%{box-shadow:0 0 0px rgba(242,179,61,0.5);}
+    50%{box-shadow:0 0 12px 2px rgba(242,179,61,0.7);}
   }
-  .kpi .num{font-size:26px; font-weight:700;}
-  .kpi .label{font-size:11.5px; color:var(--text-muted); margin-top:4px;}
-  .kpi.accent-cyan .num{color:var(--cyan);}
-  .kpi.accent-amber .num{color:var(--amber);}
+  .week-day .dpoints{font-size:9px; color:var(--text-muted); margin-top:4px; font-family:'Space Grotesk',sans-serif;}
+  .week-day.done .dpoints{color:var(--gold);}
+  .week-day.missed .dpoints{color:var(--red);}
+  .checkin-btn{width:100%; background:var(--gold); border:none; color:#1B1404; font-weight:700; font-size:14px; padding:12px; border-radius:10px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .checkin-btn:disabled{background:var(--surface-raised); color:var(--text-muted);}
+  .checkin-next{font-size:12px; color:var(--text-muted); text-align:center; margin-top:8px; font-family:'Space Grotesk',sans-serif; letter-spacing:0.5px;}
 
-  .panel{background:var(--surface); border:1px solid var(--line); border-radius:12px; margin-bottom:22px; overflow:hidden;}
-  .panel-head{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 18px; border-bottom:1px solid var(--line);
-  }
-  .panel-head h3{font-size:14px; font-weight:600;}
-  .panel-head input.search{
-    background:var(--surface-raised); border:1px solid var(--line); color:var(--text);
-    font-size:12.5px; padding:7px 10px; border-radius:7px; width:200px; font-family:'Inter',sans-serif;
-  }
+  /* Task / Ad rows */
+  .ad-row{display:flex; align-items:center; gap:14px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:10px;}
+  .ad-row .icon{width:42px; height:42px; border-radius:10px; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;}
+  .ad-row .info{flex:1; min-width:0;}
+  .ad-row .info .name{font-size:14.5px; font-weight:600;}
+  .ad-row .info .sub{font-size:11.5px; color:var(--text-muted); margin-top:2px;}
+  .ad-row .info .progress-track{height:5px; background:var(--line); border-radius:4px; margin-top:8px; overflow:hidden;}
+  .ad-row .info .progress-fill{height:100%; background:var(--teal); border-radius:4px; transition:width .3s ease;}
+  .ad-row .count{font-size:12px; color:var(--text-muted); white-space:nowrap; margin-top:6px;}
+  .watch-btn{background:var(--gold); color:#1B1404; border:none; font-family:'Inter',sans-serif; font-weight:600; font-size:13px; padding:9px 16px; border-radius:10px; cursor:pointer; white-space:nowrap;}
+  .watch-btn:disabled{background:var(--surface-raised); color:var(--text-muted); cursor:not-allowed;}
 
-  table{width:100%; border-collapse:collapse;}
-  th{
-    text-align:left; font-size:11px; color:var(--text-muted); font-weight:600;
-    padding:10px 18px; border-bottom:1px solid var(--line); background:var(--surface-raised);
-  }
-  td{padding:11px 18px; font-size:13px; border-bottom:1px solid var(--line);}
-  tr:last-child td{border-bottom:none;}
-  .num-cell{font-family:'IBM Plex Mono',monospace; font-size:12.5px;}
-  .addr-cell{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--text-muted);}
+  .ads-note{font-size:12.5px; color:var(--text-muted); line-height:1.5; margin:16px 0;}
 
-  .pill{font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px; display:inline-block;}
-  .pill.eligible{background:rgba(74,222,128,0.12); color:var(--green);}
-  .pill.pending{background:rgba(240,101,78,0.12); color:var(--red);}
-  .pill.review{background:rgba(96,165,250,0.12); color:var(--blue);}
+  /* Earn page — two sections with per-section subtotal */
+  .earn-section-head{display:flex; align-items:center; justify-content:space-between; margin:22px 0 10px;}
+  .earn-section-head .stitle{font-size:13px; color:var(--text-muted); font-weight:500;}
+  .earn-section-head .ssubtotal{font-size:13px; font-weight:700; font-family:'Space Grotesk',sans-serif;}
+  .earn-section-head .ssubtotal.ap{color:var(--gold);}
+  .earn-section-head .ssubtotal.up{color:var(--up-color);}
+  .earn-toggle{display:flex; gap:8px;}
+  .earn-toggle-btn{flex:1; background:var(--surface); border:1px solid var(--line); color:var(--text-muted); font-family:'Inter',sans-serif; font-weight:700; font-size:13.5px; padding:12px; border-radius:12px; cursor:pointer;}
+  .earn-toggle-btn.active{background:var(--gold); color:#1B1404; border-color:var(--gold);}
+  .earn-section-head-premium{display:flex; align-items:center; justify-content:space-between; background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border:1px solid var(--line); border-radius:14px; padding:14px 18px; margin:18px 0 10px; box-shadow:0 4px 14px rgba(0,0,0,0.18);}
+  .earn-section-head-premium .eshp-title{font-size:13px; color:var(--text-muted); font-weight:600;}
+  .earn-section-head-premium .eshp-val{font-size:18px; font-weight:700; font-family:'Space Grotesk',sans-serif;}
+  .earn-section-head-premium.ap{border-color:var(--gold-dim);}
+  .earn-section-head-premium.ap .eshp-val{color:var(--gold);}
+  .earn-section-head-premium.up{border-color:var(--up-dim);}
+  .earn-section-head-premium.up .eshp-val{color:var(--up-color);}
+  .coming-soon-box{background:var(--surface); border:1px dashed var(--line); border-radius:14px; padding:24px 16px; text-align:center; color:var(--text-muted); font-size:12.5px; line-height:1.6;}
 
-  .row-actions button{
-    font-family:'Inter',sans-serif; font-size:12px; font-weight:600; border:none;
-    padding:6px 12px; border-radius:7px; cursor:pointer; margin-right:6px;
-  }
-  .btn-approve{background:rgba(74,222,128,0.15); color:var(--green);}
-  .btn-reject{background:rgba(240,101,78,0.15); color:var(--red);}
+  /* AP/UP pill badges (leaderboard, profile) */
+  .ap-tag, .up-tag{font-size:11px; font-weight:700; padding:2px 8px; border-radius:8px; font-family:'Space Grotesk',sans-serif;}
+  .ap-tag{background:rgba(242,179,61,0.12); color:var(--gold);}
+  .up-tag{background:rgba(74,222,128,0.12); color:var(--up-color);}
 
-  .tab-content{display:none;}
-  .tab-content.active{display:block;}
+  /* Settings gear + modal */
+  .settings-gear{position:absolute; top:14px; right:14px; background:var(--surface-raised); border:1px solid var(--line); width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; cursor:pointer; color:var(--text-muted);}
+  .settings-overlay{position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:900; display:none; align-items:flex-end; justify-content:center;}
+  .settings-overlay.active{display:flex;}
+  .settings-sheet{background:var(--surface); border-radius:20px 20px 0 0; width:100%; max-width:480px; padding:20px; padding-bottom:calc(20px + env(safe-area-inset-bottom));}
+  .settings-sheet h3{font-size:15px; margin-bottom:16px;}
+  .settings-row{display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--line);}
+  .settings-row:last-child{border-bottom:none;}
+  .settings-row .slabel{font-size:13.5px; font-weight:600;}
+  .settings-row .shint{font-size:11px; color:var(--text-muted); margin-top:2px;}
+  .settings-btn{background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:12.5px; font-weight:600; padding:8px 14px; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .theme-switch{display:flex; gap:6px;}
+  .theme-switch button{background:var(--surface-raised); border:1px solid var(--line); color:var(--text-muted); font-size:11.5px; font-weight:600; padding:7px 12px; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .theme-switch button.active{background:var(--gold); color:#1B1404; border-color:var(--gold);}
+  .settings-close{width:100%; margin-top:16px; background:none; border:none; color:var(--text-muted); font-size:13px; padding:10px; cursor:pointer; font-family:'Inter',sans-serif;}
 
-  .flag-note{font-size:11px; color:var(--amber); margin-top:2px;}
-.wm-btn{background:var(--surface);border:1px solid var(--line);color:var(--text);padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit}
-.wm-btn.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:600}
-.wm-btn.active[data-mode="off"]{background:#d9534f;border-color:#d9534f}
+  /* Profile stat readout (replaces the old inline edit button area) */
+  .profile-breakdown{margin-top:16px; padding-top:16px; border-top:1px solid var(--line);}
+  .editing-mode .profile-breakdown{display:none;}
+  .pb-row{display:flex; justify-content:space-between; align-items:center; padding:6px 0; font-size:12.5px;}
+  .pb-row .pbl{color:var(--text-muted);}
+  .pb-row .pbv{font-weight:600; font-family:'Space Grotesk',sans-serif;}
+  .pb-row.ap .pbv{color:var(--gold);}
+  .pb-row.up .pbv{color:var(--up-color);}
+  .pb-divider{height:1px; background:var(--line); margin:8px 0;}
+
+  /* Leaderboard — premium styling */
+  .podium{display:flex; align-items:flex-end; gap:10px; margin:20px 0 10px;}
+  .podium-item{flex:1; text-align:center; background:linear-gradient(180deg, var(--surface-raised), var(--surface)); border:1px solid var(--line); border-radius:16px; padding:14px 8px; box-shadow:0 4px 14px rgba(0,0,0,0.25);}
+  .podium-item.gold{order:2; min-height:186px; border-color:var(--gold); padding-top:12px; box-shadow:0 6px 20px rgba(242,179,61,0.25);}
+  .podium-item.silver{order:1; min-height:150px;}
+  .podium-item.bronze{order:3; min-height:128px;}
+  .podium-hat{font-size:24px; margin-bottom:4px;}
+  .podium-avatar{width:60px; height:60px; border-radius:50%; background:var(--surface-raised); margin:0 auto 8px; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--gold); overflow:hidden; font-size:19px; border:2px solid var(--line);}
+  .podium-item.gold .podium-avatar{width:68px; height:68px; border-color:var(--gold);}
+  .podium-avatar img{width:100%; height:100%; object-fit:cover;}
+  .podium-item .pname{font-size:12.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .podium-item .ppts{font-size:11.5px; color:var(--gold); margin-top:2px; font-weight:600;}
+
+  .lb-row{display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:10px 14px; margin-bottom:8px;}
+  .lb-row .rank{width:26px; font-size:13px; color:var(--text-muted); font-weight:600; text-align:center;}
+  .lb-row .avatar{width:42px; height:42px; border-radius:50%; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:600; color:var(--gold); overflow:hidden;}
+  .lb-row .avatar img{width:100%; height:100%; object-fit:cover;}
+  .lb-row .name{flex:1; font-size:13.5px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .lb-row .pts{font-size:13px; font-weight:600; color:var(--gold);}
+  .lb-row.you{border-color:var(--gold); box-shadow:0 0 0 1px var(--gold) inset;}
+
+  /* Referral */
+  .ref-link-box{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; margin-top:16px;}
+  .ref-link-box .label{font-size:12.5px; color:var(--text-muted); margin-bottom:8px;}
+  .ref-link-row{display:flex; gap:8px;}
+  .ref-link-row input{flex:1; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:12.5px; padding:10px 12px; border-radius:10px; font-family:monospace; overflow:hidden; text-overflow:ellipsis;}
+  .copy-btn{background:var(--gold); border:none; color:#1B1404; font-weight:600; font-size:13px; padding:0 16px; border-radius:10px; cursor:pointer;}
+  .ref-stats{display:flex; gap:10px; margin-top:16px;}
+  .ref-stat{flex:1; background:var(--surface-raised); border-radius:12px; padding:12px; text-align:center;}
+  .ref-stat .num{font-size:20px; font-weight:700;}
+  .ref-stat .label{font-size:10.5px; color:var(--text-muted); margin-top:2px;}
+
+  .ref-user{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:10px;}
+  .ref-user-top{display:flex; align-items:center; gap:12px;}
+  .ref-user .avatar{width:38px; height:38px; border-radius:50%; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:14px; color:var(--gold); flex-shrink:0;}
+  .ref-user .info{flex:1;}
+  .ref-user .info .name{font-size:14px; font-weight:600;}
+  .ref-user .info .sub{font-size:11.5px; color:var(--text-muted); margin-top:2px;}
+  .badge{font-size:11px; font-weight:600; padding:4px 9px; border-radius:20px;}
+  .badge.eligible{background:rgba(45,212,191,0.12); color:var(--teal);}
+  .badge.pending{background:rgba(232,96,76,0.12); color:var(--red);}
+  .ref-progress-track{height:6px; background:var(--line); border-radius:4px; margin-top:10px; overflow:hidden;}
+  .ref-progress-fill{height:100%; border-radius:4px; transition:width .3s ease;}
+  .ref-commission{font-size:11px; color:var(--text-muted); margin-top:8px;}
+
+  /* Profile */
+  .profile-card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; margin-top:16px; position:relative;}
+  .profile-head{display:flex; align-items:center; gap:14px;}
+  .profile-head .avatar-wrap{position:relative; width:64px; height:64px; flex-shrink:0;}
+  .profile-head .avatar{width:64px; height:64px; border-radius:50%; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; color:var(--gold); overflow:hidden;}
+  .profile-head .avatar img{width:100%; height:100%; object-fit:cover;}
+  .avatar-change-overlay{position:absolute; inset:0; border-radius:50%; background:rgba(0,0,0,0.55); display:none; align-items:center; justify-content:center; font-size:10px; font-weight:600; color:#fff; cursor:pointer; text-align:center;}
+  .editing .avatar-change-overlay{display:flex;}
+  .profile-head .name{font-size:18px; font-weight:700;}
+  .profile-head .name-input{font-size:16px; font-weight:700; background:var(--surface-raised); border:1px solid var(--gold); color:var(--text); border-radius:8px; padding:7px 10px; font-family:'Inter',sans-serif; display:none; width:100%; margin-top:2px;}
+  .editing .name{display:none;}
+  .editing .name-input{display:block;}
+  .profile-head .id{font-size:12.5px; color:var(--text-muted); margin-top:2px;}
+  .edit-toggle-btn{width:100%; margin-top:16px; background:var(--surface-raised); border:1px solid var(--line); color:var(--text-muted); font-size:13px; font-weight:600; cursor:pointer; padding:10px; border-radius:10px; font-family:'Inter',sans-serif; display:none;}
+  .editing-mode .edit-toggle-btn{display:block;}
+  .edit-toggle-btn.done{background:var(--gold); color:#1B1404; border-color:var(--gold);}
+
+  .stat-grid{display:flex; gap:10px; margin:20px 0;}
+  .stat-card{flex:1; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px;}
+  .stat-card .num{font-size:20px; font-weight:700;}
+  .stat-card .label{font-size:11.5px; color:var(--text-muted); margin-top:4px;}
+
+  .range-toggle{display:flex; gap:6px; margin-bottom:12px;}
+  .range-toggle button{flex:1; background:var(--surface-raised); border:1px solid var(--line); color:var(--text-muted); font-size:12px; font-weight:600; padding:8px; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .range-toggle button.active{background:var(--gold); color:#1B1404; border-color:var(--gold);}
+
+  .chart-box{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:20px;}
+  .chart-legend{display:flex; gap:16px; font-size:11.5px; margin-top:8px;}
+  .chart-legend span{display:flex; align-items:center; gap:6px; color:var(--text-muted);}
+  .dot{width:8px; height:8px; border-radius:50%; display:inline-block;}
+  .chart-loading{text-align:center; font-size:11.5px; color:var(--text-muted); padding:20px 0;}
+
+
+  /* Notifications bell + page */
+  .home-user{flex:1;}
+  .bell-btn{position:relative; width:40px; height:40px; border-radius:12px; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:18px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center;}
+  .bell-badge{position:absolute; top:-5px; right:-5px; min-width:17px; height:17px; padding:0 4px; border-radius:9px; background:var(--red,#F0654E); color:#fff; font-size:10px; font-weight:700; display:none; align-items:center; justify-content:center;}
+  .notice-item{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:10px;}
+  .notice-item.unread{border-color:var(--gold-dim);}
+  .notice-item .nt{font-size:13.5px; font-weight:600; display:flex; align-items:center; gap:6px;}
+  .notice-item .nb{font-size:12.5px; color:var(--text-muted); margin-top:5px; line-height:1.5; white-space:pre-wrap; word-break:break-word;}
+  .notice-item .nd{font-size:10.5px; color:var(--text-muted); margin-top:7px; opacity:0.8;}
+
+  /* Withdraw cooldown */
+  .wd-cooldown{background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-top:12px; text-align:center;}
+  .wd-cd-label{font-size:12px; color:var(--text-muted); margin-bottom:10px;}
+  .wd-cd-grid{display:flex; gap:8px; justify-content:center;}
+  .wd-cd-cell{flex:1; max-width:72px; background:rgba(0,0,0,0.18); border-radius:10px; padding:8px 0;}
+  .wd-cd-num{font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:700; color:var(--gold);}
+  .wd-cd-unit{font-size:9.5px; color:var(--text-muted); margin-top:2px;}
+  .wd-cd-open{font-size:15px; font-weight:700; color:var(--green,#4ADE80);}
+  .wd-cd-note{font-size:11px; color:var(--text-muted); margin-top:10px;}
+
+  /* Withdraw notice marquee */
+  .withdraw-notice{background:var(--indigo-bg); border:1px solid var(--indigo); border-radius:12px; padding:10px 0; margin-top:16px; overflow:hidden; white-space:nowrap;}
+  .withdraw-notice-track{display:inline-block; padding-left:100%; animation:marquee 18s linear infinite; font-size:12.5px; color:var(--indigo-text); font-weight:500;}
+  @keyframes marquee{ from{transform:translateX(0);} to{transform:translateX(-100%);} }
+
+  .withdraw-box{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 16px 18px; margin-top:12px;}
+  .withdraw-box .title{font-size:14.5px; font-weight:600; margin-bottom:4px;}
+  .withdraw-box .sub{font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.5;}
+  .withdraw-box select, .withdraw-box input{width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:13.5px; padding:11px 12px; border-radius:10px; margin-bottom:10px; font-family:'Inter',sans-serif;}
+  .withdraw-submit{width:100%; background:var(--gold); border:none; color:#1B1404; font-weight:700; font-size:14px; padding:12px; border-radius:10px; cursor:pointer;}
+  .withdraw-submit:disabled{background:var(--surface-raised); color:var(--text-muted);}
+  .withdraw-note{font-size:11px; color:var(--text-muted); margin-top:10px; text-align:center;}
+
+  /* Payout season boxes — premium cards */
+  .payouts-section-title{font-size:14.5px; font-weight:600; margin:20px 4px 10px;}
+  .season-box{background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border:1px solid var(--gold-dim); border-radius:16px; padding:16px; margin-bottom:12px; box-shadow:0 4px 16px rgba(0,0,0,0.2);}
+  .season-box .sname{font-size:15px; font-weight:700; color:var(--gold);}
+  .season-box .sdates{font-size:11.5px; color:var(--text-muted); margin-top:2px; margin-bottom:14px;}
+  .season-box .srow{display:flex; gap:10px;}
+  .season-box .sstat{flex:1; background:rgba(0,0,0,0.18); border-radius:10px; padding:10px; text-align:center;}
+  .season-box .sstat .snum{font-size:16px; font-weight:700;}
+  .season-box .sstat .slabel{font-size:9.5px; color:var(--text-muted); margin-top:2px;}
+
+  /* LFA page */
+  .lfa-frame{width:100%; height:65vh; border:1px solid var(--line); border-radius:14px; margin-top:16px; background:var(--surface);}
+  .lfa-doc-row{display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-top:10px; text-decoration:none; color:var(--text);}
+  .lfa-doc-row .icon{font-size:20px;}
+  .lfa-doc-row .label{flex:1; font-size:13.5px; font-weight:600;}
+  .lfa-doc-row .arrow{color:var(--text-muted);}
+
+  /* Bottom nav */
+  .bottom-nav{position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; background:var(--surface); border-top:1px solid var(--line); display:flex; padding:8px 4px calc(8px + env(safe-area-inset-bottom));}
+  .nav-item{flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; color:var(--text-muted); font-family:'Inter',sans-serif; font-size:9.5px; padding:5px 0; cursor:pointer;}
+  .nav-item .icon{font-size:17px; line-height:1;}
+  .nav-item.active{color:var(--gold);}
+
+  /* Profile premium AP/UP balance box */
+  .profile-balance-premium{display:flex; align-items:center; margin-top:18px; padding-top:18px; border-top:1px solid var(--line); background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border-radius:14px; padding:16px; margin-top:16px; border-top:none;}
+  .pbp-item{flex:1; text-align:center;}
+  .pbp-label{font-size:11px; font-weight:700; letter-spacing:0.5px; font-family:'Space Grotesk',sans-serif;}
+  .pbp-item.ap .pbp-label{color:var(--gold);}
+  .pbp-item.up .pbp-label{color:var(--up-color);}
+  .pbp-val{font-size:24px; font-weight:700; font-family:'Space Grotesk',sans-serif; margin-top:4px;}
+  .pbp-item.ap .pbp-val{color:var(--gold);}
+  .pbp-item.up .pbp-val{color:var(--up-color);}
+  .pbp-divider{width:1px; height:38px; background:var(--line);}
+
+  /* Withdraw premium clickable box (opens hidden withdraw page) */
+  .withdraw-premium-box{display:flex; align-items:center; justify-content:space-between; background:linear-gradient(155deg, var(--indigo-bg), var(--surface)); border:1px solid var(--indigo); border-radius:14px; padding:16px 18px; margin-top:12px; cursor:pointer; box-shadow:0 4px 16px rgba(99,102,241,0.15);}
+  .wpb-title{font-size:14.5px; font-weight:700;}
+  .wpb-sub{font-size:11.5px; color:var(--text-muted); margin-top:2px;}
+  .wpb-arrow{font-size:22px; color:var(--indigo);}
+
+  /* Withdraw page (hidden, not in bottom nav) */
+  .withdraw-page-header{display:flex; align-items:center; gap:14px; padding:18px 0 6px;}
+  .wp-back{background:var(--surface); border:1px solid var(--line); color:var(--text); font-size:13px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; padding:8px 14px; border-radius:10px;}
+  .wp-title{font-size:17px; font-weight:700;}
+  .wd-balance-row{display:flex; gap:10px; margin:16px 0;}
+  .wd-balance-item{flex:1; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center;}
+  .wd-label{font-size:10.5px; font-weight:700; font-family:'Space Grotesk',sans-serif;}
+  .wd-balance-item.ap .wd-label{color:var(--gold);}
+  .wd-balance-item.up .wd-label{color:var(--up-color);}
+  .wd-val{font-size:20px; font-weight:700; margin-top:4px; font-family:'Space Grotesk',sans-serif;}
+  .wd-balance-item.ap .wd-val{color:var(--gold);}
+  .wd-balance-item.up .wd-val{color:var(--up-color);}
+  .wd-section{margin-bottom:18px;}
+  .wd-section-title{font-size:12.5px; color:var(--text-muted); font-weight:600; margin-bottom:8px;}
+  .wd-allocation-box{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px; text-align:center;}
+  .wd-alloc-formula{font-size:10.5px; color:var(--text-muted); margin-bottom:6px;}
+  .wd-alloc-amount{font-size:22px; font-weight:700; color:var(--gold); font-family:'Space Grotesk',sans-serif;}
+  .wd-swap-box{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px;}
+  .wd-swap-row{display:flex; align-items:center; gap:8px;}
+  .wd-swap-row input{flex:1; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:16px; font-weight:700; padding:10px 12px; border-radius:10px; font-family:'Space Grotesk',sans-serif;}
+  .wd-swap-unit{font-size:12.5px; color:var(--up-color); font-weight:700;}
+  .wd-max-btn{background:var(--up-dim); color:var(--up-color); border:1px solid var(--up-color); font-size:11px; font-weight:700; padding:8px 10px; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .wd-swap-arrow{text-align:center; font-size:16px; color:var(--text-muted); margin:8px 0;}
+  .wd-swap-result{text-align:center; font-size:18px; font-weight:700; color:var(--up-color); font-family:'Space Grotesk',sans-serif;}
+  .wd-total-box{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px;}
+  .wd-total-row{display:flex; justify-content:space-between; font-size:12.5px; color:var(--text-muted); padding:5px 0;}
+  .wd-total-row.grand{font-size:15px; font-weight:700; color:var(--text);}
+  .wd-total-divider{height:1px; background:var(--line); margin:6px 0;}
+
+  /* Season boxes — expandable participants */
+  .season-box-toggle{display:flex; align-items:center; justify-content:center; gap:6px; margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.08); font-size:11.5px; color:var(--text-muted); cursor:pointer;}
+  .season-box-toggle .arrow{transition:transform 0.2s;}
+  .season-box-toggle.expanded .arrow{transform:rotate(180deg);}
+  .season-participants{display:none; margin-top:10px;}
+  .season-participants.expanded{display:block;}
+  .sp-row{display:flex; justify-content:space-between; font-size:11.5px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.06);}
+  .sp-row .sp-addr{font-family:monospace; color:var(--text-muted);}
+
+  /* Crop modal */
+  .crop-overlay{position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:none; align-items:center; justify-content:center; flex-direction:column;}
+  .crop-overlay.active{display:flex;}
+  .crop-frame{width:280px; height:280px; border-radius:50%; overflow:hidden; position:relative; touch-action:none; border:2px solid var(--gold); background:#000;}
+  .crop-frame img{position:absolute; top:0; left:0; transform-origin:0 0; cursor:grab; user-select:none; -webkit-user-drag:none;}
+  .crop-controls{width:280px; margin-top:20px;}
+  .crop-controls input[type=range]{width:100%;}
+  .crop-actions{display:flex; gap:10px; margin-top:16px; width:280px;}
+  .crop-actions button{flex:1; padding:11px; border-radius:10px; border:none; font-weight:700; font-size:13.5px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .crop-actions .cancel-btn{background:var(--surface-raised); color:var(--text-muted);}
+  .crop-actions .confirm-btn{background:var(--gold); color:#1B1404;}
+  .crop-hint{color:var(--text-muted); font-size:11.5px; margin-top:12px;}
 </style>
 </head>
 <body>
 
-<div id="loginGate">
-  <h1>Admin access</h1>
-  <input type="password" id="adminPass" placeholder="Admin passphrase">
-  <button onclick="tryLogin()">Enter</button>
-  <div id="loginError"></div>
-</div>
+  <div class="topbar">
+    <div class="brand">Live For Ads</div>
+    <div class="season" id="seasonLabel">Testing Season</div>
+  </div>
 
-<div id="dashboard">
-  <div class="shell">
-    <div class="sidebar">
-      <div class="brand">EarnApp</div>
-      <div class="brand-sub">Admin panel</div>
-      <nav>
-        <button class="active" onclick="showTab('overview', this)">Overview</button>
-        <button onclick="showTab('users', this)">Users</button>
-        <button onclick="showTab('withdrawals', this)">Withdrawals</button>
-        <button onclick="showTab('tasks', this)">Tasks</button>
-        <button onclick="showTab('notices', this)">Notices</button>
-        <button onclick="showTab('payouts', this)">Payouts</button>
-        <button onclick="showTab('settings', this)">Settings</button>
-      </nav>
-      <div class="season-tag">Current: Testing Season<br>Sep 1 – Oct 31</div>
+  <!-- ================= HOME ================= -->
+  <div class="page active" id="page-home">
+    <div class="home-header">
+      <div class="home-user">
+        <div class="home-avatar" id="homeAvatar">U</div>
+        <div class="home-name" id="homeName">User</div>
+      </div>
+      <button class="bell-btn" onclick="showPage('notices', null)" aria-label="Notifications">🔔<span class="bell-badge" id="bellBadge">0</span></button>
+      <div class="home-balance-box">
+        <div class="hb-row"><span class="hb-label ap">AP</span><span class="hb-val ap" id="homeAp">0</span></div>
+        <div class="hb-row"><span class="hb-label up">UP</span><span class="hb-val up" id="homeUp">0</span></div>
+      </div>
     </div>
 
-    <div class="main">
-
-      <!-- OVERVIEW -->
-      <div class="tab-content active" id="tab-overview">
-        <div class="topline">
-          <div><h2>Overview</h2><div class="sub">Season-to-date snapshot</div></div>
-        </div>
-        <div class="kpi-row">
-          <div class="kpi"><div class="num" id="kpiUsers">—</div><div class="label">Total users</div></div>
-          <div class="kpi accent-cyan"><div class="num" id="kpiAds">—</div><div class="label">Ads watched (season)</div></div>
-          <div class="kpi accent-amber"><div class="num" id="kpiPoints">—</div><div class="label">Total points issued</div></div>
-          <div class="kpi"><div class="num" id="kpiPending">—</div><div class="label">Pending withdrawals</div></div>
-        </div>
-        <div class="panel">
-          <div class="panel-head"><h3>Top earners this season</h3></div>
-          <table>
-            <thead><tr><th>User</th><th>Telegram ID</th><th>Points</th><th>Referrals</th></tr></thead>
-            <tbody id="topEarnersBody"></tbody>
-          </table>
-        </div>
+    <div class="checkin-box">
+      <div class="checkin-head">
+        <div class="title">Daily Check-in</div>
+        <div class="streak" id="streakLabel">🔥 0 day streak</div>
       </div>
+      <div class="week-strip" id="weekStrip"></div>
+      <button class="checkin-btn" id="checkinBtn" onclick="doCheckin()">Check in — claim points</button>
+      <div class="checkin-next" id="checkinNext"></div>
+    </div>
 
-      <!-- USERS -->
-      <div class="tab-content" id="tab-users">
-        <div class="topline">
-          <div><h2>Users</h2><div class="sub">Every user, tracked permanently by Telegram ID</div></div>
-          <input class="search" placeholder="Search name or ID" oninput="filterUsers(this.value)">
-        </div>
-        <div class="panel">
-          <table>
-            <thead><tr><th>Name</th><th>TG ID</th><th>AP</th><th>UP</th><th>Ads (season)</th><th>Joined</th><th>Status</th><th></th></tr></thead>
-            <tbody id="usersBody"></tbody>
-          </table>
-        </div>
+    <div class="section-label">Tasks</div>
+    <div id="taskList"></div>
+  </div>
+
+  <!-- ================= EARN (Offerwall + Ads) ================= -->
+  <div class="page" id="page-ads">
+    <div class="earn-toggle" style="margin-top:16px;">
+      <button class="earn-toggle-btn active" id="earnTabOfferwall" onclick="setEarnSubTab('offerwall')">Reward Wall</button>
+      <button class="earn-toggle-btn" id="earnTabAds" onclick="setEarnSubTab('ads')">ADS</button>
+    </div>
+
+    <div class="earn-subpage" id="earnSubpage-offerwall">
+      <div class="earn-section-head-premium up">
+        <div class="eshp-title">Offerwall</div>
+        <div class="eshp-val" id="offerwallSubtotal">0 UP</div>
       </div>
-
-      <!-- USER DETAILS (full drill-down, opened from a user row) -->
-      <div class="tab-content" id="tab-user-details">
-        <div class="topline">
-          <div><h2 id="udName">User</h2><div class="sub" id="udSub">TG ID: —</div></div>
-          <button class="btn-reject" onclick="backToUsers()">← Back to Users</button>
-        </div>
-
-        <div class="kpi-row">
-          <div class="kpi accent-amber"><div class="num" id="udAp">0</div><div class="label">Total AP</div></div>
-          <div class="kpi accent-cyan"><div class="num" id="udUp">0</div><div class="label">Total UP</div></div>
-          <div class="kpi"><div class="num" id="udAds">0</div><div class="label">Ads watched (all-time)</div></div>
-          <div class="kpi"><div class="num" id="udStreak">0</div><div class="label">Check-in streak</div></div>
-        </div>
-
-        <div class="panel" style="padding:16px; margin-bottom:20px;">
-          <h3 style="margin-bottom:10px;">AP breakdown</h3>
-          <div id="udApBreakdown" style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;"></div>
-        </div>
-
-        <div class="panel" style="margin-bottom:20px;">
-          <div class="panel-head"><h3>Referrals (<span id="udRefCount">0</span>)</h3></div>
-          <table>
-            <thead><tr><th>Name</th><th>TG ID</th><th>Ads</th><th>Status</th><th>Commission</th><th>Points</th></tr></thead>
-            <tbody id="udReferralsBody"></tbody>
-          </table>
-        </div>
-
-        <div class="panel" style="padding:16px;">
-          <h3 style="margin-bottom:12px;">Activity timeline</h3>
-          <div id="udActivityList" style="max-height:520px; overflow-y:auto;"></div>
-        </div>
+      <div class="ads-note">Complete simple offers for real USD value. 100 UP = 1 USDT.</div>
+      <iframe id="offerwallFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
+      <div id="offerwallFallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
+        <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">The Reward Wall didn't load. This can happen occasionally — try again below.</div>
+        <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall()">Reload</button>
+        <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect()">Open directly</button>
       </div>
+    </div>
 
-      <!-- WITHDRAWALS -->
-      <div class="tab-content" id="tab-withdrawals">
-        <div class="topline">
-          <div><h2>Withdrawals</h2><div class="sub">Review window: 3rd–5th of the month</div></div>
-        </div>
-        <div class="panel">
-          <table>
-            <thead><tr><th>User</th><th>Points</th><th>Allocation (USD)</th><th>Network</th><th>Address</th><th>Status</th><th></th></tr></thead>
-            <tbody id="withdrawalsBody"></tbody>
-          </table>
-        </div>
+    <div class="earn-subpage" id="earnSubpage-ads" style="display:none;">
+      <div class="earn-section-head-premium ap">
+        <div class="eshp-title">Ads</div>
+        <div class="eshp-val" id="adsSubtotal">0 AP</div>
       </div>
-
-      <!-- TASKS -->
-      <div class="tab-content" id="tab-tasks">
-        <div class="topline">
-          <div><h2>Tasks</h2><div class="sub">One-time tasks users see on the Home page</div></div>
-        </div>
-        <div class="panel" style="padding:16px;">
-          <h3 style="margin-bottom:12px;">Add new task</h3>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
-            <input id="newTaskTitle" placeholder="Title (e.g. Subscribe to channel)" style="background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:9px 10px; border-radius:7px; font-size:13px;">
-            <select id="newTaskType" style="background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:9px 10px; border-radius:7px; font-size:13px;">
-              <option value="channel">Telegram channel</option>
-              <option value="webpage">Web page visit</option>
-              <option value="pdf">Whitepaper / PDF</option>
-              <option value="custom">Custom</option>
-            </select>
-            <input id="newTaskUrl" placeholder="URL to open" style="background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:9px 10px; border-radius:7px; font-size:13px;">
-            <input id="newTaskPoints" type="number" placeholder="Points (default 50)" style="background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:9px 10px; border-radius:7px; font-size:13px;">
-          </div>
-          <button class="btn-approve" style="padding:9px 16px;" onclick="createNewTask()">+ Add task</button>
-        </div>
-        <div class="panel">
-          <table>
-            <thead><tr><th>Title</th><th>Type</th><th>Points</th><th>Active</th><th></th></tr></thead>
-            <tbody id="tasksBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- SETTINGS -->
-      <div class="tab-content" id="tab-settings">
-        <div class="topline">
-          <div><h2>Settings</h2><div class="sub">Season name and withdrawal window control</div></div>
-        </div>
-        <div class="panel" style="padding:18px;">
-          <div style="margin-bottom:16px;">
-            <label style="font-size:12.5px; color:var(--text-muted); display:block; margin-bottom:6px;">Current season name (shown in the app's top bar)</label>
-            <input id="seasonNameInput" placeholder="e.g. Season 1" style="width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:10px 12px; border-radius:8px; font-size:13.5px;">
-          </div>
-          <div style="margin-bottom:16px;">
-            <label style="font-size:12.5px; color:var(--text-muted); display:block; margin-bottom:6px;">Withdraw notice (scrolling banner users see)</label>
-            <textarea id="withdrawNoticeInput" rows="2" placeholder="e.g. Season 1 payouts will be sent between Feb 3-5." style="width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:10px 12px; border-radius:8px; font-size:13.5px; font-family:'Inter',sans-serif; resize:vertical;"></textarea>
-          </div>
-          <div style="margin-bottom:16px;">
-            <label style="font-size:12.5px; color:var(--text-muted); display:block; margin-bottom:6px;">Note shown below the Withdraw button when the window is closed</label>
-            <textarea id="withdrawClosedNoteInput" rows="2" placeholder="e.g. The withdrawal window opens on the 1st-2nd of Jan, Mar, May, Jul, Sep, Nov." style="width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:10px 12px; border-radius:8px; font-size:13.5px; font-family:'Inter',sans-serif; resize:vertical;"></textarea>
-          </div>
-          <div style="margin-bottom:12px; background:var(--surface-raised); border-radius:10px; padding:12px 14px;">
-            <div style="font-size:13.5px; font-weight:600;">Withdrawals — manual control</div>
-            <div style="font-size:11.5px; color:var(--text-muted); margin:2px 0 10px;">Auto follows the schedule below. Force ON opens withdrawals even outside the scheduled days. Force OFF blocks them even inside the window (e.g. fraud review).</div>
-            <div id="withdrawModeGroup" style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button type="button" class="wm-btn" data-mode="auto" onclick="setWithdrawMode('auto')">Auto (schedule)</button>
-              <button type="button" class="wm-btn" data-mode="on" onclick="setWithdrawMode('on')">Force ON</button>
-              <button type="button" class="wm-btn" data-mode="off" onclick="setWithdrawMode('off')">Force OFF</button>
-            </div>
-            <input type="hidden" id="withdrawModeInput" value="auto">
-          </div>
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; background:var(--surface-raised); border-radius:10px; padding:12px 14px;">
-            <div>
-              <div style="font-size:13.5px; font-weight:600;">Withdrawal status right now</div>
-              <div style="font-size:11.5px; color:var(--text-muted);">Schedule: 1st–2nd of every odd month (Jan, Mar, May, Jul, Sep, Nov). <span id="withdrawModeNote"></span></div>
-            </div>
-            <span id="withdrawWindowStatus" class="pill pending">Loading…</span>
-          </div>
-          <button class="btn-approve" style="padding:10px 18px;" onclick="saveSettings()">Save settings</button>
-          <div id="settingsSaved" style="font-size:12px; color:var(--green); margin-top:10px;"></div>
-        </div>
-      </div>
-
-      <!-- PAYOUTS -->
-      <div class="tab-content" id="tab-notices">
-        <div class="topline">
-          <div><h2>Notices</h2><div class="sub">Updates users see under the 🔔 bell on the Home page</div></div>
-        </div>
-        <div class="panel" style="padding:16px;">
-          <h3 style="margin-bottom:12px;">Post a new notice</h3>
-          <input id="noticeTitle" maxlength="80" placeholder="Title (e.g. New task added)" style="width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:9px 10px; border-radius:7px; font-size:13px; margin-bottom:10px;">
-          <textarea id="noticeBody" maxlength="1000" rows="4" placeholder="Message (optional)" style="width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:9px 10px; border-radius:7px; font-size:13px; font-family:inherit; margin-bottom:10px; resize:vertical;"></textarea>
-          <label style="display:flex; align-items:center; gap:8px; font-size:12.5px; margin-bottom:12px; cursor:pointer;">
-            <input type="checkbox" id="noticeSendTg"> Also send this as a Telegram message to all users
-          </label>
-          <button class="btn-approve" style="padding:9px 16px; border:none; border-radius:7px; cursor:pointer; font-weight:600;" onclick="postNotice()">Post notice</button>
-          <span id="noticeStatus" style="font-size:12px; margin-left:10px; color:var(--text-muted);"></span>
-        </div>
-        <div class="panel" style="padding:16px;">
-          <h3 style="margin-bottom:6px;">Automatic notices</h3>
-          <div style="font-size:12px; color:var(--text-muted); line-height:1.6; margin-bottom:12px;">
-            Sent by the system on their own: when you switch withdrawals to Force ON, when the scheduled window opens (1st of odd months), and 10 hours and 6 hours before it closes. They always appear under the 🔔 bell.
-          </div>
-          <label style="display:flex; align-items:center; gap:8px; font-size:12.5px; cursor:pointer;">
-            <input type="checkbox" id="autoNoticeTg" onchange="saveAutoNoticeTg()"> Also send automatic notices as Telegram messages to all users
-          </label>
-        </div>
-        <div class="panel">
-          <table>
-            <thead><tr><th>Type</th><th>Title / message</th><th>Posted</th><th></th></tr></thead>
-            <tbody id="noticesBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="tab-content" id="tab-payouts">
-        <div class="topline">
-          <div><h2>Payouts</h2><div class="sub">Season boxes shown to users on the Profile page</div></div>
-        </div>
-        <div class="panel" style="padding:16px;">
-          <h3 style="margin-bottom:12px;">Add new season box</h3>
-          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:10px;">
-            <input id="newSeasonName" placeholder="Season name (e.g. Season 1)" style="background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:9px 10px; border-radius:7px; font-size:13px;">
-            <input id="newSeasonStart" type="date" style="background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:9px 10px; border-radius:7px; font-size:13px;">
-            <input id="newSeasonEnd" type="date" style="background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:9px 10px; border-radius:7px; font-size:13px;">
-          </div>
-          <button class="btn-approve" style="padding:9px 16px;" onclick="createSeasonBox()">+ Add season box</button>
-        </div>
-        <div id="seasonBoxesAdminList"></div>
-      </div>
-
+      <div class="ads-note">Each ad gives 50 AP. 5 ads per network, then a 3-hour cooldown.</div>
+      <div id="adList"></div>
     </div>
   </div>
-</div>
+
+  <!-- ================= LEADERBOARD ================= -->
+  <div class="page" id="page-leaderboard">
+    <div class="earn-toggle" style="margin-top:16px;">
+      <button class="earn-toggle-btn active" id="lbTabAll" onclick="setLeaderboardTab('all')">All Time</button>
+      <button class="earn-toggle-btn" id="lbTabAp" onclick="setLeaderboardTab('ap')">AP</button>
+      <button class="earn-toggle-btn" id="lbTabUp" onclick="setLeaderboardTab('up')">UP</button>
+    </div>
+    <div class="section-label">Top 20 earners</div>
+    <div class="podium" id="podium"></div>
+    <div id="lbList"></div>
+    <div id="lbYou"></div>
+  </div>
+
+  <!-- ================= REFERRAL ================= -->
+  <div class="page" id="page-referral">
+    <div class="ref-link-box">
+      <div class="label">Your referral link</div>
+      <div class="ref-link-row">
+        <input type="text" id="refLinkInput" readonly value="https://t.me/LiveForAds_Bot?start=ref_000000">
+        <button class="copy-btn" onclick="copyRefLink()">Copy</button>
+      </div>
+      <div class="ref-stats">
+        <div class="ref-stat"><div class="num" id="refCount">0</div><div class="label">Referred</div></div>
+        <div class="ref-stat"><div class="num" id="refEligible">0</div><div class="label">Eligible</div></div>
+        <div class="ref-stat"><div class="num" id="refEarned">0</div><div class="label">Points earned</div></div>
+      </div>
+    </div>
+
+    <div class="section-label">Your referrals</div>
+    <div id="refList"></div>
+  </div>
+
+  <!-- ================= LFA (web view) ================= -->
+  <div class="page" id="page-lfa">
+    <div class="section-label" style="margin-top:16px;">Web View</div>
+    <iframe class="lfa-frame" id="lfaFrame" src="about:blank"></iframe>
+    <div class="section-label">Documents</div>
+    <a class="lfa-doc-row" id="lfaWhitepaperLink" href="#" target="_blank">
+      <div class="icon">📄</div>
+      <div class="label">Whitepaper (PDF)</div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="lfa-doc-row" id="lfaTermsLink" href="#" target="_blank">
+      <div class="icon">📜</div>
+      <div class="label">Terms & Privacy Policy (PDF)</div>
+      <div class="arrow">›</div>
+    </a>
+
+    <div class="section-label">Season History (LFA Token snapshot)</div>
+    <div id="lfaSeasonHistory"></div>
+  </div>
+
+  <!-- ================= PROFILE ================= -->
+  <div class="page" id="page-profile">
+    <div class="profile-card" id="profileCard">
+      <div class="settings-gear" id="settingsGear" onclick="openSettings()">⚙</div>
+      <div class="profile-head" id="profileHead">
+        <div class="avatar-wrap">
+          <div class="avatar" id="profileAvatar">U</div>
+          <div class="avatar-change-overlay" id="avatarChangeOverlay" onclick="triggerAvatarPick()">Change</div>
+        </div>
+        <div style="flex:1;">
+          <div class="name" id="profileName">User</div>
+          <input class="name-input" id="profileNameInput" type="text">
+          <div class="id" id="profileId">ID: —</div>
+        </div>
+      </div>
+      <button class="edit-toggle-btn" id="editBtn" onclick="toggleEdit()" style="display:none;">Save profile</button>
+      <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="onAvatarFileChosen(event)">
+
+      <div class="profile-balance-premium">
+        <div class="pbp-item ap" onclick="showPage('ap-history', null)" style="cursor:pointer;">
+          <div class="pbp-label">Total AP ›</div>
+          <div class="pbp-val" id="pbTotalAp">0</div>
+        </div>
+        <div class="pbp-divider"></div>
+        <div class="pbp-item up" onclick="showPage('up-history', null)" style="cursor:pointer;">
+          <div class="pbp-label">Total UP ›</div>
+          <div class="pbp-val" id="pbTotalUp">0</div>
+        </div>
+      </div>
+    </div>
+
+  <!-- ================= AVATAR CROP MODAL ================= -->
+  <div class="crop-overlay" id="cropOverlay">
+    <div class="crop-frame" id="cropFrame">
+      <img id="cropImg" src="" alt="">
+    </div>
+    <div class="crop-controls">
+      <input type="range" id="cropZoom" min="100" max="300" value="100">
+    </div>
+    <div class="crop-hint">Drag to reposition · slide to zoom</div>
+    <div class="crop-actions">
+      <button class="cancel-btn" onclick="cancelCrop()">Cancel</button>
+      <button class="confirm-btn" onclick="confirmCrop()">Use photo</button>
+    </div>
+  </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><div class="num" id="statAds">0</div><div class="label">Ads watched</div></div>
+      <div class="stat-card"><div class="num" id="statTasks">0</div><div class="label">Streak</div></div>
+      <div class="stat-card"><div class="num" id="statRef">0</div><div class="label">From referrals</div></div>
+    </div>
+
+    <div class="range-toggle">
+      <button class="active" onclick="setStatsRange('7', this)">7 Days</button>
+      <button onclick="setStatsRange('30', this)">30 Days</button>
+      <button onclick="setStatsRange('all', this)">All Time</button>
+    </div>
+
+    <div class="chart-box">
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Activity</div>
+      <svg id="chartSvg" width="100%" height="150" viewBox="0 0 320 150"></svg>
+      <div id="chartLoading" class="chart-loading" style="display:none;">Loading…</div>
+      <div class="chart-legend">
+        <span><i class="dot" style="background:var(--gold)"></i>AP</span>
+        <span><i class="dot" style="background:var(--up-color)"></i>UP</span>
+      </div>
+    </div>
+
+    <div class="withdraw-notice" id="withdrawNoticeBox" style="display:none;">
+      <div class="withdraw-notice-track" id="withdrawNoticeText"></div>
+    </div>
+
+    <div class="withdraw-premium-box" onclick="showPage('withdraw', null)">
+      <div class="wpb-left">
+        <div class="wpb-title">Withdraw</div>
+        <div class="wpb-sub" id="withdrawSub">Loading withdrawal info...</div>
+      </div>
+      <div class="wpb-arrow">›</div>
+    </div>
+
+    <div class="wd-cooldown" id="wdCooldown">
+      <div class="wd-cd-label" id="wdCdLabel">Loading...</div>
+      <div class="wd-cd-grid" id="wdCdGrid">
+        <div class="wd-cd-cell"><div class="wd-cd-num" id="wdCdD">00</div><div class="wd-cd-unit">Days</div></div>
+        <div class="wd-cd-cell"><div class="wd-cd-num" id="wdCdH">00</div><div class="wd-cd-unit">Hours</div></div>
+        <div class="wd-cd-cell"><div class="wd-cd-num" id="wdCdM">00</div><div class="wd-cd-unit">Minutes</div></div>
+        <div class="wd-cd-cell"><div class="wd-cd-num" id="wdCdS">00</div><div class="wd-cd-unit">Seconds</div></div>
+      </div>
+      <div class="wd-cd-open" id="wdCdOpen" style="display:none;">OPEN NOW</div>
+      <div class="wd-cd-note" id="wdCdNote"></div>
+    </div>
+
+    <div class="payouts-section-title">Payouts</div>
+    <div id="seasonBoxesList"></div>
+  </div>
+
+  <!-- ================= WITHDRAW (hidden page, not in bottom nav) ================= -->
+  <div class="page" id="page-withdraw">
+    <div class="withdraw-page-header">
+      <button class="wp-back" onclick="showPage('profile', document.querySelectorAll('.nav-item')[5])">‹ Back</button>
+      <div class="wp-title">Withdraw</div>
+    </div>
+
+    <div class="wd-balance-row">
+      <div class="wd-balance-item ap"><div class="wd-label">AP</div><div class="wd-val" id="wdApTotal">0</div></div>
+      <div class="wd-balance-item up"><div class="wd-label">UP</div><div class="wd-val" id="wdUpTotal">0</div></div>
+    </div>
+
+    <div class="wd-section">
+      <div class="wd-section-title">AP Allocation</div>
+      <div class="wd-allocation-box">
+        <div class="wd-alloc-formula" id="wdAllocFormula">Ad revenue pool ÷ Total AP × Your AP</div>
+        <div class="wd-alloc-amount" id="wdApAllocation">$0.00</div>
+      </div>
+    </div>
+
+    <div class="wd-section">
+      <div class="wd-section-title">UP Allocation</div>
+      <div class="wd-allocation-box">
+        <div class="wd-alloc-formula" id="wdUpFormula">Your UP ÷ 100 = USDT (converted automatically)</div>
+        <div class="wd-alloc-amount" id="wdUpAllocation">$0.00</div>
+      </div>
+    </div>
+
+    <div class="wd-section">
+      <div class="wd-section-title">Wallet Address</div>
+      <div class="withdraw-box" style="margin-top:0;">
+        <div class="sub" id="wdWindowNote">Checking withdrawal window...</div>
+        <input type="text" id="withdrawAddress" placeholder="Wallet address">
+        <select id="withdrawNetwork">
+          <option value="bep20">USDT — BEP20</option>
+          <option value="polygon">USDT — Polygon</option>
+        </select>
+
+        <div class="wd-total-box" style="margin-top:12px;">
+          <div class="wd-total-row"><span>From AP allocation</span><span id="wdFromAp">$0.00</span></div>
+          <div class="wd-total-row"><span>From UP allocation</span><span id="wdFromUp">$0.00</span></div>
+          <div class="wd-total-divider"></div>
+          <div class="wd-total-row grand"><span>Total (USDT)</span><span id="wdGrandTotal">$0.00</span></div>
+        </div>
+
+        <button class="withdraw-submit" id="withdrawBtn" onclick="submitWithdraw()">Submit request</button>
+        <div class="withdraw-note" id="withdrawStatus"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= NOTICES (hidden page) ================= -->
+  <div class="page" id="page-notices">
+    <div style="padding-top:6px;">
+      <button class="wp-back" onclick="showPage('home', document.querySelectorAll('.nav-item')[0])">‹ Back</button>
+      <div class="section-label" style="margin-top:10px;">Notifications</div>
+      <div id="noticeList"><div style="font-size:12px;color:var(--text-muted);">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- ================= AP HISTORY (hidden page) ================= -->
+  <div class="page" id="page-ap-history">
+    <div class="withdraw-page-header">
+      <button class="wp-back" onclick="showPage('profile', document.querySelectorAll('.nav-item')[5])">‹ Back</button>
+      <div class="wp-title">AP History</div>
+    </div>
+    <div id="apHistoryList" style="margin-top:14px;"></div>
+  </div>
+
+  <!-- ================= UP HISTORY (hidden page) ================= -->
+  <div class="page" id="page-up-history">
+    <div class="withdraw-page-header">
+      <button class="wp-back" onclick="showPage('profile', document.querySelectorAll('.nav-item')[5])">‹ Back</button>
+      <div class="wp-title">UP History</div>
+    </div>
+    <div id="upHistoryList" style="margin-top:14px;"></div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-item active" onclick="showPage('home', this)"><span class="icon">▣</span>Home</button>
+    <button class="nav-item" onclick="showPage('ads', this)"><span class="icon">▶</span>Earn</button>
+    <button class="nav-item" onclick="showPage('leaderboard', this)"><span class="icon">★</span>Leaders</button>
+    <button class="nav-item" onclick="showPage('referral', this)"><span class="icon">◎</span>Referral</button>
+    <button class="nav-item" onclick="showPage('lfa', this)"><span class="icon">◈</span>LFA</button>
+    <button class="nav-item" onclick="showPage('profile', this)"><span class="icon">●</span>Profile</button>
+  </div>
+
+  <!-- ================= SETTINGS SHEET ================= -->
+  <div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this) closeSettings()">
+    <div class="settings-sheet">
+      <h3>Settings</h3>
+      <div class="settings-row">
+        <div>
+          <div class="slabel">Edit Profile</div>
+          <div class="shint">Change your name and photo</div>
+        </div>
+        <button class="settings-btn" onclick="startEditFromSettings()">Edit</button>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="slabel">Theme</div>
+          <div class="shint">Choose light or dark mode</div>
+        </div>
+        <div class="theme-switch">
+          <button id="themeDarkBtn" onclick="setTheme('dark')">Dark</button>
+          <button id="themeLightBtn" onclick="setTheme('light')">Light</button>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="slabel">Connect account</div>
+          <div class="shint">Needed later for offerwall verification</div>
+        </div>
+        <button class="settings-btn" disabled style="opacity:0.5;">Coming soon</button>
+      </div>
+      <button class="settings-close" onclick="closeSettings()">Close</button>
+    </div>
+  </div>
 
 <script>
 /* ============================================================
    CONFIG
    ============================================================ */
 const API_BASE = "https://liveforadsbot-backend.onrender.com/api";
-let adminToken = ""; // set when you log in below — must match ADMIN_TOKEN in your Render env vars
+const LFA_WEBPAGE_URL = "https://rizwanur69.github.io/LiveForAdsWeb/";
+const LFA_WHITEPAPER_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/whitepaper.pdf";
+const CPALEAD_OFFERWALL_URL = "https://www.akamaicdn.org/wall/bPjTh";
+const LFA_TERMS_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/terms-and-privacy.pdf";
+const tg = window.Telegram ? window.Telegram.WebApp : null;
+if (tg) { tg.ready(); tg.expand(); }
 
-function tryLogin(){
-  const val = document.getElementById('adminPass').value;
-  adminToken = val;
-  document.getElementById('loginGate').style.display = 'none';
-  document.getElementById('dashboard').style.display = 'block';
-  loadData();
-  loadTasks();
-  loadSettingsAdmin();
-  loadSeasonBoxesAdmin();
+document.getElementById('lfaWhitepaperLink').href = LFA_WHITEPAPER_PDF_URL;
+document.getElementById('lfaTermsLink').href = LFA_TERMS_PDF_URL;
+
+const AdsgramController = window.Adsgram ? window.Adsgram.init({ blockId: "46804" }) : null;
+function setEarnSubTab(tab){
+  document.getElementById('earnSubpage-offerwall').style.display = tab === 'offerwall' ? 'block' : 'none';
+  document.getElementById('earnSubpage-ads').style.display = tab === 'ads' ? 'block' : 'none';
+  document.getElementById('earnTabOfferwall').classList.toggle('active', tab === 'offerwall');
+  document.getElementById('earnTabAds').classList.toggle('active', tab === 'ads');
 }
 
-function showTab(name, el){
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  document.querySelectorAll('.sidebar nav button').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  if (name === 'notices') loadNoticesAdmin();
+const AD_NETWORKS = [
+  { key:"adsgram", name:"Adsgram", icon:"▲" },
+  { key:"monetag", name:"Monetag", icon:"●" }
+];
+const AD_WATCH_LIMIT = 5;
+const AD_COOLDOWN_HOURS = 3;
+const POINTS_PER_AD = 50;
+const REFERRAL_ELIGIBILITY_ADS = 100;
+const REFERRAL_ELIGIBILITY_CHECKINS = 7;
+
+function getInitData(){
+  return tg && tg.initData ? tg.initData : null;
+}
+
+function getGuestId(){
+  let id = localStorage.getItem('lfa_guest_id');
+  if (!id){
+    id = 'guest_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('lfa_guest_id', id);
+  }
+  return id;
+}
+
+let state = {
+  user: { id: tg?.initDataUnsafe?.user?.id || getGuestId(), name: tg?.initDataUnsafe?.user?.first_name || "Guest" },
+  totalPoints: 0,
+  up: 0,
+  apFromAds: 0,
+  apFromTasks: 0,
+  apFromCheckin: 0,
+  theme: 'dark',
+  adsToday: {},
+  tasksCompleted: {},
+  checkin: { lastDate: null, streak: 0 },
+  checkinHistory: {},
+  displayName: null,
+  avatarUrl: null,
+  telegramAvatarUrl: null, // computed proxy URL, see loadUserFromServer
+  banned: false,
+  referrals: [],
+  refEarnedPoints: 0,
+  tasks: [],
+  settings: { seasonName: "Testing Season", withdrawOpen: false, withdrawNotice: "" },
+  statsRange: '7',
+  editing: false,
+  pendingAvatarDataUrl: null
+};
+
+let countdownInterval = null;
+let wdCooldownInterval = null;
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function showPage(name, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if (el){
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  if (countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
+  if (wdCooldownInterval){ clearInterval(wdCooldownInterval); wdCooldownInterval = null; }
+
+  if (name === 'home') loadHome();
+  if (name === 'notices') loadNoticesPage();
+  if (name === 'ads') loadUserFromServer().then(renderEarn);
+  if (name === 'leaderboard') loadLeaderboard();
+  if (name === 'referral') { loadUserFromServer().then(renderReferral); loadReferralsFromServer(); }
+  if (name === 'lfa') loadLfaFrame();
+  if (name === 'profile') {
+    loadUserFromServer().then(renderProfile);
+    loadSettings().then(renderWithdrawInfo);
+    loadSeasonBoxes();
+    loadStats();
+  }
+  if (name === 'withdraw') {
+    loadUserFromServer().then(renderProfile);
+    loadSettings().then(loadWithdrawPage);
+  }
+  if (name === 'ap-history') loadHistoryPage('ap');
+  if (name === 'up-history') loadHistoryPage('up');
 }
 
 /* ============================================================
-   LIVE DATA — fetched from your real backend
+   USER DATA
    ============================================================ */
-let liveUsers = [];
-let liveWithdrawals = [];
+async function loadUserFromServer(){
+  try{
+    const res = await fetch(`${API_BASE}/user/${state.user.id}`);
+    const data = await res.json();
+    state.totalPoints = data.points || 0;
+    state.up = data.up || 0;
+    state.apFromAds = data.apFromAds || 0;
+    state.apFromTasks = data.apFromTasks || 0;
+    state.apFromCheckin = data.apFromCheckin || 0;
+    state.theme = data.theme || 'dark';
+    applyTheme(state.theme);
+    state.adsToday = data.adsWatched || {};
+    state.tasksCompleted = data.tasksCompleted || {};
+    state.checkin = data.checkin || { lastDate: null, streak: 0 };
+    state.checkinHistory = data.checkinHistory || {};
+    state.displayName = data.displayName;
+    state.avatarUrl = data.avatarUrl;
+    state.telegramAvatarUrl = data.telegramAvatarFileId ? `${API_BASE}/avatar/${state.user.id}` : null;
+    state.banned = !!data.banned;
+    state.refEarnedPoints = data.referralEarnings || 0;
+  } catch(e){ console.error("Could not load user:", e); }
+}
 
-async function adminFetch(path, options = {}){
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers: { ...(options.headers||{}), 'x-admin-token': adminToken }
-  });
-  if (res.status === 401){
-    document.getElementById('dashboard').style.display = 'none';
-    document.getElementById('loginGate').style.display = 'flex';
-    document.getElementById('loginError').textContent = 'Wrong passphrase — check it matches ADMIN_TOKEN on Render.';
-    throw new Error('unauthorized');
+async function loadReferralsFromServer(){
+  try{
+    const res = await fetch(`${API_BASE}/referrals/${state.user.id}`);
+    state.referrals = await res.json();
+  } catch(e){ console.error("Could not load referrals:", e); }
+  renderReferral();
+}
+
+async function loadSettings(){
+  try{
+    const res = await fetch(`${API_BASE}/settings`);
+    state.settings = await res.json();
+  } catch(e){ console.error("Could not load settings:", e); }
+  document.getElementById('seasonLabel').textContent = state.settings.seasonName || 'Testing Season';
+}
+
+/* ============================================================
+   HOME — check-in + tasks
+   ============================================================ */
+function renderHomeHeader(){
+  const name = state.displayName || state.user.name;
+  const avatarUrl = state.avatarUrl || state.telegramAvatarUrl;
+  document.getElementById('homeName').textContent = name;
+  document.getElementById('homeAvatar').innerHTML = avatarUrl
+    ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
+  document.getElementById('homeAp').textContent = state.totalPoints;
+  document.getElementById('homeUp').textContent = state.up;
+}
+
+async function loadHome(){
+  await loadUserFromServer();
+  await loadSettings();
+  renderCheckin();
+  await loadTasks();
+  renderHomeHeader();
+  refreshNoticeBadge();
+
+  if (state.banned){
+    document.getElementById('checkinBtn').disabled = true;
+    document.getElementById('checkinBtn').textContent = 'Account suspended';
   }
-  return res.json();
 }
 
-function nameFor(tgId){
-  const u = liveUsers.find(u => u.tgId === String(tgId));
-  return u ? u.name : `User ${tgId}`;
+function renderCheckin(){
+  const dayLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const now = new Date();
+  const todayIdx = (now.getUTCDay() + 6) % 7; // Monday = 0
+  const today = now.toISOString().slice(0,10);
+  const monday = new Date(now);
+  monday.setUTCDate(now.getUTCDate() - todayIdx);
+
+  const strip = document.getElementById('weekStrip');
+  strip.innerHTML = dayLabels.map((label, i) => {
+    const d = new Date(monday);
+    d.setUTCDate(monday.getUTCDate() + i);
+    const key = d.toISOString().slice(0,10);
+    const entry = state.checkinHistory[key];
+    const isToday = i === todayIdx;
+    const isFuture = i > todayIdx;
+
+    let cls = '', inner = '', pointsHtml = '';
+    if (entry && entry.status === 'done'){
+      cls = 'done'; inner = '✓'; pointsHtml = `<div class="dpoints">+${entry.points}</div>`;
+    } else if (entry && entry.status === 'missed'){
+      cls = 'missed'; inner = '✕'; pointsHtml = `<div class="dpoints">${entry.points}</div>`;
+    } else if (isFuture) {
+      inner = '';
+    }
+    if (isToday) cls += ' today';
+
+    return `<div class="week-day ${cls}">
+      <div class="dlabel">${label}</div>
+      <div class="dcircle">${inner}</div>
+      ${pointsHtml}
+    </div>`;
+  }).join('');
+
+  document.getElementById('streakLabel').textContent = `🔥 ${state.checkin.streak || 0} day streak`;
+  const btn = document.getElementById('checkinBtn');
+  const nextText = document.getElementById('checkinNext');
+  const alreadyToday = state.checkin.lastDate === today;
+
+  if (countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
+
+  if (alreadyToday){
+    btn.disabled = true;
+    btn.textContent = 'Already checked in today';
+    startCountdown();
+  } else {
+    btn.disabled = false || state.banned;
+    const streak = state.checkin.streak || 0;
+    btn.textContent = `Check in — claim ${10 + (streak>0? streak*5 : 0)} points`;
+    nextText.textContent = '';
+  }
 }
 
-async function loadData(){
+function startCountdown(){
+  const nextText = document.getElementById('checkinNext');
+  function tick(){
+    const now = new Date();
+    const nextMidnight = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()+1, 0,0,0));
+    let diff = Math.max(0, nextMidnight - now);
+    const hh = String(Math.floor(diff/3600000)).padStart(2,'0');
+    const mm = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+    const ss = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+    nextText.textContent = `Next check-in in ${hh}:${mm}:${ss}`;
+  }
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+async function doCheckin(){
+  if (state.banned) return;
   try{
-    liveUsers = await adminFetch('/admin/users');
-    liveWithdrawals = await adminFetch('/admin/withdrawals');
-  } catch(e){ return; }
-
-  const totalAds = liveUsers.reduce((a,u)=>a + (u.totalAdsWatched||0), 0);
-  const totalPoints = liveUsers.reduce((a,u)=>a + (u.points||0), 0);
-  document.getElementById('kpiUsers').textContent = liveUsers.length;
-  document.getElementById('kpiAds').textContent = totalAds;
-  document.getElementById('kpiPoints').textContent = totalPoints;
-  document.getElementById('kpiPending').textContent = liveWithdrawals.filter(w=>w.status==='pending').length;
-
-  document.getElementById('topEarnersBody').innerHTML = [...liveUsers]
-    .sort((a,b)=>(b.points||0)-(a.points||0))
-    .slice(0, 10)
-    .map(u=>{
-      const refCount = liveUsers.filter(x=>x.referredBy===u.tgId).length;
-      return `<tr><td>${u.name}</td><td class="mono addr-cell">${u.tgId}</td><td class="num-cell">${u.points||0}</td><td class="num-cell">${refCount}</td></tr>`;
-    }).join('');
-
-  renderUsers(liveUsers);
-
-  // Referrals are derived from each user's referredBy field
-  const referralRows = liveUsers.filter(u => u.referredBy);
-  document.getElementById('referralsBody').innerHTML = referralRows.map(r=>`
-    <tr>
-      <td>${nameFor(r.referredBy)}</td>
-      <td>${r.name}</td>
-      <td class="num-cell">${r.totalAdsWatched||0}/10</td>
-      <td><span class="pill ${r.referralEligible?'eligible':'pending'}">${r.referralEligible?'Eligible':'Not yet'}</span></td>
-      <td class="num-cell">—</td>
-    </tr>`).join('') || `<tr><td colspan="5" style="color:var(--text-muted)">No referrals yet.</td></tr>`;
-
-  document.getElementById('withdrawalsBody').innerHTML = liveWithdrawals.map((w)=>`
-    <tr>
-      <td>${nameFor(w.tgId)}</td>
-      <td class="num-cell">${w.points}</td>
-      <td class="num-cell">—</td>
-      <td>${w.network}</td>
-      <td class="addr-cell">${w.address}</td>
-      <td><span class="pill review">Awaiting review</span></td>
-      <td class="row-actions">
-        <button class="btn-approve" onclick="approveWithdraw('${w.id}')">Mark Paid</button>
-        <button class="btn-reject" onclick="rejectWithdraw('${w.id}')">Reject</button>
-      </td>
-    </tr>`).join('') || `<tr><td colspan="7" style="color:var(--text-muted)">No pending withdrawals.</td></tr>`;
-}
-
-function renderUsers(list){
-  document.getElementById('usersBody').innerHTML = list.map(u=>`
-    <tr>
-      <td>${u.name}</td>
-      <td class="addr-cell">${u.tgId}</td>
-      <td class="num-cell">${u.points||0}</td>
-      <td class="num-cell" style="color:var(--green)">${u.up||0} <span style="color:var(--text-muted);font-size:10.5px;">($${((u.up||0)/100).toFixed(2)})</span></td>
-      <td class="num-cell">${u.totalAdsWatched||0}</td>
-      <td class="row-actions">
-        <button class="btn-approve" onclick="openUserDetails('${u.tgId}')">Details</button>
-      </td>
-      <td class="num-cell">${u.createdAt ? new Date(u.createdAt._seconds*1000).toLocaleDateString() : '—'}</td>
-      <td><span class="pill ${u.banned?'pending':'eligible'}">${u.banned?'Banned':'Active'}</span></td>
-      <td class="row-actions">
-        <button class="btn-approve" onclick="addOfferwallUp('${u.tgId}')">+ UP</button>
-        <button class="${u.banned?'btn-approve':'btn-reject'}" onclick="toggleBan('${u.tgId}', ${!u.banned})">${u.banned?'Unban':'Ban'}</button>
-      </td>
-    </tr>`).join('');
-}
-
-async function addOfferwallUp(tgId){
-  const usd = prompt("USD amount earned from this offerwall completion (e.g. 0.20):");
-  if (usd === null) return;
-  const amount = parseFloat(usd);
-  if (isNaN(amount) || amount <= 0){ alert('Enter a valid positive number.'); return; }
-  const result = await adminFetch(`/admin/users/${tgId}/add-offerwall`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ usdAmount: amount })
-  });
-  alert(`Credited ${result.upEarned} UP ($${amount.toFixed(2)}) to user ${tgId}.`);
-  loadData();
-}
-
-async function toggleBan(tgId, banned){
-  if (banned && !confirm(`Ban user ${tgId}? They won't be able to earn points until unbanned.`)) return;
-  await adminFetch(`/admin/users/${tgId}/ban`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ banned })
-  });
-  loadData();
-}
-
-const ACTIVITY_ICONS = {
-  ad: '▶', task: '✓', checkin: '🔥', referral_bonus: '◎', referral_commission: '◎', offerwall: '$'
-};
-const ACTIVITY_LABELS = {
-  ad: 'Watched ad', task: 'Completed task', checkin: 'Daily check-in',
-  referral_bonus: 'Referral bonus', referral_commission: 'Referral commission', offerwall: 'Offerwall'
-};
-
-async function openUserDetails(tgId){
-  let details;
-  try{
-    details = await adminFetch(`/admin/users/${tgId}/details`);
-  } catch(e){ return; }
-  const { user, referrals, activity } = details;
-
-  document.getElementById('udName').textContent = user.displayName || user.name;
-  document.getElementById('udSub').textContent = `TG ID: ${user.tgId} · Joined ${user.createdAt ? new Date(user.createdAt._seconds*1000).toLocaleDateString() : '—'}`;
-  document.getElementById('udAp').textContent = user.points || 0;
-  document.getElementById('udUp').textContent = `${user.up || 0} ($${((user.up||0)/100).toFixed(2)})`;
-  document.getElementById('udAds').textContent = user.totalAdsWatched || 0;
-  document.getElementById('udStreak').textContent = (user.checkin && user.checkin.streak) || 0;
-
-  document.getElementById('udApBreakdown').innerHTML = `
-    <div class="stat-card" style="text-align:center;"><div class="num">${user.apFromAds||0}</div><div class="label">From ads</div></div>
-    <div class="stat-card" style="text-align:center;"><div class="num">${user.apFromCheckin||0}</div><div class="label">From check-in</div></div>
-    <div class="stat-card" style="text-align:center;"><div class="num">${user.apFromTasks||0}</div><div class="label">From tasks</div></div>
-    <div class="stat-card" style="text-align:center;"><div class="num">${user.referralEarnings||0}</div><div class="label">From referrals</div></div>
-  `;
-
-  document.getElementById('udRefCount').textContent = referrals.length;
-  document.getElementById('udReferralsBody').innerHTML = referrals.map(r=>`
-    <tr>
-      <td>${r.name}</td>
-      <td class="addr-cell">${r.tgId}</td>
-      <td class="num-cell">${r.ads}/25</td>
-      <td><span class="pill ${r.eligible?'eligible':'pending'}">${r.eligible?'Eligible':'Pending'}</span></td>
-      <td class="num-cell">${r.commissionGenerated||0}</td>
-      <td class="num-cell">${r.points||0}</td>
-    </tr>`).join('') || `<tr><td colspan="6" style="color:var(--text-muted)">No referrals.</td></tr>`;
-
-  document.getElementById('udActivityList').innerHTML = activity.map(a=>`
-    <div style="display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line);">
-      <div style="width:32px; height:32px; border-radius:8px; background:var(--surface-raised); display:flex; align-items:center; justify-content:center; flex-shrink:0;">${ACTIVITY_ICONS[a.type]||'•'}</div>
-      <div style="flex:1;">
-        <div style="font-size:13px; font-weight:600;">${ACTIVITY_LABELS[a.type]||a.type}</div>
-        <div style="font-size:11.5px; color:var(--text-muted);">${a.detail||''}</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:13px; font-weight:600; color:var(--amber);">+${a.points}</div>
-        <div style="font-size:10.5px; color:var(--text-muted);">${a.createdAt ? new Date(a.createdAt).toLocaleString() : '—'}</div>
-      </div>
-    </div>`).join('') || `<div style="color:var(--text-muted); font-size:13px; padding:12px 0;">No activity yet.</div>`;
-
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-user-details').classList.add('active');
-}
-
-function backToUsers(){
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-users').classList.add('active');
-  document.querySelectorAll('.sidebar nav button').forEach(b=>b.classList.remove('active'));
-  const usersBtn = document.querySelector(".sidebar nav button[onclick*=\"'users'\"]");
-  if (usersBtn) usersBtn.classList.add('active');
-}
-
-function filterUsers(q){
-  q = q.toLowerCase();
-  renderUsers(liveUsers.filter(u=>u.name.toLowerCase().includes(q) || u.tgId.includes(q)));
-}
-
-async function approveWithdraw(id){
-  await adminFetch(`/admin/withdrawals/${id}/approve`, { method: 'POST' });
-  alert(`Marked as approved. Now send the USDT manually to the address shown, then you're done.`);
-  loadData();
-}
-async function rejectWithdraw(id){
-  await adminFetch(`/admin/withdrawals/${id}/reject`, { method: 'POST' });
-  loadData();
-}
-
-/* ---------- Tasks ---------- */
-let adminTasks = [];
-function escAdmin(t){ return String(t||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-async function loadNoticesAdmin(){
-  try{
-    const [list, settings] = await Promise.all([adminFetch('/admin/notices'), adminFetch('/admin/settings')]);
-    document.getElementById('autoNoticeTg').checked = !!settings.autoNoticeTelegram;
-    document.getElementById('noticesBody').innerHTML = list.map(n => `
-      <tr>
-        <td><span class="pill ${n.type === 'auto' ? 'review' : 'eligible'}">${n.type === 'auto' ? 'Auto' : 'Manual'}</span></td>
-        <td><div style="font-weight:600;">${escAdmin(n.title)}</div><div style="font-size:12px; color:var(--text-muted); margin-top:3px; white-space:pre-wrap;">${escAdmin(n.body)}</div></td>
-        <td style="font-size:12px; color:var(--text-muted); white-space:nowrap;">${new Date(n.createdAt).toLocaleString()}</td>
-        <td class="row-actions"><button class="btn-reject" onclick="removeNotice('${n.id}')">Delete</button></td>
-      </tr>`).join('') || `<tr><td colspan="4" style="color:var(--text-muted)">No notices yet.</td></tr>`;
-  } catch(e){}
-}
-
-async function postNotice(){
-  const title = document.getElementById('noticeTitle').value.trim();
-  const body = document.getElementById('noticeBody').value.trim();
-  const sendTelegram = document.getElementById('noticeSendTg').checked;
-  const status = document.getElementById('noticeStatus');
-  if (!title && !body){ alert('Write a title or a message first.'); return; }
-  if (sendTelegram && !confirm('This will message every user on Telegram. Continue?')) return;
-  status.textContent = 'Posting...';
-  try{
-    const r = await adminFetch('/admin/notices', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ title, body, sendTelegram }) });
-    if (!r.success){ status.textContent = 'Could not post.'; return; }
-    document.getElementById('noticeTitle').value = '';
-    document.getElementById('noticeBody').value = '';
-    document.getElementById('noticeSendTg').checked = false;
-    status.textContent = sendTelegram ? 'Posted — Telegram messages are being sent.' : 'Posted.';
-    loadNoticesAdmin();
-  } catch(e){ status.textContent = 'Error posting notice.'; }
-}
-
-async function removeNotice(id){
-  if (!confirm('Delete this notice for all users?')) return;
-  await adminFetch('/admin/notices/' + id, { method:'DELETE' });
-  loadNoticesAdmin();
-}
-
-async function saveAutoNoticeTg(){
-  const autoNoticeTelegram = document.getElementById('autoNoticeTg').checked;
-  await adminFetch('/admin/settings', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ autoNoticeTelegram }) });
+    const res = await fetch(`${API_BASE}/checkin`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId: state.user.id, initData: getInitData() })
+    });
+    const result = await res.json();
+    if (result.success){
+      await loadUserFromServer(); // re-pull full checkinHistory so the week box is accurate
+      state.totalPoints += 0; // already included from loadUserFromServer
+      renderHomeHeader();
+      renderCheckin();
+      if (tg) tg.HapticFeedback?.notificationOccurred('success');
+    } else {
+      renderCheckin();
+    }
+  } catch(e){ console.error("Check-in failed:", e); }
 }
 
 async function loadTasks(){
   try{
-    adminTasks = await adminFetch('/admin/tasks');
-  } catch(e){ return; }
-  document.getElementById('tasksBody').innerHTML = adminTasks.map(t=>`
-    <tr>
-      <td>${t.title}</td>
-      <td>${t.type}</td>
-      <td class="num-cell">${t.points}</td>
-      <td><span class="pill ${t.active?'eligible':'pending'}">${t.active?'Active':'Off'}</span></td>
-      <td class="row-actions">
-        <button class="btn-approve" onclick="toggleTask('${t.id}', ${!t.active})">${t.active?'Turn off':'Turn on'}</button>
-        <button class="btn-reject" onclick="removeTask('${t.id}')">Delete</button>
-      </td>
-    </tr>`).join('') || `<tr><td colspan="5" style="color:var(--text-muted)">No tasks yet — add one above.</td></tr>`;
+    const res = await fetch(`${API_BASE}/tasks`);
+    const tasks = await res.json();
+    state.tasks = tasks; // only overwrite on a successful response
+  } catch(e){
+    console.error("Could not load tasks (keeping previous list):", e);
+    // Do NOT reset state.tasks here — a transient network hiccup should not make tasks vanish
+  }
+  renderTasks();
 }
 
-async function createNewTask(){
-  const title = document.getElementById('newTaskTitle').value.trim();
-  const type = document.getElementById('newTaskType').value;
-  const url = document.getElementById('newTaskUrl').value.trim();
-  const points = parseInt(document.getElementById('newTaskPoints').value) || 50;
-  if (!title){ alert('Enter a task title.'); return; }
-  await adminFetch('/admin/tasks', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, type, url, points })
-  });
-  document.getElementById('newTaskTitle').value = '';
-  document.getElementById('newTaskUrl').value = '';
-  document.getElementById('newTaskPoints').value = '';
-  loadTasks();
-}
-
-async function toggleTask(id, newActive){
-  await adminFetch(`/admin/tasks/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ active: newActive })
-  });
-  loadTasks();
-}
-
-async function removeTask(id){
-  if (!confirm('Delete this task?')) return;
-  await adminFetch(`/admin/tasks/${id}`, { method: 'DELETE' });
-  loadTasks();
-}
-
-/* ---------- Settings ---------- */
-async function loadSettingsAdmin(){
-  try{
-    const settings = await adminFetch('/admin/settings');
-    document.getElementById('seasonNameInput').value = settings.seasonName || '';
-    document.getElementById('withdrawNoticeInput').value = settings.withdrawNotice || '';
-    document.getElementById('withdrawClosedNoteInput').value = settings.withdrawClosedNote || '';
-    setWithdrawMode(settings.withdrawMode || (settings.withdrawEnabled === false ? 'off' : 'auto'));
-    const statusEl = document.getElementById('withdrawWindowStatus');
-    statusEl.textContent = settings.withdrawOpen ? 'Open now' : 'Closed';
-    statusEl.className = `pill ${settings.withdrawOpen ? 'eligible' : 'pending'}`;
-  } catch(e){}
-}
-
-function setWithdrawMode(mode){
-  document.getElementById('withdrawModeInput').value = mode;
-  document.querySelectorAll('#withdrawModeGroup .wm-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
-  const note = document.getElementById('withdrawModeNote');
-  if (note) note.textContent = mode === 'on' ? ' (Manually forced ON)' : mode === 'off' ? ' (Manually forced OFF)' : '';
-}
-
-async function saveSettings(){
-  const seasonName = document.getElementById('seasonNameInput').value.trim();
-  const withdrawNotice = document.getElementById('withdrawNoticeInput').value.trim();
-  const withdrawClosedNote = document.getElementById('withdrawClosedNoteInput').value.trim();
-  const withdrawMode = document.getElementById('withdrawModeInput').value;
-  await adminFetch('/admin/settings', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ seasonName, withdrawNotice, withdrawClosedNote, withdrawMode })
-  });
-  const msg = document.getElementById('settingsSaved');
-  msg.textContent = 'Saved.';
-  setTimeout(()=> msg.textContent = '', 2000);
-  loadSettingsAdmin();
-}
-
-/* ---------- Payouts / season boxes ---------- */
-let adminSeasonBoxes = [];
-async function loadSeasonBoxesAdmin(){
-  let boxes = [];
-  try{ boxes = await adminFetch('/admin/season-boxes'); } catch(e){ return; }
-  adminSeasonBoxes = boxes;
-  const list = document.getElementById('seasonBoxesAdminList');
-  if (boxes.length === 0){
-    list.innerHTML = `<div class="panel" style="padding:16px; color:var(--text-muted); font-size:13px;">No season boxes yet — add one above.</div>`;
+function renderTasks(){
+  const list = document.getElementById('taskList');
+  if (state.tasks.length === 0){
+    list.innerHTML = `<div class="ad-row"><div class="info"><div class="name" style="color:var(--text-muted);font-weight:400;">No tasks available right now.</div></div></div>`;
     return;
   }
-  list.innerHTML = boxes.map(b=>`
-    <div class="panel" style="padding:16px; margin-bottom:14px; ${b.isCurrent ? 'border:1px solid var(--green);' : ''}">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <span class="pill ${b.isCurrent?'eligible':'pending'}">${b.isCurrent ? 'Current season' : 'Not current'}</span>
-        <button class="${b.isCurrent?'btn-reject':'btn-approve'}" style="padding:6px 12px; font-size:11.5px;" onclick="setCurrentSeasonBox('${b.id}', ${!b.isCurrent})">${b.isCurrent ? 'Unset current' : 'Set as current'}</button>
+  list.innerHTML = state.tasks.map(t=>{
+    const done = !!state.tasksCompleted[t.id];
+    return `<div class="ad-row">
+      <div class="icon">${t.type==='channel'?'📢':t.type==='webpage'?'🌐':t.type==='pdf'?'📄':'✓'}</div>
+      <div class="info">
+        <div class="name">${t.title}</div>
+        <div class="sub">+${t.points||50} points ${done?'· Completed':''}</div>
       </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:10px;">
-        <input value="${b.seasonName||''}" onchange="editSeasonBox('${b.id}','seasonName',this.value)" style="background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:8px 10px; border-radius:7px; font-size:13px;">
-        <input type="date" value="${b.startDate||''}" onchange="editSeasonBox('${b.id}','startDate',this.value)" style="background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:8px 10px; border-radius:7px; font-size:13px;">
-        <input type="date" value="${b.endDate||''}" onchange="editSeasonBox('${b.id}','endDate',this.value)" style="background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:8px 10px; border-radius:7px; font-size:13px;">
-      </div>
-      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; align-items:center; margin-bottom:10px;">
-        <div>
-          <label style="font-size:10.5px; color:var(--text-muted);">Participants</label>
-          <input type="number" value="${b.participants||0}" onchange="editSeasonBox('${b.id}','participants',parseInt(this.value)||0)" style="width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:8px 10px; border-radius:7px; font-size:13px;">
-        </div>
-        <div>
-          <label style="font-size:10.5px; color:var(--text-muted);">Total AP (season)</label>
-          <input type="number" value="${b.totalPointsEarned||0}" onchange="editSeasonBox('${b.id}','totalPointsEarned',parseInt(this.value)||0)" style="width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:8px 10px; border-radius:7px; font-size:13px;">
-        </div>
-        <div>
-          <label style="font-size:10.5px; color:var(--text-muted);">AP Allocation ($ ad revenue)</label>
-          <input type="number" step="0.01" value="${b.apAllocation||0}" onchange="editSeasonBox('${b.id}','apAllocation',parseFloat(this.value)||0)" style="width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:8px 10px; border-radius:7px; font-size:13px;">
-        </div>
-      </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:10px; align-items:center;">
-        <div>
-          <label style="font-size:10.5px; color:var(--text-muted);">Total UP (season)</label>
-          <input type="number" value="${b.totalUp||0}" onchange="editSeasonBox('${b.id}','totalUp',parseInt(this.value)||0)" style="width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:8px 10px; border-radius:7px; font-size:13px;">
-        </div>
-        <div>
-          <label style="font-size:10.5px; color:var(--text-muted);">Total USDT paid</label>
-          <input type="number" step="0.01" value="${b.totalUsdtPaid||0}" onchange="editSeasonBox('${b.id}','totalUsdtPaid',parseFloat(this.value)||0)" style="width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); padding:8px 10px; border-radius:7px; font-size:13px;">
-        </div>
-        <div></div>
-        <button class="btn-reject" style="align-self:end; padding:9px 14px;" onclick="deleteSeasonBoxAdmin('${b.id}')">Delete</button>
-      </div>
-    </div>`).join('');
+      <button class="watch-btn" ${done?'disabled':''} onclick="doTask('${t.id}','${t.url||''}')">${done?'Done':'Go'}</button>
+    </div>`;
+  }).join('');
 }
 
-async function createSeasonBox(){
-  const seasonName = document.getElementById('newSeasonName').value.trim();
-  const startDate = document.getElementById('newSeasonStart').value;
-  const endDate = document.getElementById('newSeasonEnd').value;
-  if (!seasonName){ alert('Enter a season name.'); return; }
-  await adminFetch('/admin/season-boxes', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ seasonName, startDate, endDate })
-  });
-  document.getElementById('newSeasonName').value = '';
-  document.getElementById('newSeasonStart').value = '';
-  document.getElementById('newSeasonEnd').value = '';
-  loadSeasonBoxesAdmin();
+function doTask(taskId, url){
+  if (url){ if (tg) tg.openLink(url); else window.open(url, '_blank'); }
+  claimTask(taskId);
 }
 
-async function editSeasonBox(id, field, value){
-  await adminFetch(`/admin/season-boxes/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ [field]: value })
-  });
-}
-
-async function setCurrentSeasonBox(id, makeCurrent){
-  // Unset any other box first so only one is ever "current"
-  for (const box of adminSeasonBoxes || []){
-    if (box.id !== id && box.isCurrent){
-      await editSeasonBox(box.id, 'isCurrent', false);
+async function claimTask(taskId){
+  try{
+    const res = await fetch(`${API_BASE}/task-claim`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId: state.user.id, taskId, initData: getInitData() })
+    });
+    const result = await res.json();
+    if (result.success){
+      state.tasksCompleted[taskId] = true;
+      state.totalPoints += result.pointsEarned;
+      state.apFromTasks += result.pointsEarned;
+      renderHomeHeader();
+      renderTasks();
     }
+  } catch(e){ console.error("Task claim failed:", e); }
+}
+
+/* ============================================================
+   EARN PAGE (Offerwall + Ads)
+   ============================================================ */
+function renderEarn(){
+  document.getElementById('offerwallSubtotal').textContent = `${state.up} UP`;
+  document.getElementById('adsSubtotal').textContent = `${state.apFromAds} AP`;
+  loadOfferwallFrame();
+  renderAds();
+}
+
+let offerwallLoadTimer = null;
+
+function getOfferwallSrc(){
+  return `${CPALEAD_OFFERWALL_URL}?subid=${state.user.id}`;
+}
+
+function loadOfferwallFrame(){
+  const frame = document.getElementById('offerwallFrame');
+  const fallback = document.getElementById('offerwallFallback');
+  const wantedSrc = getOfferwallSrc();
+  if (frame.src === wantedSrc) return; // already loaded/loading, don't restart it
+
+  fallback.style.display = 'none';
+  frame.style.display = 'block';
+  frame.src = wantedSrc;
+
+  if (offerwallLoadTimer) clearTimeout(offerwallLoadTimer);
+  frame.onload = () => { if (offerwallLoadTimer) clearTimeout(offerwallLoadTimer); };
+  // If it hasn't loaded within 8 seconds, assume it failed and show the fallback
+  offerwallLoadTimer = setTimeout(() => {
+    fallback.style.display = 'block';
+    frame.style.display = 'none';
+  }, 8000);
+}
+
+function reloadOfferwall(){
+  const frame = document.getElementById('offerwallFrame');
+  frame.src = ''; // force a real reload even if the URL is unchanged
+  document.getElementById('offerwallFallback').style.display = 'none';
+  frame.style.display = 'block';
+  setTimeout(() => loadOfferwallFrame(), 50);
+}
+
+function openOfferwallDirect(){
+  const url = getOfferwallSrc();
+  if (tg) tg.openLink(url); else window.open(url, '_blank');
+}
+
+let adsCountdownInterval = null;
+
+function formatCountdown(ms){
+  const total = Math.max(0, Math.floor(ms/1000));
+  const hh = String(Math.floor(total/3600)).padStart(2,'0');
+  const mm = String(Math.floor((total%3600)/60)).padStart(2,'0');
+  const ss = String(total%60).padStart(2,'0');
+  return `${hh}:${mm}:${ss}`;
+}
+
+function renderAds(){
+  const adList = document.getElementById('adList');
+  const now = Date.now();
+  let anyLocked = false;
+
+  adList.innerHTML = AD_NETWORKS.map(net=>{
+    const rawSlot = state.adsToday[net.key];
+    const slot = (rawSlot && Number.isFinite(rawSlot.count)) ? rawSlot : { count: 0, unlockAt: null };
+    const stillLocked = slot.unlockAt && now < slot.unlockAt;
+    const count = stillLocked ? slot.count : (slot.unlockAt && now >= slot.unlockAt ? 0 : slot.count);
+    const pct = Math.min(100, (count/AD_WATCH_LIMIT)*100);
+
+    if (stillLocked) anyLocked = true;
+
+    let buttonHtml;
+    if (state.banned){
+      buttonHtml = `<button class="watch-btn" disabled>Suspended</button>`;
+    } else if (stillLocked){
+      buttonHtml = `<button class="watch-btn" disabled style="min-width:78px;">${formatCountdown(slot.unlockAt - now)}</button>`;
+    } else {
+      buttonHtml = `<button class="watch-btn" onclick="watchAd('${net.key}')">Watch</button>`;
+    }
+
+    return `
+      <div class="ad-row">
+        <div class="icon">${net.icon}</div>
+        <div class="info">
+          <div class="name">${net.name}</div>
+          <div class="sub">+${POINTS_PER_AD} points per ad</div>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <div class="count">${count}/${AD_WATCH_LIMIT} watched</div>
+        </div>
+        ${buttonHtml}
+      </div>`;
+  }).join('');
+
+  // Keep the countdowns ticking every second while any slot is on cooldown
+  if (anyLocked && !adsCountdownInterval){
+    adsCountdownInterval = setInterval(renderAds, 1000);
+  } else if (!anyLocked && adsCountdownInterval){
+    clearInterval(adsCountdownInterval);
+    adsCountdownInterval = null;
   }
-  await editSeasonBox(id, 'isCurrent', makeCurrent);
-  loadSeasonBoxesAdmin();
 }
 
-async function deleteSeasonBoxAdmin(id){
-  if (!confirm('Delete this season box? Users will no longer see it.')) return;
-  await adminFetch(`/admin/season-boxes/${id}`, { method: 'DELETE' });
-  loadSeasonBoxesAdmin();
+function watchAd(networkKey){
+  if (state.banned) return;
+  if (networkKey === 'adsgram'){
+    if (!AdsgramController){ alert('Ad SDK not loaded — try again in a moment.'); return; }
+    AdsgramController.show().then(() => reportAdWatched(networkKey)).catch(() => {});
+    return;
+  }
+  if (networkKey === 'monetag'){
+    if (typeof window.show_11739436 !== 'function'){ alert('Ad SDK not loaded — try again in a moment.'); return; }
+    const startedAt = Date.now();
+    window.show_11739436().then(() => {
+      const watchedMs = Date.now() - startedAt;
+      if (watchedMs < 13000){
+        // Ad was closed too early (under 13s) — don't credit, per anti-fraud rule
+        return;
+      }
+      reportAdWatched(networkKey);
+    }).catch(() => {});
+    return;
+  }
 }
 
+async function reportAdWatched(networkKey){
+  try{
+    const res = await fetch(`${API_BASE}/ad-watched`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: state.user.id, network: networkKey, initData: getInitData() })
+    });
+    const result = await res.json();
+    if (!result.success){
+      if (result.reason === 'cooldown') alert('This network is on cooldown right now.');
+      if (result.reason === 'banned') alert('Your account is suspended.');
+      return;
+    }
+    state.adsToday[networkKey] = { count: result.count || 0, unlockAt: result.unlockAt || null };
+    state.totalPoints += result.pointsEarned || POINTS_PER_AD;
+    state.apFromAds += result.pointsEarned || POINTS_PER_AD;
+  } catch(e){ console.error("ad-watched failed:", e); alert("Couldn't reach the server."); return; }
+  renderEarn();
+  if (tg) tg.HapticFeedback?.notificationOccurred('success');
+}
+
+/* ============================================================
+   LEADERBOARD
+   ============================================================ */
+let leaderboardTab = 'all';
+
+function setLeaderboardTab(tab){
+  leaderboardTab = tab;
+  document.getElementById('lbTabAll').classList.toggle('active', tab === 'all');
+  document.getElementById('lbTabAp').classList.toggle('active', tab === 'ap');
+  document.getElementById('lbTabUp').classList.toggle('active', tab === 'up');
+  loadLeaderboard();
+}
+
+async function loadLeaderboard(){
+  try{
+    const sortBy = leaderboardTab === 'up' ? 'up' : 'points'; // "all" and "ap" both rank by AP
+    const res = await fetch(`${API_BASE}/leaderboard/${state.user.id}?sortBy=${sortBy}`);
+    const data = await res.json();
+    renderLeaderboard(data);
+  } catch(e){ console.error("Could not load leaderboard:", e); }
+}
+
+function initials(name){ return (name||'U')[0].toUpperCase(); }
+function avatarHtml(user){
+  const src = user.avatarUrl || (user.hasTelegramAvatar ? `${API_BASE}/avatar/${user.tgId}` : null);
+  if (src) return `<img src="${src}" alt="" onerror="this.parentElement.textContent='${initials(user.name)}'">`;
+  return initials(user.name);
+}
+
+function renderLeaderboard(data){
+  const top = data.top || [];
+  const top3 = top.slice(0,3);
+  const rest = top.slice(3);
+  const showStreak = leaderboardTab === 'all';
+  const showSecondary = leaderboardTab === 'all';
+  const primaryStat = (u) => leaderboardTab === 'up' ? `${u.up||0} UP` : `${u.points} AP`;
+  const secondaryStat = (u) => leaderboardTab === 'up' ? `${u.points} AP` : `${u.up||0} UP`;
+
+  const hats = {1:'👑',2:'🥈',3:'🥉'};
+  const order = {1:'gold',2:'silver',3:'bronze'};
+  document.getElementById('podium').innerHTML = top3.map(u=>`
+    <div class="podium-item ${order[u.rank]}">
+      <div class="podium-hat">${hats[u.rank]}</div>
+      <div class="podium-avatar">${avatarHtml(u)}</div>
+      <div class="pname">${u.name}</div>
+      <div class="ppts">${primaryStat(u)}</div>
+      ${(showSecondary || showStreak) ? `<div style="margin-top:2px; display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+        ${showSecondary ? `<span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(u)}</span>` : ''}
+        ${showStreak ? `<span class="ap-tag">🔥 ${u.streak||0}</span>` : ''}
+      </div>` : ''}
+    </div>`).join('');
+
+  document.getElementById('lbList').innerHTML = rest.map(u=>`
+    <div class="lb-row ${u.tgId===String(state.user.id)?'you':''}">
+      <div class="rank">${u.rank}</div>
+      <div class="avatar">${avatarHtml(u)}</div>
+      <div class="name">${u.name}</div>
+      <span class="${leaderboardTab==='up'?'up-tag':'ap-tag'}">${primaryStat(u)}</span>
+      ${showSecondary ? `&nbsp;<span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(u)}</span>` : ''}
+      ${showStreak ? `&nbsp;<span class="ap-tag">🔥${u.streak||0}</span>` : ''}
+    </div>`).join('');
+
+  const you = data.you;
+  const youBox = document.getElementById('lbYou');
+  if (you && you.outsideTop){
+    youBox.innerHTML = `<div class="section-label">Your rank</div>
+      <div class="lb-row you">
+        <div class="rank">${you.rank}</div>
+        <div class="avatar">${avatarHtml(you)}</div>
+        <div class="name">${you.name} (You)</div>
+        <span class="${leaderboardTab==='up'?'up-tag':'ap-tag'}">${primaryStat(you)}</span>
+        ${showSecondary ? `&nbsp;<span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(you)}</span>` : ''}
+        ${showStreak ? `&nbsp;<span class="ap-tag">🔥${you.streak||0}</span>` : ''}
+      </div>`;
+  } else {
+    youBox.innerHTML = '';
+  }
+}
+
+/* ============================================================
+   REFERRAL
+   ============================================================ */
+function refColor(pct){
+  const hue = Math.round((pct/100) * 120);
+  return `hsl(${hue}, 70%, 45%)`;
+}
+
+function renderReferral(){
+  document.getElementById('refLinkInput').value = `https://t.me/LiveForAds_Bot?start=ref_${state.user.id}`;
+  document.getElementById('refCount').textContent = state.referrals.length;
+  document.getElementById('refEligible').textContent = state.referrals.filter(r=>r.eligible).length;
+  document.getElementById('refEarned').textContent = state.refEarnedPoints;
+
+  const refList = document.getElementById('refList');
+  if (state.referrals.length === 0){
+    refList.innerHTML = `<div class="ad-row"><div class="info"><div class="name" style="color:var(--text-muted);font-weight:400;">No referrals yet — share your link above.</div></div></div>`;
+    return;
+  }
+  refList.innerHTML = state.referrals.map(r=>{
+    const adsPct = Math.min(100, (r.ads/REFERRAL_ELIGIBILITY_ADS)*100);
+    const checkinsPct = Math.min(100, ((r.checkins||0)/REFERRAL_ELIGIBILITY_CHECKINS)*100);
+    const pct = Math.min(adsPct, checkinsPct); // both conditions must be met
+    return `<div class="ref-user">
+      <div class="ref-user-top">
+        <div class="avatar">${r.name[0]}</div>
+        <div class="info">
+          <div class="name">${r.name}</div>
+          <div class="sub">${r.ads}/${REFERRAL_ELIGIBILITY_ADS} ads · ${r.checkins||0}/${REFERRAL_ELIGIBILITY_CHECKINS} check-ins</div>
+        </div>
+        <span class="badge ${r.eligible?'eligible':'pending'}">${r.eligible?'Eligible':'Pending'}</span>
+      </div>
+      <div class="ref-progress-track"><div class="ref-progress-fill" style="width:${pct}%; background:${refColor(pct)};"></div></div>
+      <div class="ref-commission">Commission generated: ${r.commissionGenerated||0} AP</div>
+    </div>`;
+  }).join('');
+}
+
+function copyRefLink(){
+  const input = document.getElementById('refLinkInput');
+  input.select();
+  document.execCommand('copy');
+  if (tg) tg.HapticFeedback?.notificationOccurred('success');
+}
+
+/* ============================================================
+   LFA WEB VIEW
+   ============================================================ */
+function loadLfaFrame(){
+  const frame = document.getElementById('lfaFrame');
+  if (frame.src !== LFA_WEBPAGE_URL) frame.src = LFA_WEBPAGE_URL;
+  loadLfaSeasonHistory();
+}
+
+async function loadLfaSeasonHistory(){
+  const list = document.getElementById('lfaSeasonHistory');
+  try{
+    const res = await fetch(`${API_BASE}/season-boxes`);
+    const boxes = await res.json();
+    if (boxes.length === 0){
+      list.innerHTML = `<div style="font-size:12px;color:var(--text-muted);">No season history yet.</div>`;
+      return;
+    }
+    list.innerHTML = boxes.map(b=>`
+      <div class="season-box">
+        <div class="sname">${b.seasonName} ${b.isCurrent ? '(current)' : ''}</div>
+        <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}</div>
+        <div class="srow" style="margin-top:8px;">
+          <div class="sstat"><div class="snum">${b.totalPointsEarned||0}</div><div class="slabel">Season Total AP</div></div>
+        </div>
+      </div>`).join('');
+  } catch(e){ list.innerHTML = `<div style="font-size:12px;color:var(--red);">Could not load season history.</div>`; }
+}
+
+/* ============================================================
+   PROFILE
+   ============================================================ */
+function renderProfile(){
+  const name = state.displayName || state.user.name;
+  document.getElementById('profileName').textContent = name;
+  document.getElementById('profileNameInput').value = name;
+  document.getElementById('profileId').textContent = 'ID: ' + state.user.id;
+  const avatarUrl = state.pendingAvatarDataUrl || state.avatarUrl || state.telegramAvatarUrl;
+  document.getElementById('profileAvatar').innerHTML = avatarUrl ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
+
+  document.getElementById('statAds').textContent = Object.values(state.adsToday).reduce((a,b)=>a+(b.count||0),0);
+  document.getElementById('statTasks').textContent = (state.checkin.streak||0) + ' 🔥';
+  document.getElementById('statRef').textContent = state.refEarnedPoints;
+
+  document.getElementById('pbTotalAp').textContent = state.totalPoints;
+  document.getElementById('pbTotalUp').textContent = state.up;
+}
+
+/* ---------- Settings sheet ---------- */
+function enterEditMode(){
+  state.editing = true;
+  document.getElementById('profileHead').classList.add('editing');
+  document.getElementById('editBtn').style.display = 'block';
+  document.getElementById('profileNameInput').value = state.displayName || state.user.name;
+}
+
+function exitEditMode(){
+  state.editing = false;
+  document.getElementById('profileHead').classList.remove('editing');
+  document.getElementById('editBtn').style.display = 'none';
+}
+
+function startEditFromSettings(){
+  closeSettings();
+  enterEditMode();
+}
+
+function toggleEdit(){
+  exitEditMode();
+  saveProfile();
+}
+
+function triggerAvatarPick(){
+  document.getElementById('avatarFileInput').click();
+}
+
+/* ---------- Avatar crop modal ---------- */
+let cropState = { img: null, baseScale: 1, zoom: 1, offsetX: 0, offsetY: 0, dragging: false, lastX: 0, lastY: 0 };
+const CROP_SIZE = 280;
+
+function onAvatarFileChosen(event){
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      cropState.img = img;
+      cropState.baseScale = Math.max(CROP_SIZE/img.width, CROP_SIZE/img.height);
+      cropState.zoom = 1;
+      cropState.offsetX = (CROP_SIZE - img.width*cropState.baseScale)/2;
+      cropState.offsetY = (CROP_SIZE - img.height*cropState.baseScale)/2;
+      document.getElementById('cropImg').src = e.target.result;
+      document.getElementById('cropZoom').value = 100;
+      applyCropTransform();
+      document.getElementById('cropOverlay').classList.add('active');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+function applyCropTransform(){
+  const img = document.getElementById('cropImg');
+  const scale = cropState.baseScale * cropState.zoom;
+  img.style.width = (cropState.img.width*scale)+'px';
+  img.style.height = (cropState.img.height*scale)+'px';
+  img.style.transform = `translate(${cropState.offsetX}px, ${cropState.offsetY}px)`;
+}
+
+function clampOffsets(){
+  const scale = cropState.baseScale * cropState.zoom;
+  const w = cropState.img.width*scale, h = cropState.img.height*scale;
+  cropState.offsetX = Math.min(0, Math.max(CROP_SIZE - w, cropState.offsetX));
+  cropState.offsetY = Math.min(0, Math.max(CROP_SIZE - h, cropState.offsetY));
+}
+
+document.getElementById('cropZoom').addEventListener('input', (e)=>{
+  const oldScale = cropState.baseScale * cropState.zoom;
+  const cx = CROP_SIZE/2, cy = CROP_SIZE/2;
+  const imgCx = (cx - cropState.offsetX) / oldScale;
+  const imgCy = (cy - cropState.offsetY) / oldScale;
+  cropState.zoom = e.target.value / 100;
+  const newScale = cropState.baseScale * cropState.zoom;
+  cropState.offsetX = cx - imgCx*newScale;
+  cropState.offsetY = cy - imgCy*newScale;
+  clampOffsets();
+  applyCropTransform();
+});
+
+const cropFrame = document.getElementById('cropFrame');
+cropFrame.addEventListener('pointerdown', (e)=>{
+  cropState.dragging = true;
+  cropState.lastX = e.clientX; cropState.lastY = e.clientY;
+  cropFrame.setPointerCapture(e.pointerId);
+});
+cropFrame.addEventListener('pointermove', (e)=>{
+  if (!cropState.dragging) return;
+  cropState.offsetX += e.clientX - cropState.lastX;
+  cropState.offsetY += e.clientY - cropState.lastY;
+  cropState.lastX = e.clientX; cropState.lastY = e.clientY;
+  clampOffsets();
+  applyCropTransform();
+});
+cropFrame.addEventListener('pointerup', ()=>{ cropState.dragging = false; });
+cropFrame.addEventListener('pointercancel', ()=>{ cropState.dragging = false; });
+
+function cancelCrop(){
+  document.getElementById('cropOverlay').classList.remove('active');
+}
+
+function confirmCrop(){
+  const canvas = document.createElement('canvas');
+  const OUT = 240;
+  canvas.width = OUT; canvas.height = OUT;
+  const ctx = canvas.getContext('2d');
+  const scale = cropState.baseScale * cropState.zoom;
+  const drawScale = OUT / CROP_SIZE;
+  ctx.drawImage(
+    cropState.img,
+    0, 0, cropState.img.width, cropState.img.height,
+    cropState.offsetX*drawScale, cropState.offsetY*drawScale,
+    cropState.img.width*scale*drawScale, cropState.img.height*scale*drawScale
+  );
+  state.pendingAvatarDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+  document.getElementById('cropOverlay').classList.remove('active');
+  document.getElementById('profileAvatar').innerHTML = `<img src="${state.pendingAvatarDataUrl}">`;
+  if (!state.editing) enterEditMode();
+}
+
+async function saveProfile(){
+  const newName = document.getElementById('profileNameInput').value.trim() || state.user.name;
+  const newAvatar = state.pendingAvatarDataUrl || state.avatarUrl;
+  try{
+    await fetch(`${API_BASE}/user/${state.user.id}/profile`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ displayName: newName, avatarUrl: newAvatar, initData: getInitData() })
+    });
+    state.displayName = newName;
+    state.avatarUrl = newAvatar;
+    state.pendingAvatarDataUrl = null;
+    renderProfile();
+  } catch(e){ console.error("Could not save profile:", e); }
+}
+
+function openSettings(){
+  document.getElementById('settingsOverlay').classList.add('active');
+  document.getElementById('themeDarkBtn').classList.toggle('active', state.theme !== 'light');
+  document.getElementById('themeLightBtn').classList.toggle('active', state.theme === 'light');
+}
+function closeSettings(){
+  document.getElementById('settingsOverlay').classList.remove('active');
+}
+
+async function setTheme(theme){
+  state.theme = theme;
+  applyTheme(theme);
+  document.getElementById('themeDarkBtn').classList.toggle('active', theme === 'dark');
+  document.getElementById('themeLightBtn').classList.toggle('active', theme === 'light');
+  try{
+    await fetch(`${API_BASE}/user/${state.user.id}/profile`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ theme, initData: getInitData() })
+    });
+  } catch(e){ console.error("Could not save theme:", e); }
+}
+
+function applyTheme(theme){
+  document.body.classList.toggle('light-theme', theme === 'light');
+}
+
+function setStatsRange(range, el){
+  state.statsRange = range;
+  document.querySelectorAll('.range-toggle button').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  loadStats();
+}
+
+async function loadStats(){
+  const loading = document.getElementById('chartLoading');
+  const svg = document.getElementById('chartSvg');
+  loading.style.display = 'block';
+  svg.style.opacity = '0.3';
+  try{
+    const res = await fetch(`${API_BASE}/user/${state.user.id}/stats?range=${state.statsRange}`);
+    const data = await res.json();
+    if (state.statsRange === 'all'){
+      drawChart((data.buckets||[]).map(b=>({date:b.label, points:b.points, up:b.up||0})));
+    } else {
+      drawChart((data.days || []).map(d=>({date:d.date, points:d.points, up:d.up||0})));
+    }
+  } catch(e){ console.error("Could not load stats:", e); }
+  loading.style.display = 'none';
+  svg.style.opacity = '1';
+}
+
+function drawChart(data){
+  const svg = document.getElementById('chartSvg');
+  if (!data || data.length === 0){ svg.innerHTML = ''; return; }
+  const w = 320, h = 150, padBottom = 18, padTop = 16;
+  const maxVal = Math.max(...data.map(d=>Math.max(d.points, d.up)), 1);
+  const groupWidth = w / data.length;
+  const barWidth = Math.min(14, groupWidth/2 - 3);
+  const showLabels = data.length <= 12;
+  const scaleH = h - padBottom - padTop;
+
+  const bars = data.map((d,i) => {
+    const groupCenter = groupWidth*i + groupWidth/2;
+    const apX = groupCenter - barWidth - 2;
+    const upX = groupCenter + 2;
+    const apH = (d.points/maxVal)*scaleH;
+    const upH = (d.up/maxVal)*scaleH;
+    const dateLabel = showLabels ? `<text x="${groupCenter}" y="${h-3}" font-size="8" fill="#8FA3A1" text-anchor="middle" font-family="Inter">${(d.date||'').slice(-5)}</text>` : '';
+    const apValLabel = (showLabels && d.points > 0) ? `<text x="${apX+barWidth/2}" y="${h-padBottom-apH-4}" font-size="7.5" fill="var(--gold)" text-anchor="middle" font-family="Space Grotesk">${d.points}</text>` : '';
+    const upValLabel = (showLabels && d.up > 0) ? `<text x="${upX+barWidth/2}" y="${h-padBottom-upH-4}" font-size="7.5" fill="var(--up-color)" text-anchor="middle" font-family="Space Grotesk">${d.up}</text>` : '';
+    return `
+      <rect x="${apX}" y="${h-padBottom-apH}" width="${barWidth}" height="${apH}" rx="2" fill="var(--gold)"/>
+      <rect x="${upX}" y="${h-padBottom-upH}" width="${barWidth}" height="${upH}" rx="2" fill="var(--up-color)"/>
+      ${apValLabel}
+      ${upValLabel}
+      ${dateLabel}
+    `;
+  }).join('');
+
+  svg.innerHTML = `<line x1="0" y1="${h-padBottom}" x2="${w}" y2="${h-padBottom}" stroke="#24393D" stroke-width="1"/>${bars}`;
+}
+
+/* ============================================================
+   WITHDRAW + SEASON PAYOUT BOXES
+   ============================================================ */
+function renderWithdrawInfo(){
+  const sub = document.getElementById('withdrawSub');
+  const noticeBox = document.getElementById('withdrawNoticeBox');
+  const noticeText = document.getElementById('withdrawNoticeText');
+
+  // Force ON -> the notice board switches to an automatic "withdraw is open" message.
+  // Auto / Force OFF -> it keeps showing the admin's own notice text.
+  if (state.settings.withdrawMode === 'on'){
+    noticeBox.style.display = 'block';
+    noticeText.textContent = `🟢 Withdrawals are OPEN now for ${state.settings.seasonName}! Tap Withdraw below to submit your request.`;
+  } else if (state.settings.withdrawNotice){
+    noticeBox.style.display = 'block';
+    noticeText.textContent = state.settings.withdrawNotice;
+  } else {
+    noticeBox.style.display = 'none';
+  }
+
+  sub.textContent = state.settings.withdrawOpen
+    ? `Withdrawals are open now for ${state.settings.seasonName}. Tap to view details.`
+    : `${state.settings.seasonName} payout window is currently closed.`;
+
+  startWithdrawCooldown();
+}
+
+/* ---------- Withdraw cooldown (days / hours / minutes / seconds) ---------- */
+function startWithdrawCooldown(){
+  if (wdCooldownInterval){ clearInterval(wdCooldownInterval); wdCooldownInterval = null; }
+  const s = state.settings;
+  const offset = s.serverNow ? (new Date(s.serverNow).getTime() - Date.now()) : 0; // correct phone clock errors
+  const label = document.getElementById('wdCdLabel');
+  const grid = document.getElementById('wdCdGrid');
+  const openEl = document.getElementById('wdCdOpen');
+  const note = document.getElementById('wdCdNote');
+
+  if (s.withdrawMode === 'on'){
+    label.textContent = 'Withdrawals are open';
+    grid.style.display = 'none'; openEl.style.display = 'block';
+    note.textContent = '';
+    return;
+  }
+  grid.style.display = 'flex'; openEl.style.display = 'none';
+
+  let target, text;
+  if (s.withdrawMode !== 'off' && s.withdrawWindowOpen && s.windowClosesAt){
+    target = new Date(s.windowClosesAt).getTime(); text = 'Withdrawals close in';
+    note.textContent = '';
+  } else if (s.nextWindowOpensAt){
+    target = new Date(s.nextWindowOpensAt).getTime(); text = 'Withdrawals open in';
+    note.textContent = s.withdrawMode === 'off' ? 'Withdrawals are temporarily paused by admin.' : '';
+  } else { label.textContent = 'No upcoming withdrawal window'; return; }
+  label.textContent = text;
+
+  let refreshed = false;
+  const tick = () => {
+    let diff = Math.floor((target - (Date.now() + offset)) / 1000);
+    if (diff <= 0){
+      diff = 0;
+      if (!refreshed){ refreshed = true; setTimeout(() => loadSettings().then(renderWithdrawInfo), 2500); }
+    }
+    const pad = n => String(n).padStart(2, '0');
+    document.getElementById('wdCdD').textContent = pad(Math.floor(diff / 86400));
+    document.getElementById('wdCdH').textContent = pad(Math.floor(diff % 86400 / 3600));
+    document.getElementById('wdCdM').textContent = pad(Math.floor(diff % 3600 / 60));
+    document.getElementById('wdCdS').textContent = pad(diff % 60);
+  };
+  tick();
+  wdCooldownInterval = setInterval(tick, 1000);
+}
+
+/* ---------- Notifications (bell on Home) ---------- */
+function escHtml(t){ return String(t||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+let cachedNotices = [];
+
+async function fetchNotices(){
+  try{
+    const res = await fetch(`${API_BASE}/notices`);
+    cachedNotices = await res.json();
+  } catch(e){ console.error("Could not load notices:", e); }
+  return cachedNotices;
+}
+
+function getSeenTime(){ return parseInt(localStorage.getItem('lfa_notice_seen') || '0', 10); }
+
+function updateBellBadge(){
+  const seen = getSeenTime();
+  const unread = cachedNotices.filter(n => new Date(n.createdAt).getTime() > seen).length;
+  const badge = document.getElementById('bellBadge');
+  if (!badge) return;
+  badge.textContent = unread > 9 ? '9+' : unread;
+  badge.style.display = unread > 0 ? 'flex' : 'none';
+}
+
+async function refreshNoticeBadge(){ await fetchNotices(); updateBellBadge(); }
+
+async function loadNoticesPage(){
+  const list = document.getElementById('noticeList');
+  await fetchNotices();
+  const seen = getSeenTime();
+  list.innerHTML = cachedNotices.length ? cachedNotices.map(n => `
+    <div class="notice-item ${new Date(n.createdAt).getTime() > seen ? 'unread' : ''}">
+      <div class="nt">${n.type === 'auto' ? '🔔' : '📢'} ${escHtml(n.title)}</div>
+      ${n.body ? `<div class="nb">${escHtml(n.body)}</div>` : ''}
+      <div class="nd">${new Date(n.createdAt).toLocaleString()}</div>
+    </div>`).join('')
+    : `<div style="font-size:12.5px;color:var(--text-muted);">No notifications yet.</div>`;
+  if (cachedNotices.length) localStorage.setItem('lfa_notice_seen', String(new Date(cachedNotices[0].createdAt).getTime()));
+  updateBellBadge();
+}
+
+setInterval(() => { if (state.user) refreshNoticeBadge(); }, 60000);
+
+let withdrawInfo = { ap:0, up:0, apAllocationUsdt:0, upToUsdtRate:100, withdrawOpen:false, seasonName:'' };
+
+async function loadWithdrawPage(){
+  try{
+    const res = await fetch(`${API_BASE}/withdraw-info/${state.user.id}`);
+    withdrawInfo = await res.json();
+  } catch(e){ console.error("Could not load withdraw info:", e); }
+
+  document.getElementById('wdApTotal').textContent = withdrawInfo.ap;
+  document.getElementById('wdUpTotal').textContent = withdrawInfo.up;
+  document.getElementById('wdApAllocation').textContent = `$${(withdrawInfo.apAllocationUsdt||0).toFixed(2)}`;
+
+  const note = document.getElementById('wdWindowNote');
+  const btn = document.getElementById('withdrawBtn');
+  note.textContent = withdrawInfo.withdrawOpen
+    ? `Withdrawals for ${withdrawInfo.seasonName} are open now. Requests are reviewed and paid between the 3rd–5th of next month.`
+    : (state.settings.withdrawClosedNote || `The withdrawal window opens on the 1st–2nd of Jan, Mar, May, Jul, Sep, and Nov (00:00–23:59 UTC). It's currently closed.`);
+  btn.disabled = !withdrawInfo.withdrawOpen || state.banned;
+  document.getElementById('withdrawStatus').textContent = '';
+
+  updateWithdrawTotals();
+}
+
+// All UP is converted to USDT automatically — no manual convert step.
+function getUpUsdt(){
+  return (withdrawInfo.up || 0) / (withdrawInfo.upToUsdtRate || 100);
+}
+
+function updateWithdrawTotals(){
+  const apUsdt = withdrawInfo.apAllocationUsdt || 0;
+  const upUsdt = getUpUsdt();
+  document.getElementById('wdUpFormula').textContent = `${withdrawInfo.up || 0} UP ÷ ${withdrawInfo.upToUsdtRate || 100} = USDT (converted automatically)`;
+  document.getElementById('wdUpAllocation').textContent = `$${upUsdt.toFixed(2)}`;
+  document.getElementById('wdFromAp').textContent = `$${apUsdt.toFixed(2)}`;
+  document.getElementById('wdFromUp').textContent = `$${upUsdt.toFixed(2)}`;
+  document.getElementById('wdGrandTotal').textContent = `$${(apUsdt+upUsdt).toFixed(2)}`;
+}
+
+async function loadSeasonBoxes(){
+  try{
+    const res = await fetch(`${API_BASE}/season-boxes`);
+    const boxes = await res.json();
+    const list = document.getElementById('seasonBoxesList');
+    if (boxes.length === 0){
+      list.innerHTML = `<div style="font-size:12px;color:var(--text-muted);">No season data published yet.</div>`;
+      return;
+    }
+    list.innerHTML = boxes.map(b=>`
+      <div class="season-box">
+        <div class="sname">${b.seasonName}</div>
+        <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}</div>
+        <div class="srow">
+          <div class="sstat"><div class="snum">${b.participants||0}</div><div class="slabel">Participants</div></div>
+          <div class="sstat"><div class="snum">$${(b.totalUsdtPaid||0).toFixed(2)}</div><div class="slabel">Total Paid</div></div>
+        </div>
+        <div class="srow" style="margin-top:8px;">
+          <div class="sstat"><div class="snum">${b.totalPointsEarned||0}</div><div class="slabel">Total AP</div></div>
+          <div class="sstat"><div class="snum">$${(b.apAllocation||0).toFixed(2)}</div><div class="slabel">AP Allocation</div></div>
+        </div>
+        <div class="srow" style="margin-top:8px;">
+          <div class="sstat"><div class="snum">${b.totalUp||0}</div><div class="slabel">Total UP</div></div>
+          <div class="sstat"><div class="snum">$${((b.totalUp||0)/100).toFixed(2)}</div><div class="slabel">UP Allocation</div></div>
+        </div>
+        <div class="season-box-toggle" onclick="toggleSeasonParticipants('${b.id}', this)">
+          <span>View participants</span><span class="arrow">▾</span>
+        </div>
+        <div class="season-participants" id="sp-${b.id}"></div>
+      </div>`).join('');
+  } catch(e){ console.error("Could not load season boxes:", e); }
+}
+
+function maskAddress(addr){
+  if (!addr || addr.length <= 10) return addr || '';
+  return addr.slice(0,5) + '•••' + addr.slice(-5);
+}
+
+async function toggleSeasonParticipants(boxId, el){
+  const panel = document.getElementById(`sp-${boxId}`);
+  const isOpen = panel.classList.contains('expanded');
+  if (isOpen){
+    panel.classList.remove('expanded');
+    el.classList.remove('expanded');
+    return;
+  }
+  el.classList.add('expanded');
+  panel.classList.add('expanded');
+  if (panel.dataset.loaded) return;
+  try{
+    const res = await fetch(`${API_BASE}/season-boxes/${boxId}/participants`);
+    const list = await res.json();
+    panel.innerHTML = list.length === 0
+      ? `<div style="font-size:11.5px;color:var(--text-muted);padding:8px 0;">No payouts recorded yet.</div>`
+      : list.map(p=>`<div class="sp-row"><span>${p.name}</span><span class="sp-addr">${p.maskedAddress}</span><span>$${(p.totalUsdt||0).toFixed(2)}</span></div>`).join('');
+    panel.dataset.loaded = '1';
+  } catch(e){ panel.innerHTML = `<div style="font-size:11.5px;color:var(--red);">Could not load participants.</div>`; }
+}
+
+const AP_ACTIVITY_TYPES = ['ad','task','checkin','referral_bonus','referral_commission'];
+const UP_ACTIVITY_TYPES = ['offerwall'];
+const ACTIVITY_ICONS = { ad:'▶', task:'✓', checkin:'🔥', referral_bonus:'◎', referral_commission:'◎', offerwall:'$' };
+const ACTIVITY_LABELS = { ad:'Watched ad', task:'Completed task', checkin:'Daily check-in', referral_bonus:'Referral bonus', referral_commission:'Referral commission', offerwall:'Offerwall' };
+
+async function loadHistoryPage(kind){
+  const listEl = document.getElementById(kind === 'up' ? 'upHistoryList' : 'apHistoryList');
+  listEl.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:20px 0;">Loading…</div>`;
+  try{
+    const res = await fetch(`${API_BASE}/user/${state.user.id}/activity`);
+    const all = await res.json();
+    const types = kind === 'up' ? UP_ACTIVITY_TYPES : AP_ACTIVITY_TYPES;
+    const filtered = all.filter(a => types.includes(a.type));
+    if (filtered.length === 0){
+      listEl.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:20px 0;">No ${kind.toUpperCase()} activity yet.</div>`;
+      return;
+    }
+    const color = kind === 'up' ? 'var(--up-color)' : 'var(--gold)';
+    listEl.innerHTML = filtered.map(a=>`
+      <div class="ad-row">
+        <div class="icon">${ACTIVITY_ICONS[a.type]||'•'}</div>
+        <div class="info">
+          <div class="name">${ACTIVITY_LABELS[a.type]||a.type}</div>
+          <div class="sub">${a.detail||''} · ${a.createdAt ? new Date(a.createdAt).toLocaleString() : '—'}</div>
+        </div>
+        <div style="font-weight:700; color:${color}; font-family:'Space Grotesk',sans-serif;">+${a.points}</div>
+      </div>`).join('');
+  } catch(e){
+    listEl.innerHTML = `<div style="text-align:center; color:var(--red); font-size:12.5px; padding:20px 0;">Could not load history.</div>`;
+  }
+}
+
+async function submitWithdraw(){
+  const network = document.getElementById('withdrawNetwork').value;
+  const addr = document.getElementById('withdrawAddress').value.trim();
+  const status = document.getElementById('withdrawStatus');
+  if (!withdrawInfo.withdrawOpen){ status.textContent = "Withdrawals are currently closed."; return; }
+  if (!addr){ status.textContent = "Enter a wallet address first."; return; }
+  try{
+    const res = await fetch(`${API_BASE}/withdraw`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: state.user.id, network, address: addr, initData: getInitData() })
+    });
+    const result = await res.json();
+    if (!result.success){
+      status.textContent = result.reason === 'nothing_to_withdraw' ? "You have nothing to withdraw yet."
+        : result.reason === 'withdraw_closed' ? "Withdrawals are currently closed."
+        : "Something went wrong — try again.";
+      return;
+    }
+  } catch(e){ status.textContent = "Couldn't reach the server."; return; }
+  status.textContent = "Request submitted. You'll be paid between the 3rd–5th if approved.";
+  document.getElementById('withdrawBtn').disabled = true;
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+loadHome();
 </script>
 </body>
 </html>
