@@ -223,7 +223,41 @@
   .chart-loading{text-align:center; font-size:11.5px; color:var(--text-muted); padding:20px 0;}
 
 
-  /* Notifications bell + page */
+
+  /* Inbox + Support boxes (home) */
+  .hq-row{display:flex; gap:10px; margin-top:12px;}
+  .hq-box{flex:1; position:relative; display:flex; align-items:center; gap:10px; background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border:1px solid var(--line); border-radius:14px; padding:12px 14px; box-shadow:0 4px 14px rgba(0,0,0,0.18); cursor:pointer; color:var(--text); font-family:'Inter',sans-serif; text-align:left;}
+  .hq-icon{font-size:22px; line-height:1;}
+  .hq-title{font-size:13.5px; font-weight:700;}
+  .hq-sub{font-size:10.5px; color:var(--text-muted); margin-top:1px;}
+  .hq-badge{position:absolute; top:-6px; right:-4px; min-width:18px; height:18px; padding:0 5px; border-radius:9px; background:var(--red); color:#fff; font-size:10.5px; font-weight:700; display:none; align-items:center; justify-content:center;}
+  .inbox-item{display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:13px 14px; margin-bottom:8px; cursor:pointer;}
+  .inbox-item.unread{border-color:var(--gold-dim);}
+  .inbox-item .it{flex:1; font-size:13.5px; font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .inbox-item .id{font-size:10.5px; color:var(--text-muted); flex-shrink:0;}
+  .udot{width:8px; height:8px; border-radius:50%; background:var(--gold); flex-shrink:0;}
+  .lfa-modal{position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; display:none; align-items:center; justify-content:center; padding:20px;}
+  .lfa-modal.active{display:flex;}
+  .lfa-modal-card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; width:100%; max-width:420px; max-height:85vh; overflow-y:auto;}
+  .lfa-modal-card h3{font-size:16px; margin-bottom:4px;}
+  .lfa-modal-date{font-size:10.5px; color:var(--text-muted); margin-bottom:12px;}
+  .lfa-modal-body{font-size:13.5px; line-height:1.6; white-space:pre-wrap; word-break:break-word;}
+  .lfa-modal-close{width:100%; margin-top:16px; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-weight:600; font-size:13.5px; padding:11px; border-radius:10px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .withdraw-box textarea{width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:13.5px; padding:11px 12px; border-radius:10px; margin-bottom:10px; font-family:'Inter',sans-serif; resize:vertical;}
+  .tk-attach{display:inline-block; background:var(--surface-raised); border:1px dashed var(--line); color:var(--text-muted); font-size:12.5px; padding:9px 14px; border-radius:10px; cursor:pointer; margin-bottom:10px;}
+  .tk-preview{position:relative; margin-bottom:10px; display:none;}
+  .tk-preview img{max-width:100%; max-height:160px; border-radius:10px; border:1px solid var(--line); display:block;}
+  .tk-preview button{position:absolute; top:6px; right:6px; background:rgba(0,0,0,0.65); color:#fff; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer;}
+  .tk-pill{font-size:10.5px; font-weight:600; padding:3px 9px; border-radius:20px; flex-shrink:0;}
+  .tk-pill.open{background:rgba(74,222,128,0.12); color:var(--green);}
+  .tk-pill.closed{background:rgba(255,255,255,0.08); color:var(--text-muted);}
+  .tk-msg{background:var(--surface-raised); border-radius:10px; padding:9px 11px; margin-top:8px; font-size:12.5px; line-height:1.5; white-space:pre-wrap; word-break:break-word;}
+  .tk-msg.admin{border-left:3px solid var(--gold);}
+  .tk-msg .who{font-size:10.5px; color:var(--text-muted); margin-bottom:3px;}
+  .lfa-modal-card img.tk-img{max-width:100%; border-radius:10px; margin-top:10px;}
+  .lfa-modal-card textarea{width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:13px; padding:10px; border-radius:10px; margin-top:12px; font-family:'Inter',sans-serif; resize:vertical;}
+
+  /* (old bell styles) */
   .home-user{flex:1;}
   .bell-btn{position:relative; width:40px; height:40px; border-radius:12px; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:18px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center;}
   .bell-badge{position:absolute; top:-5px; right:-5px; min-width:17px; height:17px; padding:0 4px; border-radius:9px; background:var(--red,#F0654E); color:#fff; font-size:10px; font-weight:700; display:none; align-items:center; justify-content:center;}
@@ -362,11 +396,23 @@
         <div class="home-avatar" id="homeAvatar">U</div>
         <div class="home-name" id="homeName">User</div>
       </div>
-      <button class="bell-btn" onclick="showPage('notices', null)" aria-label="Notifications">🔔<span class="bell-badge" id="bellBadge">0</span></button>
       <div class="home-balance-box">
         <div class="hb-row"><span class="hb-label ap">AP</span><span class="hb-val ap" id="homeAp">0</span></div>
         <div class="hb-row"><span class="hb-label up">UP</span><span class="hb-val up" id="homeUp">0</span></div>
       </div>
+    </div>
+
+    <div class="hq-row">
+      <button class="hq-box" onclick="showPage('notices', null)">
+        <span class="hq-icon">📥</span>
+        <span><div class="hq-title">Inbox</div><div class="hq-sub">News &amp; updates</div></span>
+        <span class="hq-badge" id="bellBadge">0</span>
+      </button>
+      <button class="hq-box" onclick="showPage('support', null)">
+        <span class="hq-icon">🎧</span>
+        <span><div class="hq-title">Support</div><div class="hq-sub">Get help</div></span>
+        <span class="hq-badge" id="supportBadge">0</span>
+      </button>
     </div>
 
     <div class="checkin-box">
@@ -613,13 +659,38 @@
     </div>
   </div>
 
-  <!-- ================= NOTICES (hidden page) ================= -->
+  <!-- ================= INBOX (hidden page) ================= -->
   <div class="page" id="page-notices">
     <div style="padding-top:6px;">
       <button class="wp-back" onclick="showPage('home', document.querySelectorAll('.nav-item')[0])">‹ Back</button>
-      <div class="section-label" style="margin-top:10px;">Notifications</div>
+      <div class="section-label" style="margin-top:10px;">Inbox</div>
       <div id="noticeList"><div style="font-size:12px;color:var(--text-muted);">Loading...</div></div>
     </div>
+  </div>
+
+  <!-- ================= SUPPORT (hidden page) ================= -->
+  <div class="page" id="page-support">
+    <div style="padding-top:6px;">
+      <button class="wp-back" onclick="showPage('home', document.querySelectorAll('.nav-item')[0])">‹ Back</button>
+      <div class="section-label" style="margin-top:10px;">Support</div>
+      <div class="withdraw-box" style="margin-top:0;">
+        <div class="title">New ticket</div>
+        <div class="sub">Tell us what went wrong. We'll reply here and in the bot chat.</div>
+        <input id="tkSubject" maxlength="100" placeholder="Headline (e.g. Task reward missing)">
+        <textarea id="tkDesc" maxlength="2000" rows="4" placeholder="Describe the problem in detail..."></textarea>
+        <label class="tk-attach">📎 Add picture<input type="file" accept="image/*" id="tkFile" style="display:none;" onchange="onTicketPicture(event)"></label>
+        <div class="tk-preview" id="tkPreview"><img id="tkPreviewImg"><button onclick="clearTicketPicture()">✕</button></div>
+        <button class="withdraw-submit" id="tkSubmitBtn" onclick="submitTicket()">Send ticket</button>
+        <div class="withdraw-note" id="tkStatus"></div>
+      </div>
+      <div class="section-label">My tickets</div>
+      <div id="tkList"><div style="font-size:12px;color:var(--text-muted);">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- Popup (inbox message / ticket details) -->
+  <div class="lfa-modal" id="lfaModal" onclick="if(event.target===this) closeLfaModal()">
+    <div class="lfa-modal-card" id="lfaModalCard"></div>
   </div>
 
   <!-- ================= AP HISTORY (hidden page) ================= -->
@@ -771,6 +842,7 @@ function showPage(name, el){
 
   if (name === 'home') loadHome();
   if (name === 'notices') loadNoticesPage();
+  if (name === 'support') loadTicketsPage();
   if (name === 'ads') loadUserFromServer().then(renderEarn);
   if (name === 'leaderboard') loadLeaderboard();
   if (name === 'referral') { loadUserFromServer().then(renderReferral); loadReferralsFromServer(); }
@@ -1608,44 +1680,183 @@ function startWithdrawCooldown(){
   wdCooldownInterval = setInterval(tick, 1000);
 }
 
-/* ---------- Notifications (bell on Home) ---------- */
+/* ---------- Inbox (headlines) + popup ---------- */
 function escHtml(t){ return String(t||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 let cachedNotices = [];
 
 async function fetchNotices(){
   try{
     const res = await fetch(`${API_BASE}/notices`);
-    cachedNotices = await res.json();
+    const data = await res.json();
+    if (Array.isArray(data)) cachedNotices = data;
   } catch(e){ console.error("Could not load notices:", e); }
   return cachedNotices;
 }
 
 function getSeenTime(){ return parseInt(localStorage.getItem('lfa_notice_seen') || '0', 10); }
+function setBadge(id, n){
+  const badge = document.getElementById(id);
+  if (!badge) return;
+  badge.textContent = n > 9 ? '9+' : n;
+  badge.style.display = n > 0 ? 'flex' : 'none';
+}
 
 function updateBellBadge(){
   const seen = getSeenTime();
-  const unread = cachedNotices.filter(n => new Date(n.createdAt).getTime() > seen).length;
-  const badge = document.getElementById('bellBadge');
-  if (!badge) return;
-  badge.textContent = unread > 9 ? '9+' : unread;
-  badge.style.display = unread > 0 ? 'flex' : 'none';
+  setBadge('bellBadge', cachedNotices.filter(n => new Date(n.createdAt).getTime() > seen).length);
 }
 
-async function refreshNoticeBadge(){ await fetchNotices(); updateBellBadge(); }
+async function refreshNoticeBadge(){ await fetchNotices(); updateBellBadge(); refreshSupportBadge(); }
+
+function openLfaModal(html){
+  document.getElementById('lfaModalCard').innerHTML = html + '<button class="lfa-modal-close" onclick="closeLfaModal()">Close</button>';
+  document.getElementById('lfaModal').classList.add('active');
+}
+function closeLfaModal(){ document.getElementById('lfaModal').classList.remove('active'); }
 
 async function loadNoticesPage(){
   const list = document.getElementById('noticeList');
   await fetchNotices();
   const seen = getSeenTime();
-  list.innerHTML = cachedNotices.length ? cachedNotices.map(n => `
-    <div class="notice-item ${new Date(n.createdAt).getTime() > seen ? 'unread' : ''}">
-      <div class="nt">${n.type === 'auto' ? '🔔' : '📢'} ${escHtml(n.title)}</div>
-      ${n.body ? `<div class="nb">${escHtml(n.body)}</div>` : ''}
-      <div class="nd">${new Date(n.createdAt).toLocaleString()}</div>
-    </div>`).join('')
-    : `<div style="font-size:12.5px;color:var(--text-muted);">No notifications yet.</div>`;
+  list.innerHTML = cachedNotices.length ? cachedNotices.map((n, i) => {
+    const unread = new Date(n.createdAt).getTime() > seen;
+    return `<div class="inbox-item ${unread ? 'unread' : ''}" onclick="openNotice(${i})">
+      ${unread ? '<span class="udot"></span>' : ''}
+      <span class="it">${n.type === 'auto' ? '🔔' : '📢'} ${escHtml(n.title)}</span>
+      <span class="id">${new Date(n.createdAt).toLocaleDateString()}</span>
+    </div>`;
+  }).join('') : `<div style="font-size:12.5px;color:var(--text-muted);">No messages yet.</div>`;
   if (cachedNotices.length) localStorage.setItem('lfa_notice_seen', String(new Date(cachedNotices[0].createdAt).getTime()));
   updateBellBadge();
+}
+
+function openNotice(i){
+  const n = cachedNotices[i];
+  if (!n) return;
+  openLfaModal(`<h3>${escHtml(n.title)}</h3>
+    <div class="lfa-modal-date">${new Date(n.createdAt).toLocaleString()}</div>
+    <div class="lfa-modal-body">${escHtml(n.body) || '<span style="color:var(--text-muted)">(no extra details)</span>'}</div>`);
+  const item = document.querySelectorAll('#noticeList .inbox-item')[i];
+  if (item){ item.classList.remove('unread'); const d = item.querySelector('.udot'); if (d) d.remove(); }
+}
+
+/* ---------- Support tickets ---------- */
+let ticketPicture = null;
+let cachedTickets = [];
+
+function isGuest(){ return String(state.user.id).startsWith('guest_'); }
+
+function ticketPost(path, extra){
+  return fetch(`${API_BASE}${path}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId: state.user.id, initData: getInitData(), ...(extra||{}) })
+  }).then(r => r.json());
+}
+
+async function refreshSupportBadge(){
+  if (isGuest()) return;
+  try{
+    const list = await ticketPost('/tickets/mine');
+    if (Array.isArray(list)){ cachedTickets = list; setBadge('supportBadge', list.filter(t => t.unreadByUser).length); }
+  } catch(e){}
+}
+
+function onTicketPicture(ev){
+  const file = ev.target.files && ev.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      // shrink so it stays small enough to store (max 1000px, JPEG)
+      const MAX = 1000;
+      const k = Math.min(1, MAX / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      let q = 0.8, data = c.toDataURL('image/jpeg', q);
+      while (data.length > 600000 && q > 0.3){ q -= 0.1; data = c.toDataURL('image/jpeg', q); }
+      ticketPicture = data;
+      document.getElementById('tkPreviewImg').src = data;
+      document.getElementById('tkPreview').style.display = 'block';
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearTicketPicture(){
+  ticketPicture = null;
+  document.getElementById('tkFile').value = '';
+  document.getElementById('tkPreview').style.display = 'none';
+}
+
+async function loadTicketsPage(){
+  const list = document.getElementById('tkList');
+  if (isGuest()){ list.innerHTML = `<div style="font-size:12.5px;color:var(--text-muted);">Open the app from Telegram to use support.</div>`; return; }
+  try{
+    const data = await ticketPost('/tickets/mine');
+    cachedTickets = Array.isArray(data) ? data : [];
+  } catch(e){ list.innerHTML = `<div style="font-size:12.5px;color:var(--red);">Could not load tickets.</div>`; return; }
+  list.innerHTML = cachedTickets.length ? cachedTickets.map(t => `
+    <div class="inbox-item ${t.unreadByUser ? 'unread' : ''}" onclick="openTicket('${t.id}')">
+      ${t.unreadByUser ? '<span class="udot"></span>' : ''}
+      <span class="it">${escHtml(t.subject)}</span>
+      <span class="tk-pill ${t.status}">${t.status === 'open' ? 'Open' : 'Closed'}</span>
+    </div>`).join('') : `<div style="font-size:12.5px;color:var(--text-muted);">No tickets yet.</div>`;
+  setBadge('supportBadge', cachedTickets.filter(t => t.unreadByUser).length);
+}
+
+async function submitTicket(){
+  const subject = document.getElementById('tkSubject').value.trim();
+  const description = document.getElementById('tkDesc').value.trim();
+  const status = document.getElementById('tkStatus');
+  const btn = document.getElementById('tkSubmitBtn');
+  if (isGuest()){ status.textContent = "Open the app from Telegram to send a ticket."; return; }
+  if (!subject || !description){ status.textContent = "Write a headline and a description."; return; }
+  btn.disabled = true; status.textContent = "Sending...";
+  try{
+    const r = await ticketPost('/tickets', { subject, description, image: ticketPicture });
+    if (r.success){
+      status.textContent = "Ticket sent. We'll reply soon.";
+      document.getElementById('tkSubject').value = '';
+      document.getElementById('tkDesc').value = '';
+      clearTicketPicture();
+      loadTicketsPage();
+    } else {
+      status.textContent = r.reason === 'too_many_open' ? "You already have 5 open tickets. Please wait for replies."
+        : r.reason === 'bad_image' ? "That picture is too large. Try a smaller one."
+        : r.error === 'invalid_init_data' ? "Session expired. Close the app and open it again from Telegram."
+        : "Could not send the ticket. Please try again.";
+    }
+  } catch(e){ status.textContent = "Couldn't reach the server."; }
+  btn.disabled = false;
+}
+
+async function openTicket(id){
+  let t;
+  try{ t = await ticketPost(`/tickets/${id}/view`); } catch(e){ return; }
+  if (!t || t.success === false) return;
+  const replies = (t.replies || []).map(r => `
+    <div class="tk-msg ${r.from === 'admin' ? 'admin' : ''}">
+      <div class="who">${r.from === 'admin' ? 'Support' : 'You'} · ${new Date(r.at).toLocaleString()}</div>${escHtml(r.text)}
+    </div>`).join('');
+  openLfaModal(`<h3>${escHtml(t.subject)}</h3>
+    <div class="lfa-modal-date"><span class="tk-pill ${t.status}">${t.status === 'open' ? 'Open' : 'Closed'}</span> · ${new Date(t.createdAt).toLocaleString()}</div>
+    <div class="lfa-modal-body">${escHtml(t.description)}</div>
+    ${t.image ? `<img class="tk-img" src="${t.image}">` : ''}
+    ${replies}
+    ${t.status === 'open' ? `<textarea id="tkReplyText" rows="2" maxlength="2000" placeholder="Write a reply..."></textarea>
+      <button class="withdraw-submit" style="margin-top:8px;" onclick="sendTicketReply('${t.id}')">Send reply</button>` : '<div class="withdraw-note">This ticket is closed.</div>'}`);
+  loadTicketsPage();
+}
+
+async function sendTicketReply(id){
+  const el = document.getElementById('tkReplyText');
+  const text = el.value.trim();
+  if (!text) return;
+  const r = await ticketPost(`/tickets/${id}/reply`, { text });
+  if (r.success) openTicket(id);
 }
 
 setInterval(() => { if (state.user) refreshNoticeBadge(); }, 60000);
@@ -1667,6 +1878,7 @@ async function loadWithdrawPage(){
   note.textContent = withdrawInfo.withdrawOpen
     ? `Withdrawals for ${withdrawInfo.seasonName} are open now. Requests are reviewed and paid between the 3rd–5th of next month.`
     : (state.settings.withdrawClosedNote || `The withdrawal window opens on the 1st–2nd of Jan, Mar, May, Jul, Sep, and Nov (00:00–23:59 UTC). It's currently closed.`);
+  if (withdrawInfo.apClaimed) note.textContent += ' Your AP allocation for this season is already requested.';
   btn.disabled = !withdrawInfo.withdrawOpen || state.banned;
   document.getElementById('withdrawStatus').textContent = '';
 
@@ -1783,23 +1995,43 @@ async function submitWithdraw(){
   const network = document.getElementById('withdrawNetwork').value;
   const addr = document.getElementById('withdrawAddress').value.trim();
   const status = document.getElementById('withdrawStatus');
+  const btn = document.getElementById('withdrawBtn');
   if (!withdrawInfo.withdrawOpen){ status.textContent = "Withdrawals are currently closed."; return; }
   if (!addr){ status.textContent = "Enter a wallet address first."; return; }
+  // BEP20 and Polygon both use 0x + 40 hex characters
+  if (!/^0x[a-fA-F0-9]{40}$/.test(addr)){
+    status.textContent = "That wallet address looks wrong. It must start with 0x and be 42 characters long.";
+    return;
+  }
+  btn.disabled = true; status.textContent = "Submitting...";
+  let result;
   try{
     const res = await fetch(`${API_BASE}/withdraw`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId: state.user.id, network, address: addr, initData: getInitData() })
     });
-    const result = await res.json();
-    if (!result.success){
-      status.textContent = result.reason === 'nothing_to_withdraw' ? "You have nothing to withdraw yet."
-        : result.reason === 'withdraw_closed' ? "Withdrawals are currently closed."
-        : "Something went wrong — try again.";
-      return;
-    }
-  } catch(e){ status.textContent = "Couldn't reach the server."; return; }
+    result = await res.json().catch(() => ({}));
+  } catch(e){ status.textContent = "Couldn't reach the server. Check your internet and try again."; btn.disabled = false; return; }
+
+  if (!result.success){
+    const reasons = {
+      nothing_to_withdraw: "You have nothing to withdraw yet.",
+      already_requested: "You already requested this season's allocation. New UP can be withdrawn in a new request.",
+      withdraw_closed: "Withdrawals are currently closed.",
+      invalid_address: "That wallet address looks wrong. It must start with 0x and be 42 characters long.",
+      bad_network: "Please choose BEP20 or Polygon.",
+      banned: "Your account is suspended.",
+      user_not_found: "Account not found. Close the app and open it again from Telegram.",
+      invalid_init_data: "Your session expired. Close the app and open it again from Telegram, then retry.",
+      missing_init_data: "Please open the app from inside Telegram to withdraw.",
+      user_id_mismatch: "Account mismatch. Close the app and open it again from Telegram."
+    };
+    const code = result.reason || result.error || 'unknown';
+    status.textContent = reasons[code] || `Server error — please try again in a minute. (code: ${code})`;
+    btn.disabled = false;
+    return;
+  }
   status.textContent = "Request submitted. You'll be paid between the 3rd–5th if approved.";
-  document.getElementById('withdrawBtn').disabled = true;
 }
 
 /* ============================================================
