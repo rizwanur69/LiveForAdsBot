@@ -393,6 +393,9 @@
   .season-participants.expanded{display:block;}
   .sp-row{display:flex; justify-content:space-between; font-size:11.5px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.06);}
   .sp-row .sp-addr{font-family:monospace; color:var(--text-muted);}
+  .sp-item{border-bottom:1px solid rgba(255,255,255,0.06);}
+  .sp-item .sp-row{border-bottom:none; padding-bottom:2px;}
+  .sp-txline{display:block; font-family:monospace; font-size:10.5px; color:var(--teal); padding:0 0 7px; text-decoration:none; cursor:pointer;}
 
   /* Crop modal */
   .crop-overlay{position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:none; align-items:center; justify-content:center; flex-direction:column;}
@@ -2096,6 +2099,13 @@ function maskAddress(addr){
   return addr.slice(0,5) + '•••' + addr.slice(-5);
 }
 
+function shortHash(t){ t = String(t||''); return t.length > 18 ? t.slice(0,10) + '…' + t.slice(-6) : t; }
+// Explorer link for a payout; only ever http(s) links
+function payoutTxUrl(p){
+  const u = p.txUrl || (p.txHash && TX_EXPLORER[p.network] ? TX_EXPLORER[p.network] + encodeURIComponent(p.txHash) : '');
+  return /^https?:\/\//i.test(u) ? u : '';
+}
+
 async function toggleSeasonParticipants(boxId, el){
   const panel = document.getElementById(`sp-${boxId}`);
   const isOpen = panel.classList.contains('expanded');
@@ -2112,7 +2122,12 @@ async function toggleSeasonParticipants(boxId, el){
     const list = await res.json();
     panel.innerHTML = list.length === 0
       ? `<div style="font-size:11.5px;color:var(--text-muted);padding:8px 0;">No payouts recorded yet.</div>`
-      : list.map(p=>`<div class="sp-row"><span>${p.name}</span><span class="sp-addr">${p.maskedAddress}</span><span>$${(p.totalUsdt||0).toFixed(2)}</span></div>`).join('');
+      : list.map(p=>{
+          const url = payoutTxUrl(p);
+          const txLine = (p.txHash && url)
+            ? `<a class="sp-txline" href="${escHtml(url)}" onclick="event.preventDefault(); openExternal(this.href)">🔗 ${escHtml(shortHash(p.txHash))} · View on ${p.network === 'polygon' ? 'PolygonScan' : 'BscScan'} ›</a>` : '';
+          return `<div class="sp-item"><div class="sp-row"><span>${escHtml(p.name)}</span><span class="sp-addr">${escHtml(p.maskedAddress)}</span><span>$${(p.totalUsdt||0).toFixed(2)}</span></div>${txLine}</div>`;
+        }).join('');
     panel.dataset.loaded = '1';
   } catch(e){ panel.innerHTML = `<div style="font-size:11.5px;color:var(--red);">Could not load participants.</div>`; }
 }
