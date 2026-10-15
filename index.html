@@ -267,6 +267,28 @@
   .notice-item .nb{font-size:12.5px; color:var(--text-muted); margin-top:5px; line-height:1.5; white-space:pre-wrap; word-break:break-word;}
   .notice-item .nd{font-size:10.5px; color:var(--text-muted); margin-top:7px; opacity:0.8;}
 
+
+  /* Withdrawal status card (profile) */
+  .wd-status-card{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:14px; padding:13px 15px; margin-top:12px;}
+  .wd-status-card.paid{border-left-color:var(--green);}
+  .wd-status-card.rejected{border-left-color:var(--red);}
+  .wds-top{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .wds-title{font-size:13.5px; font-weight:700;}
+  .wds-pill{font-size:10.5px; font-weight:700; padding:3px 10px; border-radius:20px;}
+  .wds-pill.pending{background:rgba(242,179,61,0.14); color:var(--gold);}
+  .wds-pill.paid{background:rgba(74,222,128,0.14); color:var(--green);}
+  .wds-pill.rejected{background:rgba(232,96,76,0.14); color:var(--red);}
+  .wds-main{font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:700; margin-top:8px;}
+  .wds-meta{font-size:11.5px; color:var(--text-muted); margin-top:4px; line-height:1.55; word-break:break-all;}
+  .wds-link{color:var(--teal); font-size:12px; font-weight:600; cursor:pointer; margin-top:8px; display:inline-block;}
+  .wds-row{display:flex; justify-content:space-between; gap:10px; font-size:12px; margin-top:6px;}
+  .wds-row span:first-child{color:var(--text-muted);}
+  .wds-block{margin-top:10px; background:var(--surface-raised); border-radius:10px; padding:9px 11px;}
+  .wds-k{font-size:10.5px; color:var(--text-muted); margin-bottom:3px;}
+  .wds-v{font-size:11.5px; word-break:break-all; line-height:1.5;}
+  .wds-copy{margin-top:7px; margin-right:6px; background:var(--surface); border:1px solid var(--line); color:var(--teal); font-size:11.5px; font-weight:600; padding:6px 11px; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .wds-help{margin-top:10px; width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-weight:600; font-size:12.5px; padding:9px; border-radius:10px; cursor:pointer; font-family:'Inter',sans-serif;}
+
   /* Withdraw cooldown */
   .wd-cooldown{background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-top:12px; text-align:center;}
   .wd-cd-label{font-size:12px; color:var(--text-muted); margin-bottom:10px;}
@@ -642,7 +664,6 @@
         <input type="text" id="withdrawAddress" placeholder="Wallet address">
         <select id="withdrawNetwork">
           <option value="bep20">USDT — BEP20</option>
-          <option value="polygon">USDT — Polygon</option>
         </select>
 
         <div class="wd-total-box" style="margin-top:12px;">
@@ -655,6 +676,11 @@
         <button class="withdraw-submit" id="withdrawBtn" onclick="submitWithdraw()">Submit request</button>
         <div class="withdraw-note" id="withdrawStatus"></div>
       </div>
+    </div>
+
+    <div class="wd-section">
+      <div class="wd-section-title">Withdraw History</div>
+      <div id="wdHistoryList"><div style="font-size:12px;color:var(--text-muted);">Loading...</div></div>
     </div>
   </div>
 
@@ -1635,6 +1661,70 @@ function renderWithdrawInfo(){
   startWithdrawCooldown();
 }
 
+/* ---------- Withdraw history (permanent, bottom of the Withdraw page) ---------- */
+const TX_EXPLORER = { bep20: 'https://bscscan.com/tx/', polygon: 'https://polygonscan.com/tx/' };
+const NET_NAME = { bep20: 'BEP20', polygon: 'Polygon' };
+let wdHistory = [];
+
+function openExternal(url){ if (tg) tg.openLink(url); else window.open(url, '_blank'); }
+
+function copyToClipboard(text, btn){
+  const done = () => { if (btn){ const old = btn.dataset.label || btn.textContent; btn.dataset.label = old; btn.textContent = 'Copied ✓'; setTimeout(() => btn.textContent = old, 1400); } };
+  const fallback = () => {
+    const t = document.createElement('textarea'); t.value = text; t.style.position = 'fixed'; t.style.opacity = '0';
+    document.body.appendChild(t); t.select();
+    try{ document.execCommand('copy'); done(); } catch(e){ prompt('Copy this:', text); }
+    t.remove();
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+  else fallback();
+}
+
+function txLink(w){ return w.txUrl || (w.txHash && TX_EXPLORER[w.network] ? TX_EXPLORER[w.network] + encodeURIComponent(w.txHash) : ''); }
+
+function copyWd(id, field, btn){
+  const w = wdHistory.find(x => x.id === id);
+  if (w && w[field]) copyToClipboard(w[field], btn);
+}
+function openWdTx(id){
+  const w = wdHistory.find(x => x.id === id);
+  const url = w && txLink(w);
+  if (url) openExternal(url);
+}
+
+async function loadWithdrawHistory(){
+  const box = document.getElementById('wdHistoryList');
+  if (!box) return;
+  if (isGuest()){ box.innerHTML = `<div style="font-size:12.5px;color:var(--text-muted);">Open the app from Telegram to see your withdrawals.</div>`; return; }
+  try{
+    const r = await ticketPost('/withdrawals/history');
+    wdHistory = Array.isArray(r) ? r : [];
+  } catch(e){ box.innerHTML = `<div style="font-size:12.5px;color:var(--red);">Could not load history.</div>`; return; }
+  if (!wdHistory.length){ box.innerHTML = `<div style="font-size:12.5px;color:var(--text-muted);">No withdrawals yet.</div>`; return; }
+  box.innerHTML = wdHistory.map(w => {
+    const label = w.status === 'paid' ? 'Paid' : w.status === 'rejected' ? 'Declined' : 'Pending review';
+    const row = (k, v) => `<div class="wds-row"><span>${k}</span><span>${v}</span></div>`;
+    return `<div class="wd-status-card ${w.status}">
+      <div class="wds-top"><span class="wds-title">#${String(w.id).slice(0,6).toUpperCase()}</span><span class="wds-pill ${w.status}">${label}</span></div>
+      <div class="wds-main">$${(w.totalUsdt||0).toFixed(2)} <span style="font-size:12px;color:var(--text-muted);font-weight:500;">USDT</span></div>
+      ${row('From AP', '$' + (w.apUsdt||0).toFixed(2))}
+      ${row('From UP', '$' + (w.upUsdt||0).toFixed(2) + (w.upSpent ? ` (${w.upSpent} UP)` : ''))}
+      ${row('Network', NET_NAME[w.network] || w.network)}
+      ${row('Requested', w.createdAt ? new Date(w.createdAt).toLocaleString() : '—')}
+      ${w.processedAt ? row(w.status === 'paid' ? 'Paid on' : 'Declined on', new Date(w.processedAt).toLocaleString()) : ''}
+      <div class="wds-block"><div class="wds-k">Wallet address</div><div class="wds-v">${escHtml(w.address)}</div>
+        <button class="wds-copy" onclick="copyWd('${w.id}','address',this)">Copy address</button></div>
+      ${w.status === 'paid' && w.txHash ? `<div class="wds-block"><div class="wds-k">Transaction hash</div><div class="wds-v">${escHtml(w.txHash)}</div>
+        <button class="wds-copy" onclick="copyWd('${w.id}','txHash',this)">Copy hash</button>
+        ${txLink(w) ? `<button class="wds-copy" onclick="openWdTx('${w.id}')">View transaction ›</button>` : ''}</div>` : ''}
+      ${w.status === 'paid' && !w.txHash ? `<div class="wds-meta">Paid. No transaction hash was added.</div>` : ''}
+      ${w.status === 'rejected' && w.note ? `<div class="wds-meta">Reason: ${escHtml(w.note)}</div>` : ''}
+      ${w.status === 'rejected' && w.upSpent > 0 ? `<div class="wds-meta">${w.upSpent} UP returned to your balance.</div>` : ''}
+      ${w.status === 'rejected' ? `<button class="wds-help" onclick="showPage('support', null)">🎧 Talk to Support</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
 /* ---------- Withdraw cooldown (days / hours / minutes / seconds) ---------- */
 function startWithdrawCooldown(){
   if (wdCooldownInterval){ clearInterval(wdCooldownInterval); wdCooldownInterval = null; }
@@ -1685,12 +1775,23 @@ function escHtml(t){ return String(t||'').replace(/[&<>"']/g, c => ({'&':'&amp;'
 let cachedNotices = [];
 
 async function fetchNotices(){
+  let data = null;
   try{
-    const res = await fetch(`${API_BASE}/notices`);
-    const data = await res.json();
-    if (Array.isArray(data)) cachedNotices = data;
-  } catch(e){ console.error("Could not load notices:", e); }
+    // logged-in users get global notices + their own personal messages
+    if (!isGuest()) data = await ticketPost('/notices/mine');
+  } catch(e){}
+  if (!Array.isArray(data)){
+    try{ data = await (await fetch(`${API_BASE}/notices`)).json(); } catch(e){ console.error("Could not load notices:", e); }
+  }
+  if (Array.isArray(data)) cachedNotices = data;
   return cachedNotices;
+}
+
+function noticeIcon(n){
+  if (n.type === 'withdraw_paid') return '✅';
+  if (n.type === 'withdraw_declined') return '❌';
+  if (n.type === 'withdraw_request') return '💳';
+  return n.type === 'auto' ? '🔔' : '📢';
 }
 
 function getSeenTime(){ return parseInt(localStorage.getItem('lfa_notice_seen') || '0', 10); }
@@ -1722,7 +1823,7 @@ async function loadNoticesPage(){
     const unread = new Date(n.createdAt).getTime() > seen;
     return `<div class="inbox-item ${unread ? 'unread' : ''}" onclick="openNotice(${i})">
       ${unread ? '<span class="udot"></span>' : ''}
-      <span class="it">${n.type === 'auto' ? '🔔' : '📢'} ${escHtml(n.title)}</span>
+      <span class="it">${noticeIcon(n)} ${escHtml(n.title)}</span>
       <span class="id">${new Date(n.createdAt).toLocaleDateString()}</span>
     </div>`;
   }).join('') : `<div style="font-size:12.5px;color:var(--text-muted);">No messages yet.</div>`;
@@ -1730,12 +1831,32 @@ async function loadNoticesPage(){
   updateBellBadge();
 }
 
+function copyNoticeField(i, field, btn){
+  const n = cachedNotices[i];
+  if (n && n.meta && n.meta[field]) copyToClipboard(n.meta[field], btn);
+}
+function openNoticeTx(i){
+  const n = cachedNotices[i];
+  const m = n && n.meta;
+  const url = m && (m.txUrl || (m.txHash && TX_EXPLORER[m.network] ? TX_EXPLORER[m.network] + encodeURIComponent(m.txHash) : ''));
+  if (url) openExternal(url);
+}
+
 function openNotice(i){
   const n = cachedNotices[i];
   if (!n) return;
+  const m = n.meta || {};
+  const isWd = n.type === 'withdraw_request' || n.type === 'withdraw_paid' || n.type === 'withdraw_declined';
+  const buttons = (isWd ? `
+    <div style="margin-top:14px; display:flex; flex-wrap:wrap; gap:6px;">
+      ${m.txHash ? `<button class="wds-copy" onclick="copyNoticeField(${i},'txHash',this)">Copy transaction hash</button>` : ''}
+      ${(m.txUrl || m.txHash) ? `<button class="wds-copy" onclick="openNoticeTx(${i})">View transaction ›</button>` : ''}
+      ${m.address ? `<button class="wds-copy" onclick="copyNoticeField(${i},'address',this)">Copy address</button>` : ''}
+    </div>` : '') +
+    ((n.type === 'withdraw_declined' || n.type === 'withdraw_paid') ? `<button class="wds-help" style="margin-top:10px;" onclick="closeLfaModal(); showPage('support', null)">🎧 Talk to Support</button>` : '');
   openLfaModal(`<h3>${escHtml(n.title)}</h3>
     <div class="lfa-modal-date">${new Date(n.createdAt).toLocaleString()}</div>
-    <div class="lfa-modal-body">${escHtml(n.body) || '<span style="color:var(--text-muted)">(no extra details)</span>'}</div>`);
+    <div class="lfa-modal-body">${escHtml(n.body) || '<span style="color:var(--text-muted)">(no extra details)</span>'}</div>${buttons}`);
   const item = document.querySelectorAll('#noticeList .inbox-item')[i];
   if (item){ item.classList.remove('unread'); const d = item.querySelector('.udot'); if (d) d.remove(); }
 }
@@ -1883,6 +2004,7 @@ async function loadWithdrawPage(){
   document.getElementById('withdrawStatus').textContent = '';
 
   updateWithdrawTotals();
+  loadWithdrawHistory();
 }
 
 // All UP is converted to USDT automatically — no manual convert step.
@@ -2019,7 +2141,7 @@ async function submitWithdraw(){
       already_requested: "You already requested this season's allocation. New UP can be withdrawn in a new request.",
       withdraw_closed: "Withdrawals are currently closed.",
       invalid_address: "That wallet address looks wrong. It must start with 0x and be 42 characters long.",
-      bad_network: "Please choose BEP20 or Polygon.",
+      bad_network: "Only BEP20 is supported.",
       banned: "Your account is suspended.",
       user_not_found: "Account not found. Close the app and open it again from Telegram.",
       invalid_init_data: "Your session expired. Close the app and open it again from Telegram, then retry.",
@@ -2032,6 +2154,7 @@ async function submitWithdraw(){
     return;
   }
   status.textContent = "Request submitted. You'll be paid between the 3rd–5th if approved.";
+  loadWithdrawHistory();
 }
 
 /* ============================================================
