@@ -203,7 +203,9 @@
   .editing .name{display:none;}
   .editing .name-input{display:block;}
   .profile-head .id{font-size:12.5px; color:var(--text-muted); margin-top:2px;}
-  .edit-toggle-btn{width:100%; margin-top:16px; background:var(--surface-raised); border:1px solid var(--line); color:var(--text-muted); font-size:13px; font-weight:600; cursor:pointer; padding:10px; border-radius:10px; font-family:'Inter',sans-serif; display:none;}
+  .edit-toggle-btn{width:100%; margin-top:16px; background:linear-gradient(135deg, var(--gold), #FFD27A); border:1px solid var(--gold); color:#1B1404; font-size:14px; font-weight:700; letter-spacing:0.2px; cursor:pointer; padding:12px; border-radius:12px; font-family:'Inter',sans-serif; display:none; box-shadow:0 0 12px rgba(242,179,61,0.55), 0 0 28px rgba(242,179,61,0.25); animation:saveGlow 1.8s ease-in-out infinite;}
+  .edit-toggle-btn:active{transform:scale(0.98);}
+  @keyframes saveGlow{0%,100%{box-shadow:0 0 8px rgba(242,179,61,0.45), 0 0 18px rgba(242,179,61,0.18);} 50%{box-shadow:0 0 18px rgba(242,179,61,0.85), 0 0 38px rgba(242,179,61,0.40);}}
   .editing-mode .edit-toggle-btn{display:block;}
   .edit-toggle-btn.done{background:var(--gold); color:#1B1404; border-color:var(--gold);}
 
@@ -439,6 +441,9 @@
 
     <div class="section-label">Tasks</div>
     <div id="taskList"></div>
+
+    <div class="payouts-section-title">Payouts</div>
+    <div id="seasonBoxesList"></div>
   </div>
 
   <!-- ================= EARN (Offerwall + Ads) ================= -->
@@ -535,7 +540,7 @@
         </div>
         <div style="flex:1;">
           <div class="name" id="profileName">User</div>
-          <input class="name-input" id="profileNameInput" type="text">
+          <input class="name-input" id="profileNameInput" type="text" maxlength="30">
           <div class="id" id="profileId">ID: —</div>
         </div>
       </div>
@@ -625,8 +630,6 @@
       <div class="wpb-arrow">›</div>
     </div>
 
-    <div class="payouts-section-title">Payouts</div>
-    <div id="seasonBoxesList"></div>
   </div>
 
   <!-- ================= WITHDRAW (hidden page, not in bottom nav) ================= -->
@@ -792,7 +795,15 @@ if (tg) { tg.ready(); tg.expand(); }
 document.getElementById('lfaWhitepaperLink').href = LFA_WHITEPAPER_PDF_URL;
 document.getElementById('lfaTermsLink').href = LFA_TERMS_PDF_URL;
 
-const AdsgramController = window.Adsgram ? window.Adsgram.init({ blockId: "46804" }) : null;
+const ADSGRAM_BLOCK_ID = "54131";
+let AdsgramController = null;
+// Created on demand, so it still works if the Adsgram script finishes loading after the page starts
+function getAdsgram(){
+  if (!AdsgramController && window.Adsgram){
+    try{ AdsgramController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID }); } catch(e){ console.error("Adsgram init failed:", e); }
+  }
+  return AdsgramController;
+}
 function setEarnSubTab(tab){
   document.getElementById('earnSubpage-offerwall').style.display = tab === 'offerwall' ? 'block' : 'none';
   document.getElementById('earnSubpage-ads').style.display = tab === 'ads' ? 'block' : 'none';
@@ -876,7 +887,6 @@ function showPage(name, el){
   if (name === 'profile') {
     loadUserFromServer().then(renderProfile);
     loadSettings().then(renderWithdrawInfo);
-    loadSeasonBoxes();
     loadStats();
   }
   if (name === 'withdraw') {
@@ -949,6 +959,7 @@ async function loadHome(){
   await loadTasks();
   renderHomeHeader();
   refreshNoticeBadge();
+  loadSeasonBoxes();
 
   if (state.banned){
     document.getElementById('checkinBtn').disabled = true;
@@ -1203,8 +1214,15 @@ function renderAds(){
 function watchAd(networkKey){
   if (state.banned) return;
   if (networkKey === 'adsgram'){
-    if (!AdsgramController){ alert('Ad SDK not loaded — try again in a moment.'); return; }
-    AdsgramController.show().then(() => reportAdWatched(networkKey)).catch(() => {});
+    const ctrl = getAdsgram();
+    if (!ctrl){ alert('Ad SDK not loaded — try again in a moment.'); return; }
+    ctrl.show().then(() => reportAdWatched(networkKey)).catch((err) => {
+      console.error("Adsgram error:", err);
+      // Closing the ad early is normal; only tell the user when no ad could be loaded or shown
+      if (err && err.error && (err.state === 'load' || err.state === 'render')){
+        alert(`No ad available right now. Please try again in a little while.${err.description ? '\n\n(' + err.description + ')' : ''}`);
+      }
+    });
     return;
   }
   if (networkKey === 'monetag'){
@@ -1433,9 +1451,12 @@ function startEditFromSettings(){
   enterEditMode();
 }
 
-function toggleEdit(){
-  exitEditMode();
-  saveProfile();
+async function toggleEdit(){
+  const btn = document.getElementById('editBtn');
+  btn.disabled = true;
+  const ok = await saveProfile();
+  btn.disabled = false;
+  if (ok) exitEditMode();
 }
 
 function triggerAvatarPick(){
@@ -1538,18 +1559,33 @@ function confirmCrop(){
 }
 
 async function saveProfile(){
-  const newName = document.getElementById('profileNameInput').value.trim() || state.user.name;
+  const newName = document.getElementById('profileNameInput').value.trim().slice(0, 30) || state.displayName || state.user.name;
   const newAvatar = state.pendingAvatarDataUrl || state.avatarUrl;
   try{
-    await fetch(`${API_BASE}/user/${state.user.id}/profile`, {
+    const res = await fetch(`${API_BASE}/user/${state.user.id}/profile`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ displayName: newName, avatarUrl: newAvatar, initData: getInitData() })
     });
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok || out.success === false){
+      const msg = out.error === 'invalid_init_data'
+        ? "Your session expired. Close the app and open it again from Telegram, then save again."
+        : "Couldn't save your profile. Please try again.";
+      if (tg && tg.showAlert) tg.showAlert(msg); else alert(msg);
+      return false;
+    }
     state.displayName = newName;
     state.avatarUrl = newAvatar;
     state.pendingAvatarDataUrl = null;
     renderProfile();
-  } catch(e){ console.error("Could not save profile:", e); }
+    renderHomeHeader();
+    return true;
+  } catch(e){
+    console.error("Could not save profile:", e);
+    const msg = "Couldn't reach the server. Check your internet and try again.";
+    if (tg && tg.showAlert) tg.showAlert(msg); else alert(msg);
+    return false;
+  }
 }
 
 function openSettings(){
