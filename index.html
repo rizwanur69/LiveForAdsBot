@@ -329,6 +329,8 @@
   .wpb-title{font-size:14.5px; font-weight:700;}
   .wpb-sub{font-size:11.5px; color:var(--text-muted); margin-top:2px;}
   .wpb-arrow{font-size:22px; color:var(--indigo);}
+  .support-box{position:relative; background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border-color:var(--gold-dim); box-shadow:0 4px 16px rgba(242,179,61,0.10);}
+  .support-box .wpb-arrow{color:var(--gold);}
 
   /* Withdraw page (hidden, not in bottom nav) */
   .withdraw-page-header{display:flex; align-items:center; gap:14px; padding:18px 0 6px;}
@@ -396,23 +398,11 @@
         <div class="home-avatar" id="homeAvatar">U</div>
         <div class="home-name" id="homeName">User</div>
       </div>
+      <button class="bell-btn" onclick="showPage('notices', null)" aria-label="Notifications">🔔<span class="bell-badge" id="bellBadge">0</span></button>
       <div class="home-balance-box">
         <div class="hb-row"><span class="hb-label ap">AP</span><span class="hb-val ap" id="homeAp">0</span></div>
         <div class="hb-row"><span class="hb-label up">UP</span><span class="hb-val up" id="homeUp">0</span></div>
       </div>
-    </div>
-
-    <div class="hq-row">
-      <button class="hq-box" onclick="showPage('notices', null)">
-        <span class="hq-icon">📥</span>
-        <span><div class="hq-title">Inbox</div><div class="hq-sub">News &amp; updates</div></span>
-        <span class="hq-badge" id="bellBadge">0</span>
-      </button>
-      <button class="hq-box" onclick="showPage('support', null)">
-        <span class="hq-icon">🎧</span>
-        <span><div class="hq-title">Support</div><div class="hq-sub">Get help</div></span>
-        <span class="hq-badge" id="supportBadge">0</span>
-      </button>
     </div>
 
     <div class="checkin-box">
@@ -604,6 +594,15 @@
       <div class="wd-cd-note" id="wdCdNote"></div>
     </div>
 
+    <div class="withdraw-premium-box support-box" onclick="showPage('support', null)">
+      <div class="wpb-left">
+        <div class="wpb-title">🎧 Support</div>
+        <div class="wpb-sub">Report a problem or ask for help</div>
+      </div>
+      <span class="hq-badge" id="supportBadge" style="top:-6px; right:10px;">0</span>
+      <div class="wpb-arrow">›</div>
+    </div>
+
     <div class="payouts-section-title">Payouts</div>
     <div id="seasonBoxesList"></div>
   </div>
@@ -671,7 +670,7 @@
   <!-- ================= SUPPORT (hidden page) ================= -->
   <div class="page" id="page-support">
     <div style="padding-top:6px;">
-      <button class="wp-back" onclick="showPage('home', document.querySelectorAll('.nav-item')[0])">‹ Back</button>
+      <button class="wp-back" onclick="showPage('profile', document.querySelectorAll('.nav-item')[5])">‹ Back</button>
       <div class="section-label" style="margin-top:10px;">Support</div>
       <div class="withdraw-box" style="margin-top:0;">
         <div class="title">New ticket</div>
@@ -843,6 +842,7 @@ function showPage(name, el){
   if (name === 'home') loadHome();
   if (name === 'notices') loadNoticesPage();
   if (name === 'support') loadTicketsPage();
+  if (name === 'profile') refreshSupportBadge();
   if (name === 'ads') loadUserFromServer().then(renderEarn);
   if (name === 'leaderboard') loadLeaderboard();
   if (name === 'referral') { loadUserFromServer().then(renderReferral); loadReferralsFromServer(); }
