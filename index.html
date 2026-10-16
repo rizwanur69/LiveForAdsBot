@@ -8,18 +8,18 @@
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <script src="//libtl.com/sdk.js" data-zone="11739436" data-sdk="show_11739436"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
 
   :root{
-    --bg:#0F1A1C; --surface:#16262A; --surface-raised:#1C2E32; --line:#24393D;
+    --bg:#09110F; --surface:#0F1C1A; --surface-raised:#152623; --line:#1F3532;
     --text:#EAF2F1; --text-muted:#8FA3A1;
     --gold:#F2B33D; --gold-dim:#5A4523; --teal:#2DD4BF; --red:#E8604C; --green:#4ADE80;
     --indigo:#6366F1; --indigo-bg:#1E1F3B; --indigo-text:#C7C9FB;
     --up-color:#4ADE80; --up-dim:#1F4A33;
   }
   body.light-theme{
-    --bg:#F4F6F5; --surface:#FFFFFF; --surface-raised:#EEF2F1; --line:#DCE3E1;
-    --text:#152321; --text-muted:#647572;
+    --bg:#FAF6EE; --surface:#FFFFFF; --surface-raised:#F6EFE2; --line:#EBDFC9;
+    --text:#241B10; --text-muted:#7A6D5A;
     --indigo-bg:#E9EAFB; --indigo-text:#3730A3;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -209,18 +209,35 @@
   .editing-mode .edit-toggle-btn{display:block;}
   .edit-toggle-btn.done{background:var(--gold); color:#1B1404; border-color:var(--gold);}
 
-  .stat-grid{display:flex; gap:10px; margin:20px 0;}
-  .stat-card{flex:1; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px;}
-  .stat-card .num{font-size:20px; font-weight:700;}
-  .stat-card .label{font-size:11.5px; color:var(--text-muted); margin-top:4px;}
+  .range-toggle{display:flex; gap:4px; margin:18px 0 12px; padding:4px; background:var(--surface); border:1px solid var(--line); border-radius:13px;}
+  .range-toggle button{flex:1; background:transparent; border:none; color:var(--text-muted); font-size:12px; font-weight:600; padding:9px 6px; border-radius:10px; cursor:pointer; font-family:'Inter',sans-serif; transition:all .2s;}
+  .range-toggle button.active{background:linear-gradient(135deg, var(--gold), #FFD27A); color:#1B1404; box-shadow:0 3px 12px rgba(242,179,61,0.38);}
 
-  .range-toggle{display:flex; gap:6px; margin-bottom:12px;}
-  .range-toggle button{flex:1; background:var(--surface-raised); border:1px solid var(--line); color:var(--text-muted); font-size:12px; font-weight:600; padding:8px; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif;}
-  .range-toggle button.active{background:var(--gold); color:#1B1404; border-color:var(--gold);}
-
-  .chart-box{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:20px;}
-  .chart-legend{display:flex; gap:16px; font-size:11.5px; margin-top:8px;}
-  .chart-legend span{display:flex; align-items:center; gap:6px; color:var(--text-muted);}
+  .chart-box{position:relative; overflow:hidden; background:linear-gradient(165deg, rgba(242,179,61,0.08), transparent 42%), linear-gradient(180deg, var(--surface-raised), var(--surface)); border:1px solid rgba(242,179,61,0.24); border-radius:20px; padding:16px 14px 14px; margin-bottom:20px; box-shadow:0 12px 32px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06);}
+  .chart-box::before{content:""; position:absolute; top:-70px; right:-50px; width:200px; height:200px; background:radial-gradient(circle, rgba(242,179,61,0.20), transparent 65%); pointer-events:none;}
+  .chart-box::after{content:""; position:absolute; bottom:-80px; left:-60px; width:200px; height:200px; background:radial-gradient(circle, rgba(74,222,128,0.10), transparent 65%); pointer-events:none;}
+  .chart-head{position:relative; z-index:1; display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:6px;}
+  .chart-title{font-size:15px; font-weight:700; letter-spacing:0.2px;}
+  .chart-sub{font-size:11px; color:var(--text-muted); margin-top:2px;}
+  .chart-totals{display:flex; gap:8px;}
+  .ct{display:flex; flex-direction:column; align-items:flex-end; background:rgba(0,0,0,0.16); border:1px solid var(--line); border-radius:11px; padding:5px 10px; min-width:58px;}
+  .ct-l{font-size:9.5px; font-weight:700; letter-spacing:0.8px;}
+  .ct-v{font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:700; margin-top:1px;}
+  .ct.ap .ct-l,.ct.ap .ct-v{color:var(--gold);}
+  .ct.up .ct-l,.ct.up .ct-v{color:var(--up-color);}
+  .chart-wrap{position:relative; z-index:1;}
+  .chart-wrap svg{display:block; width:100%; height:auto; touch-action:pan-y; overflow:visible;}
+  .chart-tip{position:absolute; top:-2px; z-index:2; display:none; transform:translateX(-50%); background:rgba(10,18,20,0.92); border:1px solid rgba(242,179,61,0.35); border-radius:10px; padding:5px 10px; font-size:10.5px; white-space:nowrap; box-shadow:0 6px 18px rgba(0,0,0,0.4); pointer-events:none; color:#E8F0EF;}
+  .chart-tip b{font-weight:700; margin-right:8px;}
+  .chart-tip .tip-ap{color:var(--gold); margin-right:8px; font-weight:600;}
+  .chart-tip .tip-up{color:var(--up-color); font-weight:600;}
+  .cl-line{stroke-dasharray:1; stroke-dashoffset:1; animation:clDraw 1.2s cubic-bezier(.4,0,.2,1) forwards;}
+  .cl-area{opacity:0; animation:clFade .9s .35s ease-out forwards;}
+  .cl-dot{opacity:0; animation:clFade .5s .9s ease-out forwards;}
+  @keyframes clDraw{to{stroke-dashoffset:0;}}
+  @keyframes clFade{to{opacity:1;}}
+  .chart-legend{position:relative; z-index:1; display:flex; gap:10px; font-size:11px; margin-top:10px;}
+  .chart-legend span{display:flex; align-items:center; gap:6px; color:var(--text-muted); background:rgba(0,0,0,0.14); border:1px solid var(--line); border-radius:20px; padding:4px 11px;}
   .dot{width:8px; height:8px; border-radius:50%; display:inline-block;}
   .chart-loading{text-align:center; font-size:11.5px; color:var(--text-muted); padding:20px 0;}
 
@@ -409,43 +426,160 @@
   .crop-actions .cancel-btn{background:var(--surface-raised); color:var(--text-muted);}
   .crop-actions .confirm-btn{background:var(--gold); color:#1B1404;}
   .crop-hint{color:var(--text-muted); font-size:11.5px; margin-top:12px;}
+
+  /* =====================================================
+     PREMIUM REDESIGN (home, header, nav)
+     ===================================================== */
+  :root{
+    --rc-btn-bg:var(--gold); --rc-btn-text:#1B1404;
+    --gift-left:#1E1E1E; --gift-right:#0E0E0E; --gift-top:#2C2C2C;
+    --shadow-card:0 10px 26px rgba(0,0,0,0.30);
+    --card-grad:linear-gradient(160deg, rgba(242,179,61,0.07), transparent 42%), linear-gradient(180deg, var(--surface-raised), var(--surface));
+  }
+  body.light-theme{
+    --rc-btn-bg:#2B1F0E; --rc-btn-text:#FFF3D6;
+    --gift-left:#F4EBDC; --gift-right:#E0D0B2; --gift-top:#FFFDF8;
+    --shadow-card:0 10px 24px rgba(120,90,40,0.13);
+    --card-grad:linear-gradient(180deg, #FFFFFF, #FFFCF6);
+    --gold:#B87413; --gold-dim:#E4CFA2; --green:#1F9D5C; --up-color:#1F9D5C; --red:#D6452F;
+    --up-dim:#CFEBDB;
+  }
+  body{background:radial-gradient(130% 50% at 50% -8%, rgba(242,179,61,0.10), transparent 62%), var(--bg); background-attachment:fixed;}
+  body.light-theme{background:radial-gradient(130% 50% at 50% -8%, rgba(214,160,70,0.18), transparent 62%), var(--bg); background-attachment:fixed;}
+
+  .topbar{padding:16px 20px 6px;}
+  .brand-wrap{display:flex; align-items:center; gap:11px; min-width:0;}
+  .brand-logo{flex-shrink:0; filter:drop-shadow(0 4px 10px rgba(242,179,61,0.38));}
+  .topbar .brand{font-family:'Playfair Display',serif; font-size:21px; font-weight:700; color:var(--text); letter-spacing:0.2px; line-height:1.1;}
+  .brand-sub{font-size:11.5px; color:var(--text-muted); margin-top:3px; letter-spacing:0.3px;}
+  .top-actions{display:flex; align-items:center; gap:2px;}
+  .top-btn{position:relative; width:42px; height:42px; border-radius:50%; background:transparent; border:none; color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer;}
+  .top-btn:active{background:var(--surface-raised);}
+  .bell-dot{position:absolute; top:8px; right:9px; min-width:9px; height:9px; border-radius:50%; background:var(--red); border:2px solid var(--bg); box-sizing:content-box; font-size:0; display:none;}
+
+  .profile-card{display:flex; align-items:center; gap:12px; margin-top:12px; padding:12px 10px 12px 14px; background:var(--card-grad); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow-card); cursor:pointer;}
+  .profile-card .home-avatar{width:54px; height:54px; border:2px solid var(--gold-dim); box-shadow:0 0 0 3px rgba(242,179,61,0.10);}
+  .pc-info{flex:1; min-width:0;}
+  .pc-name{font-family:'Playfair Display',serif; font-size:18.5px; font-weight:700;}
+  .pc-sub{font-size:11.5px; color:var(--gold); margin-top:4px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .pc-balance{display:flex; flex-direction:column; gap:3px; padding:8px 14px; border:1px solid var(--gold-dim); border-radius:15px; background:rgba(242,179,61,0.06); min-width:104px;}
+  .pc-balance .hb-val{font-size:17px;}
+  .pc-chev{color:var(--text-muted); display:flex;}
+
+  .reward-card{position:relative; overflow:hidden; margin-top:14px; border-radius:22px; padding:20px 16px 18px 20px; min-height:172px; border:1px solid rgba(242,179,61,0.50); background:radial-gradient(90% 130% at 100% 0%, rgba(242,179,61,0.22), transparent 62%), linear-gradient(135deg, var(--surface-raised), var(--surface)); box-shadow:var(--shadow-card);}
+  body.light-theme .reward-card{background:radial-gradient(90% 130% at 100% 0%, rgba(255,255,255,0.55), transparent 60%), linear-gradient(135deg, #F8E6C4, #F1D6A2 60%, #F7E4C0); border-color:#E8CD98;}
+  .rc-text{position:relative; z-index:2; max-width:62%;}
+  .rc-title{font-family:'Playfair Display',serif; font-size:28px; font-weight:700; line-height:1.1;}
+  .rc-sub{font-size:13.5px; color:var(--gold); margin-top:7px; font-weight:500;}
+  body.light-theme .rc-sub{color:var(--text);}
+  .rc-btn{margin-top:16px; display:inline-flex; align-items:center; gap:9px; background:var(--rc-btn-bg); color:var(--rc-btn-text); border:none; border-radius:15px; padding:13px 20px; font-family:'Inter',sans-serif; font-size:14.5px; font-weight:700; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,0.22);}
+  .rc-btn:active{transform:scale(0.97);}
+  .rc-btn:disabled{opacity:0.62; cursor:default; box-shadow:none;}
+  .rc-next{font-size:11px; color:var(--text-muted); margin-top:9px; font-family:'Space Grotesk',sans-serif; letter-spacing:0.4px;}
+  .rc-streak{position:absolute; top:14px; right:14px; z-index:3; background:rgba(24,17,7,0.80); color:#FFEFC9; border:1px solid rgba(242,179,61,0.55); border-radius:20px; padding:6px 12px; font-size:12px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer;}
+  .rc-gift{position:absolute; right:2px; bottom:-8px; width:158px; height:158px; z-index:1; filter:drop-shadow(0 10px 14px rgba(0,0,0,0.30));}
+
+  .quick-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin-top:14px;}
+  .qt{display:flex; flex-direction:column; align-items:center; gap:7px; padding:13px 3px 11px; border-radius:18px; background:var(--card-grad); border:1px solid var(--line); color:var(--text); cursor:pointer; box-shadow:0 5px 14px rgba(0,0,0,0.14); font-family:'Inter',sans-serif; min-height:116px;}
+  .qt:active{transform:scale(0.97);}
+  .qt-ic{width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid var(--gold-dim); color:var(--gold); background:rgba(242,179,61,0.09);}
+  .qt-name{font-size:11.5px; font-weight:600; text-align:center; line-height:1.25; min-height:29px; display:flex; align-items:center; justify-content:center;}
+  .qt-pts{font-size:11px; color:var(--gold); font-weight:600;}
+  .qt.done .qt-pts{color:var(--green);}
+  .qt.off{opacity:0.5;}
+
+  .sec-head{display:flex; align-items:center; justify-content:space-between; margin:26px 2px 12px;}
+  .sec-title{display:flex; align-items:center; gap:10px; font-family:'Playfair Display',serif; font-size:22px; font-weight:700;}
+  .sec-chip{width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; background:var(--gold); color:#1B1404;}
+  body.light-theme .sec-chip{color:#FFF6E2;}
+
+  #taskList{background:var(--card-grad); border:1px solid var(--line); border-radius:20px; padding:2px 14px; box-shadow:var(--shadow-card);}
+  #taskList .ad-row{background:none; border:none; border-bottom:1px solid var(--line); border-radius:0; padding:14px 0; margin:0;}
+  #taskList .ad-row:last-child{border-bottom:none;}
+  #taskList .ad-row .icon{width:46px; height:46px; border-radius:50%; background:rgba(242,179,61,0.10); border:1px solid var(--gold-dim); font-size:19px;}
+  #taskList .watch-btn{border-radius:20px; padding:8px 20px; font-size:12.5px;}
+  #taskList .watch-btn:disabled{background:rgba(74,222,128,0.14); color:var(--green); cursor:default;}
+  body.light-theme #taskList .watch-btn:disabled{background:#DDF3E6;}
+
+  .season-box{background:var(--card-grad); border:1px solid var(--line); border-radius:20px; padding:16px 14px 12px; box-shadow:var(--shadow-card);}
+  .season-box .sname{font-family:'Playfair Display',serif; font-size:17px; font-weight:700; color:var(--gold);}
+  .season-box .sdates{margin-bottom:12px;}
+  .sgrid{display:grid; grid-template-columns:repeat(3,1fr); border-radius:15px; overflow:hidden; border:1px solid var(--line); background:rgba(0,0,0,0.10);}
+  body.light-theme .sgrid{background:#FCF8F0;}
+  .sg{display:flex; align-items:center; gap:8px; padding:12px 8px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); min-width:0;}
+  .sg:nth-child(3n){border-right:none;}
+  .sg:nth-child(n+4){border-bottom:none;}
+  .sg-ic{width:30px; height:30px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:rgba(242,179,61,0.11); color:var(--gold);}
+  .sg .snum{font-family:'Space Grotesk',sans-serif; font-size:14.5px; font-weight:700; line-height:1.15;}
+  .sg .slabel{font-size:9.5px; color:var(--text-muted); margin-top:2px; line-height:1.2;}
+
+  .bottom-nav{background:var(--surface); border-top:1px solid rgba(242,179,61,0.30); border-radius:22px 22px 0 0; padding:9px 6px calc(9px + env(safe-area-inset-bottom)); box-shadow:0 -10px 30px rgba(0,0,0,0.22);}
+  .nav-item{font-size:10.5px; gap:4px; transition:color .2s;}
+  .nav-item .ni{display:block;}
+  .nav-item.active{color:var(--gold); font-weight:600;}
+  .nav-item.active .ni{fill:currentColor; fill-opacity:0.22;}
+
+  .menu-row{width:100%; display:flex; align-items:center; justify-content:space-between; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:14px; font-weight:600; padding:13px 14px; border-radius:12px; margin-top:8px; cursor:pointer; font-family:'Inter',sans-serif;}
 </style>
 </head>
 <body>
 
   <div class="topbar">
-    <div class="brand">Live For Ads</div>
-    <div class="season" id="seasonLabel">Testing Season</div>
+    <div class="brand-wrap">
+      <svg class="brand-logo" viewBox="0 0 48 48" width="42" height="42" aria-hidden="true"><defs><linearGradient id="lgLogo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE0A0"/><stop offset="0.55" stop-color="#F2B33D"/><stop offset="1" stop-color="#C98512"/></linearGradient></defs><path d="M9.500 7.500c0-2.400 2.600-3.900 4.700-2.700l27 15.600c2.100 1.200 2.100 4.200 0 5.400l-27 15.600c-2.100 1.200-4.700-.3-4.700-2.700z" fill="url(#lgLogo)"/><path d="M17 14.500 33.500 24 17 33.500z" fill="#7A4A06" fill-opacity=".38"/><path d="M11 8.500 30 19.500" stroke="#fff" stroke-opacity=".45" stroke-width="1.600" stroke-linecap="round"/></svg>
+      <div>
+        <div class="brand">Live For Ads</div>
+        <div class="brand-sub">Watch · Engage · Earn</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="top-btn" onclick="showPage('notices', null)" aria-label="Notifications"><svg class="ti" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span class="bell-dot" id="bellBadge">0</span></button>
+      <button class="top-btn" onclick="openMoreMenu()" aria-label="More"><svg class="ti" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg></button>
+    </div>
   </div>
 
   <!-- ================= HOME ================= -->
   <div class="page active" id="page-home">
-    <div class="home-header">
-      <div class="home-user">
-        <div class="home-avatar" id="homeAvatar">U</div>
-        <div class="home-name" id="homeName">User</div>
+    <div class="profile-card" onclick="showPage('profile', document.querySelectorAll('.nav-item')[5])">
+      <div class="home-avatar" id="homeAvatar">U</div>
+      <div class="pc-info">
+        <div class="home-name pc-name" id="homeName">User</div>
+        <div class="pc-sub" id="homeSub"></div>
       </div>
-      <button class="bell-btn" onclick="showPage('notices', null)" aria-label="Notifications">🔔<span class="bell-badge" id="bellBadge">0</span></button>
-      <div class="home-balance-box">
+      <div class="pc-balance">
         <div class="hb-row"><span class="hb-label ap">AP</span><span class="hb-val ap" id="homeAp">0</span></div>
         <div class="hb-row"><span class="hb-label up">UP</span><span class="hb-val up" id="homeUp">0</span></div>
       </div>
+      <span class="pc-chev"><svg class="ti" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
     </div>
 
-    <div class="checkin-box">
-      <div class="checkin-head">
-        <div class="title">Daily Check-in</div>
-        <div class="streak" id="streakLabel">🔥 0 day streak</div>
+    <div class="reward-card">
+      <div class="rc-text">
+        <div class="rc-title">Daily Reward</div>
+        <div class="rc-sub">Keep the streak alive!</div>
+        <button class="rc-btn" id="checkinBtn" onclick="doCheckin()"><span id="checkinBtnText">Claim Now</span><svg class="ti" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
+        <div class="rc-next" id="checkinNext"></div>
       </div>
-      <div class="week-strip" id="weekStrip"></div>
-      <button class="checkin-btn" id="checkinBtn" onclick="doCheckin()">Check in — claim points</button>
-      <div class="checkin-next" id="checkinNext"></div>
+      <button class="rc-streak" id="streakLabel" onclick="openWeekPopup()">🔥 0 day streak</button>
+      <svg class="rc-gift" viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="gfRib" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE3A3"/><stop offset="1" stop-color="#D9941E"/></linearGradient></defs>
+<ellipse cx="60" cy="108" rx="40" ry="7" fill="#000" opacity=".18"/>
+<path d="M20 48 60 66v42L20 90z" fill="var(--gift-left)"/><path d="M100 48 60 66v42l40-18z" fill="var(--gift-right)"/><path d="M60 30 100 48 60 66 20 48z" fill="var(--gift-top)"/>
+<path d="M35 54.750 45 59.250v42L35 96.750z" fill="url(#gfRib)"/><path d="M85 54.750 75 59.250v42L85 96.750z" fill="url(#gfRib)" opacity=".85"/>
+<path d="M35 41.250 75 59.250 85 54.750 45 36.750z" fill="url(#gfRib)"/><path d="M85 41.250 45 59.250 35 54.750 75 36.750z" fill="url(#gfRib)" opacity=".92"/>
+<path d="M60 46C44 20 28 30 42 41c6 4.5 12 5.5 18 5z" fill="url(#gfRib)"/><path d="M60 46C76 20 92 30 78 41c-6 4.5-12 5.5-18 5z" fill="url(#gfRib)"/><ellipse cx="60" cy="45.5" rx="6" ry="4.5" fill="#F0B84A"/><ellipse cx="58.5" cy="44" rx="2.5" ry="1.6" fill="#fff" opacity=".55"/></svg>
     </div>
 
-    <div class="section-label">Tasks</div>
+    <div class="quick-grid">
+      <button class="qt" id="qt-ads" onclick="qaWatchAds()"><span class="qt-ic"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><span class="qt-name">Watch Ads</span><span class="qt-pts" id="qtp-ads">+50 pts</span></button>
+      <button class="qt" id="qt-channel" onclick="qaTask('channel')"><span class="qt-ic"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3 10.5 13.5"/><path d="M21 3l-6.5 18-4-7.5L3 9.5z"/></svg></span><span class="qt-name">Subscribe Channel</span><span class="qt-pts" id="qtp-channel"></span></button>
+      <button class="qt" id="qt-webpage" onclick="qaTask('webpage')"><span class="qt-ic"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.8 3.9 5.8 3.9 9s-1.3 6.2-3.9 9c-2.6-2.8-3.9-5.8-3.9-9S9.4 5.8 12 3z"/></svg></span><span class="qt-name">Visit Website</span><span class="qt-pts" id="qtp-webpage"></span></button>
+      <button class="qt" id="qt-daily" onclick="qaDaily()"><span class="qt-ic"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="10" width="17" height="10" rx="1.5"/><path d="M12 10v10"/><path d="M3 10h18V7H3z"/><path d="M12 7c-1-3.4-5-3.6-5-1.3C7 7.100 9.500 7 12 7zm0 0c1-3.4 5-3.6 5-1.3 0 1.4-2.500 1.300-5 1.300z"/></svg></span><span class="qt-name">Daily Bonus</span><span class="qt-pts" id="qtp-daily"></span></button>
+    </div>
+
+    <div class="sec-head"><div class="sec-title"><span class="sec-chip"><svg class="ti" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="m8.5 12.3 2.5 2.5 4.5-5"/></svg></span>Tasks</div></div>
     <div id="taskList"></div>
 
-    <div class="payouts-section-title">Payouts</div>
+    <div class="sec-head"><div class="sec-title"><span class="sec-chip"><svg class="ti" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7.500A2.500 2.500 0 0 1 6.500 5H18v3"/><rect x="3.500" y="7.500" width="17" height="12" rx="2.500"/><circle cx="16.500" cy="13.500" r="1.200"/></svg></span>Payouts</div></div>
     <div id="seasonBoxesList"></div>
   </div>
 
@@ -578,12 +712,6 @@
     </div>
   </div>
 
-    <div class="stat-grid">
-      <div class="stat-card"><div class="num" id="statAds">0</div><div class="label">Ads watched</div></div>
-      <div class="stat-card"><div class="num" id="statTasks">0</div><div class="label">Streak</div></div>
-      <div class="stat-card"><div class="num" id="statRef">0</div><div class="label">From referrals</div></div>
-    </div>
-
     <div class="range-toggle">
       <button class="active" onclick="setStatsRange('7', this)">7 Days</button>
       <button onclick="setStatsRange('30', this)">30 Days</button>
@@ -591,12 +719,24 @@
     </div>
 
     <div class="chart-box">
-      <div style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Activity</div>
-      <svg id="chartSvg" width="100%" height="150" viewBox="0 0 320 150"></svg>
+      <div class="chart-head">
+        <div>
+          <div class="chart-title">Activity</div>
+          <div class="chart-sub" id="chartSub">Last 7 days</div>
+        </div>
+        <div class="chart-totals">
+          <div class="ct ap"><span class="ct-l">AP</span><span class="ct-v" id="chartTotalAp">0</span></div>
+          <div class="ct up"><span class="ct-l">UP</span><span class="ct-v" id="chartTotalUp">0</span></div>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-tip" id="chartTip"></div>
+        <svg id="chartSvg" viewBox="0 0 320 196"></svg>
+      </div>
       <div id="chartLoading" class="chart-loading" style="display:none;">Loading…</div>
       <div class="chart-legend">
-        <span><i class="dot" style="background:var(--gold)"></i>AP</span>
-        <span><i class="dot" style="background:var(--up-color)"></i>UP</span>
+        <span><i class="dot" style="background:var(--gold); box-shadow:0 0 8px var(--gold);"></i>AP</span>
+        <span><i class="dot" style="background:var(--up-color); box-shadow:0 0 8px var(--up-color);"></i>UP</span>
       </div>
     </div>
 
@@ -743,12 +883,12 @@
   </div>
 
   <div class="bottom-nav">
-    <button class="nav-item active" onclick="showPage('home', this)"><span class="icon">▣</span>Home</button>
-    <button class="nav-item" onclick="showPage('ads', this)"><span class="icon">▶</span>Earn</button>
-    <button class="nav-item" onclick="showPage('leaderboard', this)"><span class="icon">★</span>Leaders</button>
-    <button class="nav-item" onclick="showPage('referral', this)"><span class="icon">◎</span>Referral</button>
-    <button class="nav-item" onclick="showPage('lfa', this)"><span class="icon">◈</span>LFA</button>
-    <button class="nav-item" onclick="showPage('profile', this)"><span class="icon">●</span>Profile</button>
+    <button class="nav-item active" onclick="showPage('home', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5h4v5"/></svg><span>Home</span></button>
+    <button class="nav-item" onclick="showPage('ads', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg><span>Earn</span></button>
+    <button class="nav-item" onclick="showPage('leaderboard', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9l-5.2 2.8 1-5.9L3.5 9.7l5.9-.8z"/></svg><span>Leaders</span></button>
+    <button class="nav-item" onclick="showPage('referral', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.6c2.7.2 4.5 2 4.5 4.9"/></svg><span>Referral</span></button>
+    <button class="nav-item" style="display:none;" onclick="showPage('lfa', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5h4v5"/></svg><span>LFA</span></button>
+    <button class="nav-item" onclick="showPage('profile', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c0-4 3.4-6.3 7.5-6.3s7.5 2.3 7.5 6.3"/></svg><span>Profile</span></button>
   </div>
 
   <!-- ================= SETTINGS SHEET ================= -->
@@ -939,7 +1079,6 @@ async function loadSettings(){
     const res = await fetch(`${API_BASE}/settings`);
     state.settings = await res.json();
   } catch(e){ console.error("Could not load settings:", e); }
-  document.getElementById('seasonLabel').textContent = state.settings.seasonName || 'Testing Season';
 }
 
 /* ============================================================
@@ -951,6 +1090,7 @@ function renderHomeHeader(){
   document.getElementById('homeName').textContent = name;
   document.getElementById('homeAvatar').innerHTML = avatarUrl
     ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
+  document.getElementById('homeSub').textContent = String(state.user.id).startsWith('guest') ? 'Guest' : 'ID: ' + state.user.id;
   document.getElementById('homeAp').textContent = state.totalPoints;
   document.getElementById('homeUp').textContent = state.up;
 }
@@ -966,46 +1106,54 @@ async function loadHome(){
 
   if (state.banned){
     document.getElementById('checkinBtn').disabled = true;
-    document.getElementById('checkinBtn').textContent = 'Account suspended';
+    document.getElementById('checkinBtnText').textContent = 'Account suspended';
   }
 }
 
-function renderCheckin(){
+function buildWeekStripHtml(){
   const dayLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   const now = new Date();
   const todayIdx = (now.getUTCDay() + 6) % 7; // Monday = 0
-  const today = now.toISOString().slice(0,10);
   const monday = new Date(now);
   monday.setUTCDate(now.getUTCDate() - todayIdx);
-
-  const strip = document.getElementById('weekStrip');
-  strip.innerHTML = dayLabels.map((label, i) => {
+  return dayLabels.map((label, i) => {
     const d = new Date(monday);
     d.setUTCDate(monday.getUTCDate() + i);
     const key = d.toISOString().slice(0,10);
     const entry = state.checkinHistory[key];
     const isToday = i === todayIdx;
-    const isFuture = i > todayIdx;
-
     let cls = '', inner = '', pointsHtml = '';
     if (entry && entry.status === 'done'){
       cls = 'done'; inner = '✓'; pointsHtml = `<div class="dpoints">+${entry.points}</div>`;
     } else if (entry && entry.status === 'missed'){
       cls = 'missed'; inner = '✕'; pointsHtml = `<div class="dpoints">${entry.points}</div>`;
-    } else if (isFuture) {
-      inner = '';
     }
     if (isToday) cls += ' today';
-
     return `<div class="week-day ${cls}">
       <div class="dlabel">${label}</div>
       <div class="dcircle">${inner}</div>
       ${pointsHtml}
     </div>`;
   }).join('');
+}
 
+// Tap the streak pill: shows this week's check-in rewards
+function openWeekPopup(){
+  openLfaModal(`<h3>Daily check-in</h3>
+    <div class="lfa-modal-date">🔥 ${state.checkin.streak || 0} day streak · the reward grows every day you keep it</div>
+    <div class="week-strip" style="margin-bottom:0;">${buildWeekStripHtml()}</div>`);
+}
+
+function nextCheckinPoints(){
+  const streak = state.checkin.streak || 0;
+  return 10 + (streak > 0 ? streak * 5 : 0);
+}
+
+function renderCheckin(){
+  const today = new Date().toISOString().slice(0,10);
   document.getElementById('streakLabel').textContent = `🔥 ${state.checkin.streak || 0} day streak`;
   const btn = document.getElementById('checkinBtn');
+  const btnText = document.getElementById('checkinBtnText');
   const nextText = document.getElementById('checkinNext');
   const alreadyToday = state.checkin.lastDate === today;
 
@@ -1013,14 +1161,59 @@ function renderCheckin(){
 
   if (alreadyToday){
     btn.disabled = true;
-    btn.textContent = 'Already checked in today';
+    btnText.textContent = 'Claimed today';
     startCountdown();
   } else {
-    btn.disabled = false || state.banned;
-    const streak = state.checkin.streak || 0;
-    btn.textContent = `Check in — claim ${10 + (streak>0? streak*5 : 0)} points`;
-    nextText.textContent = '';
+    btn.disabled = !!state.banned;
+    btnText.textContent = 'Claim Now';
+    nextText.textContent = `+${nextCheckinPoints()} points waiting`;
   }
+  renderQuickTiles();
+}
+
+/* ---------- Quick action tiles (shortcuts under the Daily Reward card) ---------- */
+function renderQuickTiles(){
+  const today = new Date().toISOString().slice(0,10);
+  const claimed = state.checkin && state.checkin.lastDate === today;
+  const setTile = (key, text, cls) => {
+    const tile = document.getElementById('qt-' + key);
+    const pts = document.getElementById('qtp-' + key);
+    if (!tile || !pts) return;
+    pts.textContent = text;
+    tile.classList.toggle('done', cls === 'done');
+    tile.classList.toggle('off', cls === 'off');
+  };
+  ['channel', 'webpage'].forEach(type => {
+    const t = (state.tasks || []).find(x => x.type === type);
+    if (!t) setTile(type, 'Soon', 'off');
+    else if (state.tasksCompleted && state.tasksCompleted[t.id]) setTile(type, 'Done ✓', 'done');
+    else setTile(type, `+${t.points || 50} pts`, '');
+  });
+  setTile('ads', '+50 pts', '');
+  setTile('daily', claimed ? 'Claimed ✓' : `+${nextCheckinPoints()} pts`, claimed ? 'done' : '');
+}
+
+function qaWatchAds(){
+  showPage('ads', document.querySelectorAll('.nav-item')[1]);
+  setEarnSubTab('ads');
+}
+function qaTask(type){
+  const t = (state.tasks || []).find(x => x.type === type);
+  if (!t || (state.tasksCompleted && state.tasksCompleted[t.id])) return;
+  doTask(t.id, t.url || '');
+}
+function qaDaily(){
+  const today = new Date().toISOString().slice(0,10);
+  if (state.checkin.lastDate === today) openWeekPopup(); else doCheckin();
+}
+
+// Top-right "..." menu
+function openMoreMenu(){
+  openLfaModal(`<h3>Menu</h3>
+    <div class="lfa-modal-date">${escHtml(state.settings.seasonName || 'Testing Season')}</div>
+    <button class="menu-row" onclick="closeLfaModal(); showPage('lfa', null)"><span>LFA</span><span>›</span></button>
+    <button class="menu-row" onclick="closeLfaModal(); showPage('support', null)"><span>Support</span><span>›</span></button>
+    <button class="menu-row" onclick="closeLfaModal(); openSettings()"><span>Settings</span><span>›</span></button>`);
 }
 
 function startCountdown(){
@@ -1087,6 +1280,7 @@ function renderTasks(){
       <button class="watch-btn" ${done?'disabled':''} onclick="doTask('${t.id}','${t.url||''}')">${done?'Done':'Go'}</button>
     </div>`;
   }).join('');
+  renderQuickTiles();
 }
 
 function doTask(taskId, url){
@@ -1427,9 +1621,6 @@ function renderProfile(){
   const avatarUrl = state.pendingAvatarDataUrl || state.avatarUrl || state.telegramAvatarUrl;
   document.getElementById('profileAvatar').innerHTML = avatarUrl ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
 
-  document.getElementById('statAds').textContent = Object.values(state.adsToday).reduce((a,b)=>a+(b.count||0),0);
-  document.getElementById('statTasks').textContent = (state.checkin.streak||0) + ' 🔥';
-  document.getElementById('statRef').textContent = state.refEarnedPoints;
 
   document.getElementById('pbTotalAp').textContent = state.totalPoints;
   document.getElementById('pbTotalUp').textContent = state.up;
@@ -1627,6 +1818,7 @@ function setStatsRange(range, el){
 async function loadStats(){
   const loading = document.getElementById('chartLoading');
   const svg = document.getElementById('chartSvg');
+  document.getElementById('chartSub').textContent = state.statsRange === 'all' ? 'All time' : `Last ${state.statsRange} days`;
   loading.style.display = 'block';
   svg.style.opacity = '0.3';
   try{
@@ -1642,35 +1834,138 @@ async function loadStats(){
   svg.style.opacity = '1';
 }
 
+// Smooth curve through points that never dips below/above the data (monotone cubic)
+function monotonePath(pts){
+  const n = pts.length;
+  if (n === 1) return `M${pts[0].x},${pts[0].y}`;
+  const dx = [], m = [], t = [];
+  for (let i = 0; i < n - 1; i++){ dx[i] = pts[i+1].x - pts[i].x; m[i] = (pts[i+1].y - pts[i].y) / dx[i]; }
+  t[0] = m[0]; t[n-1] = m[n-2];
+  for (let i = 1; i < n - 1; i++) t[i] = (m[i-1] * m[i] <= 0) ? 0 : (m[i-1] + m[i]) / 2;
+  for (let i = 0; i < n - 1; i++){
+    if (m[i] === 0){ t[i] = 0; t[i+1] = 0; continue; }
+    const a = t[i] / m[i], b = t[i+1] / m[i], s = a*a + b*b;
+    if (s > 9){ const k = 3 / Math.sqrt(s); t[i] = k * a * m[i]; t[i+1] = k * b * m[i]; }
+  }
+  let d = `M${pts[0].x},${pts[0].y}`;
+  for (let i = 0; i < n - 1; i++){
+    const h = dx[i] / 3;
+    d += ` C${pts[i].x + h},${pts[i].y + t[i] * h} ${pts[i+1].x - h},${pts[i+1].y - t[i+1] * h} ${pts[i+1].x},${pts[i+1].y}`;
+  }
+  return d;
+}
+function chartNiceMax(v){
+  if (v <= 10) return 10;
+  const p = Math.pow(10, Math.floor(Math.log10(v)));
+  const f = v / p;
+  return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+}
+function chartFmt(n){
+  n = Math.round(n);
+  return n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, '') + 'k' : String(n);
+}
+
 function drawChart(data){
   const svg = document.getElementById('chartSvg');
+  const tip = document.getElementById('chartTip');
+  tip.style.display = 'none';
+  const sum = k => (data || []).reduce((a, d) => a + (d[k] || 0), 0);
+  document.getElementById('chartTotalAp').textContent = chartFmt(sum('points'));
+  document.getElementById('chartTotalUp').textContent = chartFmt(sum('up'));
   if (!data || data.length === 0){ svg.innerHTML = ''; return; }
-  const w = 320, h = 150, padBottom = 18, padTop = 16;
-  const maxVal = Math.max(...data.map(d=>Math.max(d.points, d.up)), 1);
-  const groupWidth = w / data.length;
-  const barWidth = Math.min(14, groupWidth/2 - 3);
-  const showLabels = data.length <= 12;
-  const scaleH = h - padBottom - padTop;
 
-  const bars = data.map((d,i) => {
-    const groupCenter = groupWidth*i + groupWidth/2;
-    const apX = groupCenter - barWidth - 2;
-    const upX = groupCenter + 2;
-    const apH = (d.points/maxVal)*scaleH;
-    const upH = (d.up/maxVal)*scaleH;
-    const dateLabel = showLabels ? `<text x="${groupCenter}" y="${h-3}" font-size="8" fill="#8FA3A1" text-anchor="middle" font-family="Inter">${(d.date||'').slice(-5)}</text>` : '';
-    const apValLabel = (showLabels && d.points > 0) ? `<text x="${apX+barWidth/2}" y="${h-padBottom-apH-4}" font-size="7.5" fill="var(--gold)" text-anchor="middle" font-family="Space Grotesk">${d.points}</text>` : '';
-    const upValLabel = (showLabels && d.up > 0) ? `<text x="${upX+barWidth/2}" y="${h-padBottom-upH-4}" font-size="7.5" fill="var(--up-color)" text-anchor="middle" font-family="Space Grotesk">${d.up}</text>` : '';
-    return `
-      <rect x="${apX}" y="${h-padBottom-apH}" width="${barWidth}" height="${apH}" rx="2" fill="var(--gold)"/>
-      <rect x="${upX}" y="${h-padBottom-upH}" width="${barWidth}" height="${upH}" rx="2" fill="var(--up-color)"/>
-      ${apValLabel}
-      ${upValLabel}
-      ${dateLabel}
-    `;
-  }).join('');
+  const W = 320, H = 196, padL = 32, padR = 12, padT = 18, padB = 26;
+  const plotW = W - padL - padR, plotH = H - padT - padB, base = padT + plotH;
+  const n = data.length;
+  const maxV = chartNiceMax(Math.max(...data.map(d => Math.max(d.points || 0, d.up || 0)), 1));
+  const xAt = i => n === 1 ? padL + plotW / 2 : padL + (plotW * i) / (n - 1);
+  const yAt = v => padT + plotH - ((v || 0) / maxV) * plotH;
+  const apPts = data.map((d, i) => ({ x: xAt(i), y: yAt(d.points) }));
+  const upPts = data.map((d, i) => ({ x: xAt(i), y: yAt(d.up) }));
+  const hasUp = data.some(d => (d.up || 0) > 0);
 
-  svg.innerHTML = `<line x1="0" y1="${h-padBottom}" x2="${w}" y2="${h-padBottom}" stroke="#24393D" stroke-width="1"/>${bars}`;
+  // grid + y labels
+  let grid = '';
+  [0, 0.5, 1].forEach(f => {
+    const y = yAt(maxV * f);
+    grid += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="var(--line)" stroke-width="1" ${f === 0 ? '' : 'stroke-dasharray="3 5"'} opacity="${f === 0 ? 1 : 0.75}"/>`;
+    grid += `<text x="${padL - 7}" y="${y + 3}" font-size="8.5" fill="#8FA3A1" text-anchor="end" font-family="Inter">${chartFmt(maxV * f)}</text>`;
+  });
+
+  // x labels (a handful, evenly spread)
+  const idx = n <= 7 ? data.map((_, i) => i)
+    : [...new Set([0, Math.round((n-1)/4), Math.round((n-1)/2), Math.round(3*(n-1)/4), n-1])];
+  const xLabels = idx.map(i => `<text x="${xAt(i)}" y="${H - 7}" font-size="8.5" fill="#8FA3A1" text-anchor="${i === 0 && n > 1 ? 'start' : i === n-1 && n > 1 ? 'end' : 'middle'}" font-family="Inter">${(data[i].date || '').slice(-5)}</text>`).join('');
+
+  const defs = `<defs>
+    <linearGradient id="cgAp" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" style="stop-color:var(--gold);stop-opacity:0.42"/><stop offset="100%" style="stop-color:var(--gold);stop-opacity:0"/></linearGradient>
+    <linearGradient id="cgUp" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" style="stop-color:var(--up-color);stop-opacity:0.32"/><stop offset="100%" style="stop-color:var(--up-color);stop-opacity:0"/></linearGradient>
+    <filter id="cgGlow" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>`;
+
+  let series = '';
+  if (n > 1){
+    const area = pts => `${monotonePath(pts)} L${pts[n-1].x},${base} L${pts[0].x},${base} Z`;
+    if (hasUp){
+      series += `<path class="cl-area" d="${area(upPts)}" fill="url(#cgUp)"/>`;
+      series += `<path class="cl-line" pathLength="1" d="${monotonePath(upPts)}" fill="none" stroke="var(--up-color)" stroke-width="2" stroke-linecap="round" filter="url(#cgGlow)"/>`;
+    }
+    series += `<path class="cl-area" d="${area(apPts)}" fill="url(#cgAp)"/>`;
+    series += `<path class="cl-line" pathLength="1" d="${monotonePath(apPts)}" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linecap="round" filter="url(#cgGlow)"/>`;
+  }
+
+  // dots (all for short ranges; just the best day for long ones) + best-day badge
+  let peak = 0;
+  data.forEach((d, i) => { if ((d.points || 0) > (data[peak].points || 0)) peak = i; });
+  let dots = '';
+  data.forEach((d, i) => {
+    if (n <= 14 || i === peak){
+      dots += `<circle class="cl-dot" cx="${apPts[i].x}" cy="${apPts[i].y}" r="3.2" fill="var(--surface)" stroke="var(--gold)" stroke-width="2"/>`;
+      if (hasUp && (d.up || 0) > 0 && n <= 14) dots += `<circle class="cl-dot" cx="${upPts[i].x}" cy="${upPts[i].y}" r="2.8" fill="var(--surface)" stroke="var(--up-color)" stroke-width="2"/>`;
+    }
+  });
+  let badge = '';
+  if ((data[peak].points || 0) > 0 && n > 1){
+    const label = chartFmt(data[peak].points);
+    const bw = 12 + label.length * 5.6;
+    const bx = Math.min(Math.max(apPts[peak].x - bw / 2, padL), W - padR - bw);
+    const by = Math.max(apPts[peak].y - 24, 2);
+    badge = `<g class="cl-dot"><rect x="${bx}" y="${by}" width="${bw}" height="15" rx="7.5" fill="var(--gold)"/><text x="${bx + bw / 2}" y="${by + 10.5}" font-size="9" font-weight="700" fill="#1B1404" text-anchor="middle" font-family="Space Grotesk">${label}</text></g>`;
+  }
+
+  const active = `<g id="chartActive" style="opacity:0; transition:opacity .15s;">
+    <line id="cgGuide" x1="0" y1="${padT - 4}" x2="0" y2="${base}" stroke="var(--gold)" stroke-width="1" stroke-dasharray="2 3" opacity="0.7"/>
+    <circle id="cgUpHalo" r="7" fill="var(--up-color)" opacity="0.22"/><circle id="cgUpDot" r="3.6" fill="var(--up-color)" stroke="var(--surface)" stroke-width="1.5"/>
+    <circle id="cgApHalo" r="9" fill="var(--gold)" opacity="0.25"/><circle id="cgApDot" r="4.2" fill="var(--gold)" stroke="var(--surface)" stroke-width="1.5"/>
+  </g>`;
+  const hit = `<rect id="chartHit" x="${padL - 6}" y="0" width="${plotW + 12}" height="${H}" fill="transparent" style="cursor:pointer;"/>`;
+
+  svg.innerHTML = defs + grid + xLabels + series + dots + badge + active + hit;
+
+  // touch / hover: move the guide and show that day's numbers
+  const setXY = (id, x, y) => { const e = svg.querySelector('#' + id); e.setAttribute('cx', x); e.setAttribute('cy', y); };
+  function focus(i){
+    i = Math.max(0, Math.min(n - 1, i));
+    const x = xAt(i);
+    svg.querySelector('#cgGuide').setAttribute('x1', x);
+    svg.querySelector('#cgGuide').setAttribute('x2', x);
+    setXY('cgApDot', x, apPts[i].y); setXY('cgApHalo', x, apPts[i].y);
+    const showUp = (data[i].up || 0) > 0;
+    setXY('cgUpDot', x, upPts[i].y); setXY('cgUpHalo', x, upPts[i].y);
+    svg.querySelector('#cgUpDot').style.display = svg.querySelector('#cgUpHalo').style.display = showUp ? '' : 'none';
+    svg.querySelector('#chartActive').style.opacity = 1;
+    tip.innerHTML = `<b>${(data[i].date || '').slice(-5)}</b><span class="tip-ap">AP ${data[i].points || 0}</span><span class="tip-up">UP ${data[i].up || 0}</span>`;
+    tip.style.display = 'block';
+    tip.style.left = Math.min(Math.max((x / W) * 100, 24), 76) + '%';
+  }
+  const fromEvent = e => {
+    const r = svg.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width) * W;
+    focus(n === 1 ? 0 : Math.round(((x - padL) / plotW) * (n - 1)));
+  };
+  svg.onpointerdown = fromEvent;
+  svg.onpointermove = fromEvent;
+  focus(n - 1); // start on the latest day
 }
 
 /* ============================================================
@@ -2070,21 +2365,26 @@ async function loadSeasonBoxes(){
       list.innerHTML = `<div style="font-size:12px;color:var(--text-muted);">No season data published yet.</div>`;
       return;
     }
+    const sv = (d) => `<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+    const SI = {
+      users: sv('<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.6c2.7.2 4.5 2 4.5 4.9"/>'),
+      wallet: sv('<path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3"/><rect x="3.5" y="7.5" width="17" height="12" rx="2.5"/><circle cx="16.5" cy="13.5" r="1.2"/>'),
+      coins: sv('<ellipse cx="12" cy="7" rx="7" ry="3"/><path d="M5 7v5c0 1.7 3.1 3 7 3s7-1.3 7-3V7"/><path d="M5 12v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/>'),
+      up: sv('<path d="M12 19V5"/><path d="m6 11 6-6 6 6"/>'),
+      shield: sv('<path d="M12 3 5 6v5.5c0 4.3 3 7.6 7 9 4-1.4 7-4.7 7-9V6z"/><path d="m9 12 2.2 2.2L15 10"/>')
+    };
+    const cell = (icon, num, label) => `<div class="sg"><span class="sg-ic">${SI[icon]}</span><div><div class="snum">${num}</div><div class="slabel">${label}</div></div></div>`;
     list.innerHTML = boxes.map(b=>`
       <div class="season-box">
         <div class="sname">${b.seasonName}</div>
         <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}</div>
-        <div class="srow">
-          <div class="sstat"><div class="snum">${b.participants||0}</div><div class="slabel">Participants</div></div>
-          <div class="sstat"><div class="snum">$${(b.totalUsdtPaid||0).toFixed(2)}</div><div class="slabel">Total Paid</div></div>
-        </div>
-        <div class="srow" style="margin-top:8px;">
-          <div class="sstat"><div class="snum">${b.totalPointsEarned||0}</div><div class="slabel">Total AP</div></div>
-          <div class="sstat"><div class="snum">$${(b.apAllocation||0).toFixed(2)}</div><div class="slabel">AP Allocation</div></div>
-        </div>
-        <div class="srow" style="margin-top:8px;">
-          <div class="sstat"><div class="snum">${b.totalUp||0}</div><div class="slabel">Total UP</div></div>
-          <div class="sstat"><div class="snum">$${((b.totalUp||0)/100).toFixed(2)}</div><div class="slabel">UP Allocation</div></div>
+        <div class="sgrid">
+          ${cell('users', b.participants||0, 'Participants')}
+          ${cell('wallet', '$' + (b.totalUsdtPaid||0).toFixed(2), 'Total Paid')}
+          ${cell('coins', b.totalPointsEarned||0, 'Total AP')}
+          ${cell('up', b.totalUp||0, 'Total UP')}
+          ${cell('shield', '$' + (b.apAllocation||0).toFixed(2), 'AP Allocation')}
+          ${cell('up', '$' + ((b.totalUp||0)/100).toFixed(2), 'UP Allocation')}
         </div>
         <div class="season-box-toggle" onclick="toggleSeasonParticipants('${b.id}', this)">
           <span>View participants</span><span class="arrow">▾</span>
