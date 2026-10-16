@@ -2380,9 +2380,9 @@ async function loadSeasonBoxes(){
         <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}</div>
         <div class="sgrid">
           ${cell('users', b.participants||0, 'Participants')}
-          ${cell('wallet', '$' + (b.totalUsdtPaid||0).toFixed(2), 'Total Paid')}
           ${cell('coins', b.totalPointsEarned||0, 'Total AP')}
           ${cell('up', b.totalUp||0, 'Total UP')}
+          ${cell('wallet', '$' + (b.totalUsdtPaid||0).toFixed(2), 'Total Paid')}
           ${cell('shield', '$' + (b.apAllocation||0).toFixed(2), 'AP Allocation')}
           ${cell('up', '$' + ((b.totalUp||0)/100).toFixed(2), 'UP Allocation')}
         </div>
