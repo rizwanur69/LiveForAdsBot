@@ -520,6 +520,52 @@
   .nav-item.active .ni{fill:currentColor; fill-opacity:0.22;}
 
   .menu-row{width:100%; display:flex; align-items:center; justify-content:space-between; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:14px; font-weight:600; padding:13px 14px; border-radius:12px; margin-top:8px; cursor:pointer; font-family:'Inter',sans-serif;}
+  /* ===== Profile redesign ===== */
+  .pf-head{display:flex; align-items:center; gap:12px; margin-top:16px; padding:14px; background:var(--surface); border:1px solid var(--line); border-radius:18px;}
+  .pf-avatar{width:58px; height:58px; border-radius:50%; flex-shrink:0; overflow:hidden; background:var(--surface-raised); border:2px solid var(--gold-dim); display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700; color:var(--gold);}
+  .pf-avatar img{width:100%; height:100%; object-fit:cover;}
+  .pf-info{flex:1; min-width:0;}
+  .pf-name{font-size:17px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .pf-id{font-size:11.5px; color:var(--text-muted); margin-top:3px; white-space:nowrap;}
+  .pf-bal{background:#0E0E0E; border:1px solid rgba(242,179,61,0.45); border-radius:14px; padding:4px 10px; min-width:118px; box-shadow:0 4px 14px rgba(0,0,0,0.3);}
+  .pf-slot{display:flex; align-items:center; gap:8px; padding:8px 0; cursor:pointer; font-family:'Space Grotesk',sans-serif;}
+  .pf-slot + .pf-slot{border-top:1px solid rgba(255,255,255,0.10);}
+  .pf-slot .pl{font-size:11px; font-weight:700; width:20px;}
+  .pf-slot .pv{flex:1; font-size:18px; font-weight:700; text-align:right;}
+  .pf-slot .pc{font-size:16px; opacity:.6;}
+  .pf-slot.ap .pl,.pf-slot.ap .pv,.pf-slot.ap .pc{color:var(--gold);}
+  .pf-slot.up .pl,.pf-slot.up .pv,.pf-slot.up .pc{color:var(--up-color);}
+  .pf-menu{background:var(--surface); border:1px solid var(--line); border-radius:16px; margin-top:14px; overflow:hidden;}
+  .pf-row{display:flex; align-items:center; gap:12px; padding:13px 14px; cursor:pointer;}
+  .pf-row + .pf-row{border-top:1px solid var(--line);}
+  .pf-row:active{background:var(--surface-raised);}
+  .pr-ic{width:40px; height:40px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; background:rgba(242,179,61,0.10); border:1px solid var(--gold-dim);}
+  .pr-txt{flex:1; min-width:0;}
+  .pr-t{font-size:14.5px; font-weight:600;}
+  .pr-s{font-size:11.5px; color:var(--text-muted); margin-top:2px;}
+  .pr-chev{font-size:22px; color:var(--text-muted);}
+  .wd-cooldown{margin-top:14px;}
+  /* Edit profile page */
+  .ep-hero{display:flex; flex-direction:column; align-items:center; margin-top:18px;}
+  .ep-avatar-wrap{position:relative; width:116px; height:116px; cursor:pointer;}
+  .ep-avatar{width:116px; height:116px; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:42px; font-weight:700; color:var(--gold); background:var(--surface-raised); border:3px solid var(--gold); box-shadow:0 0 0 6px rgba(242,179,61,0.12), 0 10px 26px rgba(0,0,0,0.35);}
+  .ep-avatar img{width:100%; height:100%; object-fit:cover;}
+  .ep-cam{position:absolute; right:2px; bottom:2px; width:36px; height:36px; border-radius:50%; background:var(--gold); display:flex; align-items:center; justify-content:center; font-size:16px; border:3px solid var(--bg, #0B0F0E);}
+  .ep-hint{font-size:12px; color:var(--text-muted); margin-top:12px;}
+  .ep-card{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:18px; margin-top:20px;}
+  .ep-label{display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:7px; letter-spacing:.3px;}
+  .ep-input{width:100%; box-sizing:border-box; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:15px; padding:13px 14px; border-radius:12px; font-family:'Inter',sans-serif; outline:none;}
+  .ep-input:focus{border-color:var(--gold); box-shadow:0 0 0 3px rgba(242,179,61,0.15);}
+  .ep-readonly{color:var(--text-muted);}
+  .ep-count{text-align:right; font-size:11px; color:var(--text-muted); margin-top:5px;}
+  .save-sheet{position:fixed; left:50%; bottom:0; width:100%; max-width:480px; box-sizing:border-box; z-index:500; padding:14px 20px calc(14px + env(safe-area-inset-bottom)); background:var(--surface); border-top:1px solid rgba(242,179,61,0.45); border-radius:22px 22px 0 0; box-shadow:0 -12px 32px rgba(0,0,0,0.35); transform:translate(-50%,115%); transition:transform .3s ease; pointer-events:none;}
+  .save-sheet.show{transform:translate(-50%,0); pointer-events:auto;}
+  body.on-edit-page .bottom-nav{display:none;}
+  /* Home: week strip inside the Daily Reward card */
+  .rc-week{position:relative; z-index:2; margin:16px 0 0; }
+  .rc-week .dcircle{border-radius:11px;}
+  .rc-streak{cursor:default;}
+  .rc-gift{bottom:auto; top:44px; width:128px; height:128px;}
 </style>
 </head>
 <body>
@@ -560,7 +606,8 @@
         <button class="rc-btn" id="checkinBtn" onclick="doCheckin()"><span id="checkinBtnText">Claim Now</span><svg class="ti" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
         <div class="rc-next" id="checkinNext"></div>
       </div>
-      <button class="rc-streak" id="streakLabel" onclick="openWeekPopup()">🔥 0 day streak</button>
+      <div class="week-strip rc-week" id="homeWeekStrip"></div>
+      <div class="rc-streak" id="streakLabel">🔥 0 day streak</div>
       <svg class="rc-gift" viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="gfRib" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE3A3"/><stop offset="1" stop-color="#D9941E"/></linearGradient></defs>
 <ellipse cx="60" cy="108" rx="40" ry="7" fill="#000" opacity=".18"/>
 <path d="M20 48 60 66v42L20 90z" fill="var(--gift-left)"/><path d="M100 48 60 66v42l40-18z" fill="var(--gift-right)"/><path d="M60 30 100 48 60 66 20 48z" fill="var(--gift-top)"/>
@@ -668,49 +715,17 @@
 
   <!-- ================= PROFILE ================= -->
   <div class="page" id="page-profile">
-    <div class="profile-card" id="profileCard">
-      <div class="settings-gear" id="settingsGear" onclick="openSettings()">⚙</div>
-      <div class="profile-head" id="profileHead">
-        <div class="avatar-wrap">
-          <div class="avatar" id="profileAvatar">U</div>
-          <div class="avatar-change-overlay" id="avatarChangeOverlay" onclick="triggerAvatarPick()">Change</div>
-        </div>
-        <div style="flex:1;">
-          <div class="name" id="profileName">User</div>
-          <input class="name-input" id="profileNameInput" type="text" maxlength="30">
-          <div class="id" id="profileId">ID: —</div>
-        </div>
+    <div class="pf-head">
+      <div class="pf-avatar" id="pfAvatar">U</div>
+      <div class="pf-info">
+        <div class="pf-name" id="pfName">User</div>
+        <div class="pf-id" id="pfId">ID: —</div>
       </div>
-      <button class="edit-toggle-btn" id="editBtn" onclick="toggleEdit()" style="display:none;">Save profile</button>
-      <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="onAvatarFileChosen(event)">
-
-      <div class="profile-balance-premium">
-        <div class="pbp-item ap" onclick="showPage('ap-history', null)" style="cursor:pointer;">
-          <div class="pbp-label">Total AP ›</div>
-          <div class="pbp-val" id="pbTotalAp">0</div>
-        </div>
-        <div class="pbp-divider"></div>
-        <div class="pbp-item up" onclick="showPage('up-history', null)" style="cursor:pointer;">
-          <div class="pbp-label">Total UP ›</div>
-          <div class="pbp-val" id="pbTotalUp">0</div>
-        </div>
+      <div class="pf-bal">
+        <div class="pf-slot ap" onclick="showPage('ap-history', null)"><span class="pl">AP</span><span class="pv" id="pbTotalAp">0</span><span class="pc">›</span></div>
+        <div class="pf-slot up" onclick="showPage('up-history', null)"><span class="pl">UP</span><span class="pv" id="pbTotalUp">0</span><span class="pc">›</span></div>
       </div>
     </div>
-
-  <!-- ================= AVATAR CROP MODAL ================= -->
-  <div class="crop-overlay" id="cropOverlay">
-    <div class="crop-frame" id="cropFrame">
-      <img id="cropImg" src="" alt="">
-    </div>
-    <div class="crop-controls">
-      <input type="range" id="cropZoom" min="100" max="300" value="100">
-    </div>
-    <div class="crop-hint">Drag to reposition · slide to zoom</div>
-    <div class="crop-actions">
-      <button class="cancel-btn" onclick="cancelCrop()">Cancel</button>
-      <button class="confirm-btn" onclick="confirmCrop()">Use photo</button>
-    </div>
-  </div>
 
     <div class="range-toggle">
       <button class="active" onclick="setStatsRange('7', this)">7 Days</button>
@@ -744,12 +759,11 @@
       <div class="withdraw-notice-track" id="withdrawNoticeText"></div>
     </div>
 
-    <div class="withdraw-premium-box" onclick="showPage('withdraw', null)">
-      <div class="wpb-left">
-        <div class="wpb-title">Withdraw</div>
-        <div class="wpb-sub" id="withdrawSub">Loading withdrawal info...</div>
+    <div class="pf-menu">
+      <div class="pf-row" onclick="showPage('withdraw', null)">
+        <div class="pr-ic">💸</div>
+        <div class="pr-txt"><div class="pr-t">Withdraw</div><div class="pr-s" id="withdrawSub">Loading withdrawal info...</div></div><span class="pr-chev">›</span>
       </div>
-      <div class="wpb-arrow">›</div>
     </div>
 
     <div class="wd-cooldown" id="wdCooldown">
@@ -764,14 +778,64 @@
       <div class="wd-cd-note" id="wdCdNote"></div>
     </div>
 
-    <div class="withdraw-premium-box support-box" onclick="showPage('support', null)">
-      <div class="wpb-left">
-        <div class="wpb-title">🎧 Support</div>
-        <div class="wpb-sub">Report a problem or ask for help</div>
+
+    <div class="pf-menu">
+      <div class="pf-row" onclick="startEditFromSettings2()">
+        <div class="pr-ic">👤</div>
+        <div class="pr-txt"><div class="pr-t">Edit Profile</div><div class="pr-s">Update your name and photo</div></div><span class="pr-chev">›</span>
       </div>
-      <span class="hq-badge" id="supportBadge" style="top:-6px; right:10px;">0</span>
-      <div class="wpb-arrow">›</div>
+      <div class="pf-row" onclick="openSettings()">
+        <div class="pr-ic">⚙️</div>
+        <div class="pr-txt"><div class="pr-t">Settings</div><div class="pr-s">Theme and preferences</div></div><span class="pr-chev">›</span>
+      </div>
+      <div class="pf-row" onclick="showPage('support', null)" style="position:relative;">
+        <div class="pr-ic">🎧</div>
+        <div class="pr-txt"><div class="pr-t">Help &amp; Support</div><div class="pr-s">Report a problem or ask for help</div></div>
+        <span class="hq-badge" id="supportBadge" style="top:8px; right:34px;">0</span><span class="pr-chev">›</span>
+      </div>
     </div>
+
+  </div>
+
+  <!-- ================= EDIT PROFILE (hidden page) ================= -->
+  <div class="page" id="page-edit-profile">
+    <div class="withdraw-page-header">
+      <button class="wp-back" onclick="exitEditMode()">‹ Back</button>
+      <div class="wp-title">Edit Profile</div>
+    </div>
+    <div class="ep-hero">
+      <div class="ep-avatar-wrap" onclick="triggerAvatarPick()">
+        <div class="ep-avatar" id="profileAvatar">U</div>
+        <div class="ep-cam">📷</div>
+      </div>
+      <div class="ep-hint">Tap the photo to change it</div>
+    </div>
+    <div class="ep-card">
+      <label class="ep-label">Display name</label>
+      <input class="ep-input" id="profileNameInput" type="text" maxlength="30" placeholder="Your name" oninput="markEditDirty()">
+      <div class="ep-count"><span id="epCount">0</span>/30</div>
+      <label class="ep-label" style="margin-top:14px;">Telegram ID</label>
+      <div class="ep-input ep-readonly" id="profileId">ID: —</div>
+    </div>
+    <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="onAvatarFileChosen(event)">
+    <div style="height:110px;"></div>
+    <div class="save-sheet" id="saveSheet">
+      <button class="edit-toggle-btn" id="editBtn" onclick="toggleEdit()" style="display:block;margin-top:0;">Save profile</button>
+    </div>
+  <!-- ================= AVATAR CROP MODAL ================= -->
+  <div class="crop-overlay" id="cropOverlay">
+    <div class="crop-frame" id="cropFrame">
+      <img id="cropImg" src="" alt="">
+    </div>
+    <div class="crop-controls">
+      <input type="range" id="cropZoom" min="100" max="300" value="100">
+    </div>
+    <div class="crop-hint">Drag to reposition · slide to zoom</div>
+    <div class="crop-actions">
+      <button class="cancel-btn" onclick="cancelCrop()">Cancel</button>
+      <button class="confirm-btn" onclick="confirmCrop()">Use photo</button>
+    </div>
+  </div>
 
   </div>
 
@@ -1152,6 +1216,7 @@ function nextCheckinPoints(){
 function renderCheckin(){
   const today = new Date().toISOString().slice(0,10);
   document.getElementById('streakLabel').textContent = `🔥 ${state.checkin.streak || 0} day streak`;
+  document.getElementById('homeWeekStrip').innerHTML = buildWeekStripHtml();
   const btn = document.getElementById('checkinBtn');
   const btnText = document.getElementById('checkinBtnText');
   const nextText = document.getElementById('checkinNext');
@@ -1204,7 +1269,7 @@ function qaTask(type){
 }
 function qaDaily(){
   const today = new Date().toISOString().slice(0,10);
-  if (state.checkin.lastDate === today) openWeekPopup(); else doCheckin();
+  if (state.checkin.lastDate === today) document.getElementById('homeWeekStrip').scrollIntoView({behavior:'smooth', block:'center'}); else doCheckin();
 }
 
 // Top-right "..." menu
@@ -1615,35 +1680,52 @@ async function loadLfaSeasonHistory(){
    ============================================================ */
 function renderProfile(){
   const name = state.displayName || state.user.name;
-  document.getElementById('profileName').textContent = name;
-  document.getElementById('profileNameInput').value = name;
-  document.getElementById('profileId').textContent = 'ID: ' + state.user.id;
   const avatarUrl = state.pendingAvatarDataUrl || state.avatarUrl || state.telegramAvatarUrl;
-  document.getElementById('profileAvatar').innerHTML = avatarUrl ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
-
-
+  const av = avatarUrl ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
+  document.getElementById('pfName').textContent = name;
+  document.getElementById('pfId').textContent = 'ID: ' + state.user.id;
+  document.getElementById('pfAvatar').innerHTML = av;
+  document.getElementById('profileAvatar').innerHTML = av;
+  document.getElementById('profileId').textContent = 'ID: ' + state.user.id;
+  if (!state.editing){
+    document.getElementById('profileNameInput').value = name;
+    document.getElementById('epCount').textContent = name.length;
+  }
   document.getElementById('pbTotalAp').textContent = state.totalPoints;
   document.getElementById('pbTotalUp').textContent = state.up;
 }
 
-/* ---------- Settings sheet ---------- */
+/* ---------- Edit profile page ---------- */
+function markEditDirty(){
+  const nm = document.getElementById('profileNameInput').value.trim();
+  document.getElementById('epCount').textContent = document.getElementById('profileNameInput').value.length;
+  const dirty = !!state.pendingAvatarDataUrl || (nm && nm !== (state.displayName || state.user.name));
+  document.getElementById('saveSheet').classList.toggle('show', !!dirty);
+}
+
 function enterEditMode(){
   state.editing = true;
-  document.getElementById('profileHead').classList.add('editing');
-  document.getElementById('editBtn').style.display = 'block';
+  document.body.classList.add('on-edit-page');
+  showPage('edit-profile', null);
+  renderProfile();
   document.getElementById('profileNameInput').value = state.displayName || state.user.name;
+  document.getElementById('epCount').textContent = document.getElementById('profileNameInput').value.length;
+  document.getElementById('saveSheet').classList.remove('show');
 }
 
 function exitEditMode(){
   state.editing = false;
-  document.getElementById('profileHead').classList.remove('editing');
-  document.getElementById('editBtn').style.display = 'none';
+  state.pendingAvatarDataUrl = null;
+  document.body.classList.remove('on-edit-page');
+  document.getElementById('saveSheet').classList.remove('show');
+  showPage('profile', document.querySelectorAll('.nav-item')[5]);
 }
 
 function startEditFromSettings(){
   closeSettings();
   enterEditMode();
 }
+function startEditFromSettings2(){ enterEditMode(); }
 
 async function toggleEdit(){
   const btn = document.getElementById('editBtn');
@@ -1749,7 +1831,7 @@ function confirmCrop(){
   state.pendingAvatarDataUrl = canvas.toDataURL('image/jpeg', 0.82);
   document.getElementById('cropOverlay').classList.remove('active');
   document.getElementById('profileAvatar').innerHTML = `<img src="${state.pendingAvatarDataUrl}">`;
-  if (!state.editing) enterEditMode();
+  markEditDirty();
 }
 
 async function saveProfile(){
