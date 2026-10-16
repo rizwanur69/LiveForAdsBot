@@ -580,7 +580,6 @@
     </div>
     <div class="top-actions">
       <button class="top-btn" onclick="showPage('notices', null)" aria-label="Notifications"><svg class="ti" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span class="bell-dot" id="bellBadge">0</span></button>
-      <button class="top-btn" onclick="openMoreMenu()" aria-label="More"><svg class="ti" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg></button>
     </div>
   </div>
 
@@ -759,13 +758,6 @@
       <div class="withdraw-notice-track" id="withdrawNoticeText"></div>
     </div>
 
-    <div class="pf-menu">
-      <div class="pf-row" onclick="showPage('withdraw', null)">
-        <div class="pr-ic">💸</div>
-        <div class="pr-txt"><div class="pr-t">Withdraw</div><div class="pr-s" id="withdrawSub">Loading withdrawal info...</div></div><span class="pr-chev">›</span>
-      </div>
-    </div>
-
     <div class="wd-cooldown" id="wdCooldown">
       <div class="wd-cd-label" id="wdCdLabel">Loading...</div>
       <div class="wd-cd-grid" id="wdCdGrid">
@@ -780,6 +772,10 @@
 
 
     <div class="pf-menu">
+      <div class="pf-row" onclick="showPage('withdraw', null)">
+        <div class="pr-ic">💸</div>
+        <div class="pr-txt"><div class="pr-t">Withdraw</div><div class="pr-s" id="withdrawSub">Loading withdrawal info...</div></div><span class="pr-chev">›</span>
+      </div>
       <div class="pf-row" onclick="startEditFromSettings2()">
         <div class="pr-ic">👤</div>
         <div class="pr-txt"><div class="pr-t">Edit Profile</div><div class="pr-s">Update your name and photo</div></div><span class="pr-chev">›</span>
@@ -814,8 +810,6 @@
       <label class="ep-label">Display name</label>
       <input class="ep-input" id="profileNameInput" type="text" maxlength="30" placeholder="Your name" oninput="markEditDirty()">
       <div class="ep-count"><span id="epCount">0</span>/30</div>
-      <label class="ep-label" style="margin-top:14px;">Telegram ID</label>
-      <div class="ep-input ep-readonly" id="profileId">ID: —</div>
     </div>
     <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="onAvatarFileChosen(event)">
     <div style="height:110px;"></div>
@@ -959,13 +953,6 @@
   <div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this) closeSettings()">
     <div class="settings-sheet">
       <h3>Settings</h3>
-      <div class="settings-row">
-        <div>
-          <div class="slabel">Edit Profile</div>
-          <div class="shint">Change your name and photo</div>
-        </div>
-        <button class="settings-btn" onclick="startEditFromSettings()">Edit</button>
-      </div>
       <div class="settings-row">
         <div>
           <div class="slabel">Theme</div>
@@ -1686,7 +1673,6 @@ function renderProfile(){
   document.getElementById('pfId').textContent = 'ID: ' + state.user.id;
   document.getElementById('pfAvatar').innerHTML = av;
   document.getElementById('profileAvatar').innerHTML = av;
-  document.getElementById('profileId').textContent = 'ID: ' + state.user.id;
   if (!state.editing){
     document.getElementById('profileNameInput').value = name;
     document.getElementById('epCount').textContent = name.length;
