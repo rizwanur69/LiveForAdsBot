@@ -8,6 +8,7 @@
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <script src="//libtl.com/sdk.js" data-zone="11739436" data-sdk="show_11739436"></script>
 <script src="https://w.tads.me/widget.js"></script>
+<script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
 
@@ -1031,8 +1032,13 @@ function setEarnSubTab(tab){
 const AD_NETWORKS = [
   { key:"adsgram", name:"Adsgram", icon:"▲" },
   { key:"monetag", name:"Monetag", icon:"●" },
-  { key:"tads", name:"TADS", icon:"◆" }
+  { key:"tads", name:"TADS", icon:"◆" },
+  { key:"richads", name:"RichAds", icon:"★" }
 ];
+const RICHADS_PUB_ID = "1025959";
+const RICHADS_APP_ID = "9330";
+const RICHADS_MIN_WATCH_MS = 5000; // ad closed/finished faster than this = no reward
+let richadsController = null;
 const TADS_WIDGET_ID = 12696;
 let tadsController = null;
 const AD_WATCH_LIMIT = 5;
@@ -1530,6 +1536,26 @@ function watchAd(networkKey){
     }
     tadsController.showAd().catch((err) => {
       console.log('TADS:', err);
+      alert('No ad available right now. Please try again in a little while.');
+    });
+    return;
+  }
+  if (networkKey === 'richads'){
+    if (typeof window.TelegramAdsController !== 'function'){ alert('Ad SDK not loaded — try again in a moment.'); return; }
+    if (!richadsController){
+      richadsController = new window.TelegramAdsController();
+      richadsController.initialize({ pubId: RICHADS_PUB_ID, appId: RICHADS_APP_ID, debug: false });
+    }
+    const startedAt = Date.now();
+    richadsController.triggerInterstitialVideo().then((result) => {
+      console.log('RichAds result:', result);
+      if (Date.now() - startedAt < RICHADS_MIN_WATCH_MS){
+        alert('Please watch the ad to the end to get your points.');
+        return;
+      }
+      reportAdWatched('richads');
+    }).catch((result) => {
+      console.log('RichAds no ad:', result);
       alert('No ad available right now. Please try again in a little while.');
     });
     return;
