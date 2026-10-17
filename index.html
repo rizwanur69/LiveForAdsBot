@@ -1039,6 +1039,26 @@ const RICHADS_PUB_ID = "1025959";
 const RICHADS_APP_ID = "9330";
 const RICHADS_MIN_WATCH_MS = 5000; // ad closed/finished faster than this = no reward
 let richadsController = null;
+let richadsBusy = false;           // true while a "Watch" ad is running
+let lastDisplayAdAt = Date.now() + 45000; // first display ad no earlier than ~45s after opening
+const RICHADS_DISPLAY_EVERY_MS = 3 * 60 * 1000; // regular display ad: at most once every 3 minutes
+function ensureRichads(){
+  if (richadsController) return richadsController;
+  if (typeof window.TelegramAdsController !== 'function') return null;
+  richadsController = new window.TelegramAdsController();
+  richadsController.initialize({ pubId: RICHADS_PUB_ID, appId: RICHADS_APP_ID, debug: false });
+  return richadsController;
+}
+// Called on page changes: shows a display (interstitial banner) ad at a regular pace, never mid-task
+function maybeShowDisplayAd(){
+  try {
+    if (richadsBusy || Date.now() - lastDisplayAdAt < RICHADS_DISPLAY_EVERY_MS) return;
+    const c = ensureRichads();
+    if (!c || typeof c.triggerInterstitialBanner !== 'function') return;
+    lastDisplayAdAt = Date.now();
+    c.triggerInterstitialBanner().catch((e) => console.log('RichAds display ad:', e));
+  } catch(e){ console.log('RichAds display ad error', e); }
+}
 const TADS_WIDGET_ID = 12696;
 let tadsController = null;
 const AD_WATCH_LIMIT = 5;
@@ -1092,6 +1112,7 @@ let wdCooldownInterval = null;
    NAVIGATION
    ============================================================ */
 function showPage(name, el){
+  setTimeout(maybeShowDisplayAd, 600);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   if (el){
@@ -1542,10 +1563,10 @@ function watchAd(networkKey){
   }
   if (networkKey === 'richads'){
     if (typeof window.TelegramAdsController !== 'function'){ alert('Ad SDK not loaded — try again in a moment.'); return; }
-    if (!richadsController){
-      richadsController = new window.TelegramAdsController();
-      richadsController.initialize({ pubId: RICHADS_PUB_ID, appId: RICHADS_APP_ID, debug: false });
-    }
+    if (!ensureRichads()){ alert('Ad SDK not loaded — try again in a moment.'); return; }
+    richadsBusy = true;
+    lastDisplayAdAt = Date.now(); // don't stack a display ad right after a Watch ad
+    setTimeout(() => { richadsBusy = false; }, 60000);
     const startedAt = Date.now();
     const done = (result) => {
       console.log('RichAds result:', result);
