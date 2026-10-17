@@ -633,6 +633,7 @@
   <div class="page" id="page-ads">
     <div class="earn-toggle" style="margin-top:16px;">
       <button class="earn-toggle-btn active" id="earnTabOfferwall" onclick="setEarnSubTab('offerwall')">Reward Wall</button>
+      <button class="earn-toggle-btn" id="earnTabAdgem" onclick="setEarnSubTab('adgem')">AdGem</button>
       <button class="earn-toggle-btn" id="earnTabAds" onclick="setEarnSubTab('ads')">ADS</button>
     </div>
 
@@ -647,6 +648,20 @@
         <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">The Reward Wall didn't load. This can happen occasionally — try again below.</div>
         <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall()">Reload</button>
         <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect()">Open directly</button>
+      </div>
+    </div>
+
+    <div class="earn-subpage" id="earnSubpage-adgem" style="display:none;">
+      <div class="earn-section-head-premium up">
+        <div class="eshp-title">AdGem</div>
+        <div class="eshp-val" id="adgemSubtotal">0 UP</div>
+      </div>
+      <div class="ads-note">Complete offers for real USD value. 100 UP = 1 USDT.</div>
+      <iframe id="adgemFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
+      <div id="adgemFallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
+        <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">AdGem didn't load. Try again below.</div>
+        <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('adgem')">Reload</button>
+        <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('adgem')">Open directly</button>
       </div>
     </div>
 
@@ -982,6 +997,7 @@ const API_BASE = "https://liveforadsbot-backend.onrender.com/api";
 const LFA_WEBPAGE_URL = "https://rizwanur69.github.io/LiveForAdsWeb/";
 const LFA_WHITEPAPER_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/whitepaper.pdf";
 const CPALEAD_OFFERWALL_URL = "https://www.akamaicdn.org/wall/bPjTh";
+const ADGEM_WALL_URL = "https://adunits.adgem.com/wall?appid=33875&playerid=";
 const LFA_TERMS_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/terms-and-privacy.pdf";
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { tg.ready(); tg.expand(); }
@@ -999,10 +1015,16 @@ function getAdsgram(){
   return AdsgramController;
 }
 function setEarnSubTab(tab){
-  document.getElementById('earnSubpage-offerwall').style.display = tab === 'offerwall' ? 'block' : 'none';
-  document.getElementById('earnSubpage-ads').style.display = tab === 'ads' ? 'block' : 'none';
+  ['offerwall','adgem','ads'].forEach(t=>{
+    document.getElementById('earnSubpage-'+t).style.display = tab === t ? 'block' : 'none';
+  });
   document.getElementById('earnTabOfferwall').classList.toggle('active', tab === 'offerwall');
+  document.getElementById('earnTabAdgem').classList.toggle('active', tab === 'adgem');
   document.getElementById('earnTabAds').classList.toggle('active', tab === 'ads');
+  if (tab === 'adgem'){
+    document.getElementById('adgemSubtotal').textContent = `${state.up} UP`;
+    loadOfferwallFrame('adgem');
+  }
 }
 
 const AD_NETWORKS = [
@@ -1367,41 +1389,45 @@ function renderEarn(){
   renderAds();
 }
 
-let offerwallLoadTimer = null;
+const wallTimers = {};
+const WALLS = {
+  offerwall: { frame:'offerwallFrame', fb:'offerwallFallback', src:()=>`${CPALEAD_OFFERWALL_URL}?subid=${state.user.id}` },
+  adgem:     { frame:'adgemFrame',     fb:'adgemFallback',     src:()=>`${ADGEM_WALL_URL}${encodeURIComponent(String(state.user.id).toLowerCase())}` }
+};
 
-function getOfferwallSrc(){
-  return `${CPALEAD_OFFERWALL_URL}?subid=${state.user.id}`;
-}
+function getOfferwallSrc(key='offerwall'){ return WALLS[key].src(); }
 
-function loadOfferwallFrame(){
-  const frame = document.getElementById('offerwallFrame');
-  const fallback = document.getElementById('offerwallFallback');
-  const wantedSrc = getOfferwallSrc();
+function loadOfferwallFrame(key='offerwall'){
+  const w = WALLS[key];
+  const frame = document.getElementById(w.frame);
+  const fallback = document.getElementById(w.fb);
+  const wantedSrc = getOfferwallSrc(key);
   if (frame.src === wantedSrc) return; // already loaded/loading, don't restart it
 
   fallback.style.display = 'none';
   frame.style.display = 'block';
   frame.src = wantedSrc;
 
-  if (offerwallLoadTimer) clearTimeout(offerwallLoadTimer);
-  frame.onload = () => { if (offerwallLoadTimer) clearTimeout(offerwallLoadTimer); };
-  // If it hasn't loaded within 8 seconds, assume it failed and show the fallback
-  offerwallLoadTimer = setTimeout(() => {
+  if (wallTimers[key]) clearTimeout(wallTimers[key]);
+  frame.onload = () => { if (wallTimers[key]) clearTimeout(wallTimers[key]); };
+  // If it hasn't loaded within 10 seconds, assume it failed and show the fallback
+  wallTimers[key] = setTimeout(() => {
     fallback.style.display = 'block';
     frame.style.display = 'none';
-  }, 8000);
+  }, 10000);
 }
 
-function reloadOfferwall(){
-  const frame = document.getElementById('offerwallFrame');
+function reloadOfferwall(key='offerwall'){
+  const w = WALLS[key];
+  const frame = document.getElementById(w.frame);
   frame.src = ''; // force a real reload even if the URL is unchanged
-  document.getElementById('offerwallFallback').style.display = 'none';
+  document.getElementById(w.fb).style.display = 'none';
   frame.style.display = 'block';
-  setTimeout(() => loadOfferwallFrame(), 50);
+  setTimeout(() => loadOfferwallFrame(key), 50);
 }
 
-function openOfferwallDirect(){
-  const url = getOfferwallSrc();
+function openOfferwallDirect(key='offerwall'){
+  const url = getOfferwallSrc(key);
   if (tg) tg.openLink(url); else window.open(url, '_blank');
 }
 
