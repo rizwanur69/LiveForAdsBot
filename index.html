@@ -1547,16 +1547,22 @@ function watchAd(networkKey){
       richadsController.initialize({ pubId: RICHADS_PUB_ID, appId: RICHADS_APP_ID, debug: false });
     }
     const startedAt = Date.now();
-    richadsController.triggerInterstitialVideo().then((result) => {
+    const done = (result) => {
       console.log('RichAds result:', result);
       if (Date.now() - startedAt < RICHADS_MIN_WATCH_MS){
         alert('Please watch the ad to the end to get your points.');
         return;
       }
       reportAdWatched('richads');
-    }).catch((result) => {
-      console.log('RichAds no ad:', result);
-      alert('No ad available right now. Please try again in a little while.');
+    };
+    const reasonOf = (r) => { try { return typeof r === 'string' ? r : (r && (r.message || r.error || r.reason)) || JSON.stringify(r); } catch(e){ return ''; } };
+    richadsController.triggerInterstitialVideo().then(done).catch((videoErr) => {
+      console.log('RichAds video failed:', videoErr);
+      // No video ad available — try the interstitial banner instead
+      richadsController.triggerInterstitialBanner().then(done).catch((bannerErr) => {
+        console.log('RichAds banner failed:', bannerErr);
+        alert('No ad available right now. Please try again in a little while.\n\n(' + String(reasonOf(videoErr)).slice(0, 80) + ')');
+      });
     });
     return;
   }
