@@ -7,6 +7,7 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <script src="//libtl.com/sdk.js" data-zone="11739436" data-sdk="show_11739436"></script>
+<script src="https://w.tads.me/widget.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
 
@@ -1029,8 +1030,11 @@ function setEarnSubTab(tab){
 
 const AD_NETWORKS = [
   { key:"adsgram", name:"Adsgram", icon:"▲" },
-  { key:"monetag", name:"Monetag", icon:"●" }
+  { key:"monetag", name:"Monetag", icon:"●" },
+  { key:"tads", name:"TADS", icon:"◆" }
 ];
+const TADS_WIDGET_ID = 12696;
+let tadsController = null;
 const AD_WATCH_LIMIT = 5;
 const AD_COOLDOWN_HOURS = 3;
 const POINTS_PER_AD = 50;
@@ -1511,6 +1515,23 @@ function watchAd(networkKey){
       }
       reportAdWatched(networkKey);
     }).catch(() => {});
+    return;
+  }
+  if (networkKey === 'tads'){
+    if (!window.tads || typeof window.tads.init !== 'function'){ alert('Ad SDK not loaded — try again in a moment.'); return; }
+    if (!tadsController){
+      tadsController = window.tads.init({
+        widgetId: TADS_WIDGET_ID,
+        type: 'fullscreen',
+        debug: false,
+        onShowReward: () => reportAdWatched('tads'),
+        onAdsNotFound: () => alert('No ad available right now. Please try again in a little while.')
+      });
+    }
+    tadsController.showAd().catch((err) => {
+      console.log('TADS:', err);
+      alert('No ad available right now. Please try again in a little while.');
+    });
     return;
   }
 }
