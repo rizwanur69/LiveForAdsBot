@@ -587,8 +587,8 @@
 
   <!-- ================= HOME ================= -->
   <div class="page active" id="page-home">
-    <div class="profile-card" onclick="showPage('profile', document.querySelectorAll('.nav-item')[5])">
-      <div class="home-avatar" id="homeAvatar">U</div>
+    <div class="profile-card">
+      <div class="home-avatar" id="homeAvatar" style="cursor:pointer;" onclick="showPage('profile', document.querySelectorAll('.nav-item')[5])">U</div>
       <div class="pc-info">
         <div class="home-name pc-name" id="homeName">User</div>
         <div class="pc-sub" id="homeSub"></div>
@@ -597,7 +597,6 @@
         <div class="hb-row"><span class="hb-label ap">AP</span><span class="hb-val ap" id="homeAp">0</span></div>
         <div class="hb-row"><span class="hb-label up">UP</span><span class="hb-val up" id="homeUp">0</span></div>
       </div>
-      <span class="pc-chev"><svg class="ti" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
     </div>
 
     <div class="reward-card">
@@ -617,12 +616,6 @@
 <path d="M60 46C44 20 28 30 42 41c6 4.5 12 5.5 18 5z" fill="url(#gfRib)"/><path d="M60 46C76 20 92 30 78 41c-6 4.5-12 5.5-18 5z" fill="url(#gfRib)"/><ellipse cx="60" cy="45.5" rx="6" ry="4.5" fill="#F0B84A"/><ellipse cx="58.5" cy="44" rx="2.5" ry="1.6" fill="#fff" opacity=".55"/></svg>
     </div>
 
-    <div class="quick-grid">
-      <button class="qt" id="qt-ads" onclick="qaWatchAds()"><span class="qt-ic"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><span class="qt-name">Watch Ads</span><span class="qt-pts" id="qtp-ads">+50 pts</span></button>
-      <button class="qt" id="qt-channel" onclick="qaTask('channel')"><span class="qt-ic"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3 10.5 13.5"/><path d="M21 3l-6.5 18-4-7.5L3 9.5z"/></svg></span><span class="qt-name">Subscribe Channel</span><span class="qt-pts" id="qtp-channel"></span></button>
-      <button class="qt" id="qt-webpage" onclick="qaTask('webpage')"><span class="qt-ic"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.8 3.9 5.8 3.9 9s-1.3 6.2-3.9 9c-2.6-2.8-3.9-5.8-3.9-9S9.4 5.8 12 3z"/></svg></span><span class="qt-name">Visit Website</span><span class="qt-pts" id="qtp-webpage"></span></button>
-      <button class="qt" id="qt-daily" onclick="qaDaily()"><span class="qt-ic"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="10" width="17" height="10" rx="1.5"/><path d="M12 10v10"/><path d="M3 10h18V7H3z"/><path d="M12 7c-1-3.4-5-3.6-5-1.3C7 7.100 9.500 7 12 7zm0 0c1-3.4 5-3.6 5-1.3 0 1.4-2.500 1.300-5 1.300z"/></svg></span><span class="qt-name">Daily Bonus</span><span class="qt-pts" id="qtp-daily"></span></button>
-    </div>
 
     <div class="sec-head"><div class="sec-title"><span class="sec-chip"><svg class="ti" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="m8.5 12.3 2.5 2.5 4.5-5"/></svg></span>Tasks</div></div>
     <div id="taskList"></div>
@@ -672,7 +665,7 @@
         <div class="eshp-title">Ads</div>
         <div class="eshp-val" id="adsSubtotal">0 AP</div>
       </div>
-      <div class="ads-note">Each ad gives 50 AP. 5 ads per network, then a 3-hour cooldown.</div>
+      <div class="ads-note">Each ad gives 50 AP. 5 ads per network, then a 3-hour cooldown. Counts reset daily at 6:00 AM.</div>
       <div id="adList"></div>
     </div>
   </div>
@@ -1158,7 +1151,13 @@ async function loadUserFromServer(){
     state.apFromCheckin = data.apFromCheckin || 0;
     state.theme = data.theme || 'dark';
     applyTheme(state.theme);
-    state.adsToday = data.adsWatched || {};
+    state.adsToday = {};
+    const _utcDay = new Date().toISOString().slice(0,10), _nowMs = Date.now();
+    Object.entries(data.adsWatched || {}).forEach(([k, slot]) => {
+      if (!slot) return;
+      if (slot.unlockAt) { if (_nowMs < slot.unlockAt) state.adsToday[k] = slot; } // active cooldown keeps running
+      else if (slot.day === _utcDay) state.adsToday[k] = slot;                    // partial count survives only the same day
+    });
     state.tasksCompleted = data.tasksCompleted || {};
     state.checkin = data.checkin || { lastDate: null, streak: 0 };
     state.checkinHistory = data.checkinHistory || {};
@@ -1601,7 +1600,7 @@ async function reportAdWatched(networkKey){
       if (result.reason === 'banned') alert('Your account is suspended.');
       return;
     }
-    state.adsToday[networkKey] = { count: result.count || 0, unlockAt: result.unlockAt || null };
+    state.adsToday[networkKey] = { count: result.count || 0, unlockAt: result.unlockAt || null, day: new Date().toISOString().slice(0,10) };
     state.totalPoints += result.pointsEarned || POINTS_PER_AD;
     state.apFromAds += result.pointsEarned || POINTS_PER_AD;
   } catch(e){ console.error("ad-watched failed:", e); alert("Couldn't reach the server."); return; }
