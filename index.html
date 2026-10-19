@@ -7,7 +7,6 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <script src="//libtl.com/sdk.js" data-zone="11739436" data-sdk="show_11739436"></script>
-<script src="https://w.tads.me/widget.js"></script>
 <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
@@ -1025,7 +1024,6 @@ function setEarnSubTab(tab){
 const AD_NETWORKS = [
   { key:"adsgram", name:"Adsgram", icon:"▲" },
   { key:"monetag", name:"Monetag", icon:"●" },
-  { key:"tads", name:"TADS", icon:"◆" },
   { key:"richads", name:"RichAds", icon:"★" }
 ];
 const RICHADS_PUB_ID = "1025959";
@@ -1047,13 +1045,15 @@ function maybeShowDisplayAd(){
   try {
     if (richadsBusy || Date.now() - lastDisplayAdAt < RICHADS_DISPLAY_EVERY_MS) return;
     const c = ensureRichads();
-    if (!c || typeof c.triggerInterstitialBanner !== 'function') return;
+    if (!c) return;
     lastDisplayAdAt = Date.now();
-    c.triggerInterstitialBanner().catch((e) => console.log('RichAds display ad:', e));
+    // Push-style is the format that actually has demand on this app; interstitial banner is the fallback
+    const order = ['triggerNativeNotification', 'triggerInterstitialMixed', 'triggerInterstitialBanner']
+      .filter(m => typeof c[m] === 'function');
+    const go = (i) => { if (i < order.length) Promise.resolve(c[order[i]]()).catch((e) => { console.log('RichAds ' + order[i] + ':', e); go(i + 1); }); };
+    go(0);
   } catch(e){ console.log('RichAds display ad error', e); }
 }
-const TADS_WIDGET_ID = 12696;
-let tadsController = null;
 const AD_WATCH_LIMIT = 5;
 const AD_COOLDOWN_HOURS = 3;
 const POINTS_PER_AD = 50;
@@ -1543,23 +1543,6 @@ function watchAd(networkKey){
     }).catch(() => {});
     return;
   }
-  if (networkKey === 'tads'){
-    if (!window.tads || typeof window.tads.init !== 'function'){ alert('Ad SDK not loaded — try again in a moment.'); return; }
-    if (!tadsController){
-      tadsController = window.tads.init({
-        widgetId: TADS_WIDGET_ID,
-        type: 'fullscreen',
-        debug: false,
-        onShowReward: () => reportAdWatched('tads'),
-        onAdsNotFound: () => alert('No ad available right now. Please try again in a little while.')
-      });
-    }
-    tadsController.showAd().catch((err) => {
-      console.log('TADS:', err);
-      alert('No ad available right now. Please try again in a little while.');
-    });
-    return;
-  }
   if (networkKey === 'richads'){
     if (typeof window.TelegramAdsController !== 'function'){ alert('Ad SDK not loaded — try again in a moment.'); return; }
     if (!ensureRichads()){ alert('Ad SDK not loaded — try again in a moment.'); return; }
@@ -1576,14 +1559,22 @@ function watchAd(networkKey){
       reportAdWatched('richads');
     };
     const reasonOf = (r) => { try { return typeof r === 'string' ? r : (r && (r.message || r.error || r.reason)) || JSON.stringify(r); } catch(e){ return ''; } };
-    richadsController.triggerInterstitialVideo().then(done).catch((videoErr) => {
-      console.log('RichAds video failed:', videoErr);
-      // No video ad available — try the interstitial banner instead
-      richadsController.triggerInterstitialBanner().then(done).catch((bannerErr) => {
-        console.log('RichAds banner failed:', bannerErr);
-        alert('No ad available right now. Please try again in a little while.\n\n(' + String(reasonOf(videoErr)).slice(0, 80) + ')');
+    // Try every interstitial format in order until one has an ad: video -> mixed (video/banner/playable) -> banner
+    const chain = ['triggerInterstitialVideo', 'triggerInterstitialMixed', 'triggerInterstitialBanner']
+      .filter(m => typeof richadsController[m] === 'function');
+    let firstErr = null;
+    const tryNext = (i) => {
+      if (i >= chain.length){
+        alert('No ad available right now. Please try again in a little while.\n\n(' + String(reasonOf(firstErr)).slice(0, 80) + ')');
+        return;
+      }
+      richadsController[chain[i]]().then(done).catch((err) => {
+        console.log('RichAds ' + chain[i] + ' failed:', err);
+        if (firstErr === null) firstErr = err;
+        tryNext(i + 1);
       });
-    });
+    };
+    tryNext(0);
     return;
   }
 }
