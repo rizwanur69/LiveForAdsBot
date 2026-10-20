@@ -103,8 +103,8 @@
   .earn-section-head .ssubtotal{font-size:13px; font-weight:700; font-family:'Space Grotesk',sans-serif;}
   .earn-section-head .ssubtotal.ap{color:var(--gold);}
   .earn-section-head .ssubtotal.up{color:var(--up-color);}
-  .earn-toggle{display:flex; flex-wrap:wrap; gap:8px;}
-  .earn-toggle-btn{flex:1 1 calc(50% - 4px); background:var(--surface); border:1px solid var(--line); color:var(--text-muted); font-family:'Inter',sans-serif; font-weight:700; font-size:13.5px; padding:12px; border-radius:12px; cursor:pointer;}
+  .earn-toggle{display:flex; gap:8px;}
+  .earn-toggle-btn{flex:1; background:var(--surface); border:1px solid var(--line); color:var(--text-muted); font-family:'Inter',sans-serif; font-weight:700; font-size:13.5px; padding:12px; border-radius:12px; cursor:pointer;}
   .earn-toggle-btn.active{background:var(--gold); color:#1B1404; border-color:var(--gold);}
   .earn-section-head-premium{display:flex; align-items:center; justify-content:space-between; background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border:1px solid var(--line); border-radius:14px; padding:14px 18px; margin:18px 0 10px; box-shadow:0 4px 14px rgba(0,0,0,0.18);}
   .earn-section-head-premium .eshp-title{font-size:13px; color:var(--text-muted); font-weight:600;}
@@ -629,7 +629,6 @@
   <div class="page" id="page-ads">
     <div class="earn-toggle" style="margin-top:16px;">
       <button class="earn-toggle-btn active" id="earnTabOfferwall" onclick="setEarnSubTab('offerwall')">Reward Wall</button>
-      <button class="earn-toggle-btn" id="earnTabOfferwall2" onclick="setEarnSubTab('offerwall2')">Reward Wall 2</button>
       <button class="earn-toggle-btn" id="earnTabAdgem" onclick="setEarnSubTab('adgem')">AdGem</button>
       <button class="earn-toggle-btn" id="earnTabAds" onclick="setEarnSubTab('ads')">ADS</button>
     </div>
@@ -645,20 +644,6 @@
         <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">The Reward Wall didn't load. This can happen occasionally — try again below.</div>
         <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall()">Reload</button>
         <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect()">Open directly</button>
-      </div>
-    </div>
-
-    <div class="earn-subpage" id="earnSubpage-offerwall2" style="display:none;">
-      <div class="earn-section-head-premium up">
-        <div class="eshp-title">Offerwall 2</div>
-        <div class="eshp-val" id="offerwall2Subtotal">0 UP</div>
-      </div>
-      <div class="ads-note">Complete offers and install apps for real USD value. 100 UP = 1 USDT.</div>
-      <iframe id="offerwall2Frame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
-      <div id="offerwall2Fallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
-        <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Reward Wall 2 didn't load. Try again below.</div>
-        <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('offerwall2')">Reload</button>
-        <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('offerwall2')">Open directly</button>
       </div>
     </div>
 
@@ -1008,7 +993,6 @@ const API_BASE = "https://liveforadsbot-backend.onrender.com/api";
 const LFA_WEBPAGE_URL = "https://rizwanur69.github.io/LiveForAdsWeb/";
 const LFA_WHITEPAPER_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/whitepaper.pdf";
 const CPALEAD_OFFERWALL_URL = "https://www.akamaicdn.org/wall/bPjTh";
-const CPALEAD_WALL2_URL = "https://www.cdnnd.com/wall/cBAb5";   // Reward Wall 2
 const ADGEM_WALL_URL = "https://adunits.adgem.com/wall?appid=33875&playerid=";
 const LFA_TERMS_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/terms-and-privacy.pdf";
 const tg = window.Telegram ? window.Telegram.WebApp : null;
@@ -1027,17 +1011,12 @@ function getAdsgram(){
   return AdsgramController;
 }
 function setEarnSubTab(tab){
-  ['offerwall','offerwall2','adgem','ads'].forEach(t=>{
+  ['offerwall','adgem','ads'].forEach(t=>{
     document.getElementById('earnSubpage-'+t).style.display = tab === t ? 'block' : 'none';
   });
   document.getElementById('earnTabOfferwall').classList.toggle('active', tab === 'offerwall');
-  document.getElementById('earnTabOfferwall2').classList.toggle('active', tab === 'offerwall2');
   document.getElementById('earnTabAdgem').classList.toggle('active', tab === 'adgem');
   document.getElementById('earnTabAds').classList.toggle('active', tab === 'ads');
-  if (tab === 'offerwall2'){
-    document.getElementById('offerwall2Subtotal').textContent = `${state.up} UP`;
-    loadOfferwallFrame('offerwall2');
-  }
   if (tab === 'adgem'){
     document.getElementById('adgemSubtotal').textContent = `${state.up} UP`;
     loadOfferwallFrame('adgem');
@@ -1443,10 +1422,8 @@ function renderEarn(){
 }
 
 const wallTimers = {};
-function cpaleadSrc(base){ return `${base}${base.includes('?') ? '&' : '?'}subid=${encodeURIComponent(state.user.id)}`; }
 const WALLS = {
-  offerwall:  { frame:'offerwallFrame',  fb:'offerwallFallback',  src:()=>`${CPALEAD_OFFERWALL_URL}?subid=${state.user.id}` },
-  offerwall2: { frame:'offerwall2Frame', fb:'offerwall2Fallback', src:()=>cpaleadSrc(CPALEAD_WALL2_URL) },
+  offerwall: { frame:'offerwallFrame', fb:'offerwallFallback', src:()=>`${CPALEAD_OFFERWALL_URL}?subid=${state.user.id}` },
   adgem:     { frame:'adgemFrame',     fb:'adgemFallback',     src:()=>`${ADGEM_WALL_URL}${encodeURIComponent(String(state.user.id).toLowerCase())}` }
 };
 
