@@ -256,6 +256,8 @@
   .inbox-item .it{flex:1; font-size:13.5px; font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .inbox-item .id{font-size:10.5px; color:var(--text-muted); flex-shrink:0;}
   .udot{width:8px; height:8px; border-radius:50%; background:var(--gold); flex-shrink:0;}
+  .udot.red{background:var(--red); box-shadow:0 0 0 3px rgba(240,101,78,0.18);}
+  .inbox-item.unread.notice-unread{border-color:var(--red);}
   .lfa-modal{position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; display:none; align-items:center; justify-content:center; padding:20px;}
   .lfa-modal.active{display:flex;}
   .lfa-modal-card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; width:100%; max-width:420px; max-height:85vh; overflow-y:auto;}
@@ -2286,7 +2288,26 @@ function noticeIcon(n){
   return n.type === 'auto' ? '🔔' : '📢';
 }
 
-function getSeenTime(){ return parseInt(localStorage.getItem('lfa_notice_seen') || '0', 10); }
+/* Read tracking: a notice stays "unread" (red) until the user opens its popup.
+   Read IDs are remembered on this device. 'lfa_notice_seen' is the old
+   "opened the page" timestamp — kept only so notices already seen before this
+   update don't turn red again. */
+function getSeenTime(){ try{ return parseInt(localStorage.getItem('lfa_notice_seen') || '0', 10) || 0; }catch(e){ return 0; } }
+function noticeKey(n){ return (n.personal ? 'p:' : 'g:') + n.id; }
+function getReadSet(){
+  try{ return new Set(JSON.parse(localStorage.getItem('lfa_notice_read') || '[]')); }catch(e){ return new Set(); }
+}
+function isNoticeUnread(n){
+  if (new Date(n.createdAt).getTime() <= getSeenTime()) return false; // read under the old system
+  return !getReadSet().has(noticeKey(n));
+}
+function markNoticeRead(n){
+  try{
+    const set = getReadSet();
+    set.add(noticeKey(n));
+    localStorage.setItem('lfa_notice_read', JSON.stringify([...set].slice(-300)));
+  }catch(e){}
+}
 function setBadge(id, n){
   const badge = document.getElementById(id);
   if (!badge) return;
@@ -2295,8 +2316,7 @@ function setBadge(id, n){
 }
 
 function updateBellBadge(){
-  const seen = getSeenTime();
-  setBadge('bellBadge', cachedNotices.filter(n => new Date(n.createdAt).getTime() > seen).length);
+  setBadge('bellBadge', cachedNotices.filter(isNoticeUnread).length);
 }
 
 async function refreshNoticeBadge(){ await fetchNotices(); updateBellBadge(); refreshSupportBadge(); }
@@ -2310,16 +2330,14 @@ function closeLfaModal(){ document.getElementById('lfaModal').classList.remove('
 async function loadNoticesPage(){
   const list = document.getElementById('noticeList');
   await fetchNotices();
-  const seen = getSeenTime();
   list.innerHTML = cachedNotices.length ? cachedNotices.map((n, i) => {
-    const unread = new Date(n.createdAt).getTime() > seen;
-    return `<div class="inbox-item ${unread ? 'unread' : ''}" onclick="openNotice(${i})">
-      ${unread ? '<span class="udot"></span>' : ''}
+    const unread = isNoticeUnread(n);
+    return `<div class="inbox-item ${unread ? 'unread notice-unread' : ''}" onclick="openNotice(${i})">
+      ${unread ? '<span class="udot red"></span>' : ''}
       <span class="it">${noticeIcon(n)} ${escHtml(n.title)}</span>
       <span class="id">${new Date(n.createdAt).toLocaleDateString()}</span>
     </div>`;
   }).join('') : `<div style="font-size:12.5px;color:var(--text-muted);">No messages yet.</div>`;
-  if (cachedNotices.length) localStorage.setItem('lfa_notice_seen', String(new Date(cachedNotices[0].createdAt).getTime()));
   updateBellBadge();
 }
 
@@ -2349,8 +2367,10 @@ function openNotice(i){
   openLfaModal(`<h3>${escHtml(n.title)}</h3>
     <div class="lfa-modal-date">${new Date(n.createdAt).toLocaleString()}</div>
     <div class="lfa-modal-body">${escHtml(n.body) || '<span style="color:var(--text-muted)">(no extra details)</span>'}</div>${buttons}`);
+  markNoticeRead(n);
   const item = document.querySelectorAll('#noticeList .inbox-item')[i];
-  if (item){ item.classList.remove('unread'); const d = item.querySelector('.udot'); if (d) d.remove(); }
+  if (item){ item.classList.remove('unread', 'notice-unread'); const d = item.querySelector('.udot'); if (d) d.remove(); }
+  updateBellBadge();
 }
 
 /* ---------- Support tickets ---------- */
