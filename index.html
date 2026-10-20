@@ -631,6 +631,7 @@
       <button class="earn-toggle-btn active" id="earnTabOfferwall" onclick="setEarnSubTab('offerwall')">Reward Wall</button>
       <button class="earn-toggle-btn" id="earnTabAdgem" onclick="setEarnSubTab('adgem')">AdGem</button>
       <button class="earn-toggle-btn" id="earnTabAds" onclick="setEarnSubTab('ads')">ADS</button>
+      <button class="earn-toggle-btn" id="earnTabLinks" onclick="setEarnSubTab('links')">Links</button>
     </div>
 
     <div class="earn-subpage" id="earnSubpage-offerwall">
@@ -668,6 +669,15 @@
       </div>
       <div class="ads-note">Each ad gives 50 AP. 5 ads per network, then a 3-hour cooldown. Counts reset daily at 6:00 AM.</div>
       <div id="adList"></div>
+    </div>
+
+    <div class="earn-subpage" id="earnSubpage-links" style="display:none;">
+      <div class="earn-section-head-premium ap">
+        <div class="eshp-title">Shortlinks</div>
+        <div class="eshp-val" id="linksSubtotal">0 AP</div>
+      </div>
+      <div class="ads-note">Tap Start, complete the shortlink steps in your browser, and reach the final page to receive your AP. Limits reset daily at 6:00 AM.</div>
+      <div id="linkList"></div>
     </div>
   </div>
 
@@ -1011,12 +1021,14 @@ function getAdsgram(){
   return AdsgramController;
 }
 function setEarnSubTab(tab){
-  ['offerwall','adgem','ads'].forEach(t=>{
+  ['offerwall','adgem','ads','links'].forEach(t=>{
     document.getElementById('earnSubpage-'+t).style.display = tab === t ? 'block' : 'none';
   });
   document.getElementById('earnTabOfferwall').classList.toggle('active', tab === 'offerwall');
   document.getElementById('earnTabAdgem').classList.toggle('active', tab === 'adgem');
   document.getElementById('earnTabAds').classList.toggle('active', tab === 'ads');
+  document.getElementById('earnTabLinks').classList.toggle('active', tab === 'links');
+  if (tab === 'links') loadShortlinks();
   if (tab === 'adgem'){
     document.getElementById('adgemSubtotal').textContent = `${state.up} UP`;
     loadOfferwallFrame('adgem');
@@ -1081,6 +1093,8 @@ let state = {
   up: 0,
   apFromAds: 0,
   apFromTasks: 0,
+  apFromShortlinks: 0,
+  shortlinks: [],
   apFromCheckin: 0,
   theme: 'dark',
   adsToday: {},
@@ -1150,6 +1164,7 @@ async function loadUserFromServer(){
     state.up = data.up || 0;
     state.apFromAds = data.apFromAds || 0;
     state.apFromTasks = data.apFromTasks || 0;
+    state.apFromShortlinks = data.apFromShortlinks || 0;
     state.apFromCheckin = data.apFromCheckin || 0;
     state.theme = data.theme || 'dark';
     applyTheme(state.theme);
@@ -1412,6 +1427,84 @@ async function claimTask(taskId){
 }
 
 /* ============================================================
+   SHORTLINKS (exe.io / ShrinkMe)
+   ============================================================ */
+const SHORTLINK_ICONS = { exe:'🔗', shrinkme:'⛓' };
+let shortlinkBusy = false;
+
+async function loadShortlinks(){
+  try{
+    const res = await fetch(`${API_BASE}/shortlinks/${state.user.id}`);
+    const list = await res.json();
+    if (Array.isArray(list)) state.shortlinks = list;
+  } catch(e){ console.error("Could not load shortlinks:", e); }
+  renderShortlinks();
+}
+
+function renderShortlinks(){
+  const el = document.getElementById('linkList');
+  if (!el) return;
+  document.getElementById('linksSubtotal').textContent = `${state.apFromShortlinks} AP`;
+  if (!state.shortlinks.length){
+    el.innerHTML = `<div class="ad-row"><div class="info"><div class="name" style="color:var(--text-muted);font-weight:400;">No shortlinks available right now.</div></div></div>`;
+    return;
+  }
+  el.innerHTML = state.shortlinks.map(l=>{
+    const pct = Math.min(100, (l.doneToday / l.dailyLimit) * 100);
+    const full = l.doneToday >= l.dailyLimit;
+    let btn;
+    if (state.banned) btn = `<button class="watch-btn" disabled>Suspended</button>`;
+    else if (!l.enabled) btn = `<button class="watch-btn" disabled>Soon</button>`;
+    else if (full) btn = `<button class="watch-btn" disabled>Done</button>`;
+    else btn = `<button class="watch-btn" onclick="startShortlink('${l.key}')">Start</button>`;
+    return `<div class="ad-row">
+      <div class="icon">${SHORTLINK_ICONS[l.key]||'🔗'}</div>
+      <div class="info">
+        <div class="name">${l.name}</div>
+        <div class="sub">+${l.points} points per link</div>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="count">${l.doneToday}/${l.dailyLimit} completed today</div>
+      </div>
+      ${btn}
+    </div>`;
+  }).join('');
+}
+
+async function startShortlink(provider){
+  if (shortlinkBusy) return;
+  shortlinkBusy = true;
+  try{
+    const res = await fetch(`${API_BASE}/shortlink/start`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId: state.user.id, provider, initData: getInitData() })
+    });
+    const r = await res.json();
+    if (r.success && r.url){
+      if (tg && tg.openLink) tg.openLink(r.url); else window.open(r.url, '_blank');
+    } else {
+      const msgs = {
+        limit: "You reached today's limit for this shortlink. Try again after the daily reset.",
+        banned: "Your account is suspended.",
+        not_configured: "This shortlink is not available yet.",
+        shortener_failed: "Could not create the link right now. Please try again in a moment.",
+      };
+      alert(msgs[r.reason] || "Something went wrong. Please try again.");
+    }
+  } catch(e){
+    console.error("Shortlink start failed:", e);
+    alert("Network error. Please try again.");
+  } finally { shortlinkBusy = false; }
+}
+
+// When the user comes back from the browser, refresh balance + shortlink counters
+document.addEventListener('visibilitychange', () => {
+  const adsPage = document.getElementById('page-ads');
+  if (!document.hidden && adsPage && adsPage.classList.contains('active') && state.user){
+    loadUserFromServer().then(renderEarn);
+  }
+});
+
+/* ============================================================
    EARN PAGE (Offerwall + Ads)
    ============================================================ */
 function renderEarn(){
@@ -1419,6 +1512,7 @@ function renderEarn(){
   document.getElementById('adsSubtotal').textContent = `${state.apFromAds} AP`;
   loadOfferwallFrame();
   renderAds();
+  loadShortlinks();
 }
 
 const wallTimers = {};
@@ -2610,10 +2704,10 @@ async function toggleSeasonParticipants(boxId, el){
   } catch(e){ panel.innerHTML = `<div style="font-size:11.5px;color:var(--red);">Could not load participants.</div>`; }
 }
 
-const AP_ACTIVITY_TYPES = ['ad','task','checkin','referral_bonus','referral_commission'];
+const AP_ACTIVITY_TYPES = ['ad','task','shortlink','checkin','referral_bonus','referral_commission'];
 const UP_ACTIVITY_TYPES = ['offerwall'];
-const ACTIVITY_ICONS = { ad:'▶', task:'✓', checkin:'🔥', referral_bonus:'◎', referral_commission:'◎', offerwall:'$' };
-const ACTIVITY_LABELS = { ad:'Watched ad', task:'Completed task', checkin:'Daily check-in', referral_bonus:'Referral bonus', referral_commission:'Referral commission', offerwall:'Offerwall' };
+const ACTIVITY_ICONS = { ad:'▶', task:'✓', shortlink:'🔗', checkin:'🔥', referral_bonus:'◎', referral_commission:'◎', offerwall:'$' };
+const ACTIVITY_LABELS = { ad:'Watched ad', task:'Completed task', shortlink:'Shortlink', checkin:'Daily check-in', referral_bonus:'Referral bonus', referral_commission:'Referral commission', offerwall:'Offerwall' };
 
 async function loadHistoryPage(kind){
   const listEl = document.getElementById(kind === 'up' ? 'upHistoryList' : 'apHistoryList');
