@@ -1060,7 +1060,7 @@ window.addEventListener('load', () => { try { ensureRichads(); } catch(e){ conso
 // Called on page changes: shows a display (interstitial banner) ad at a regular pace, never mid-task
 function maybeShowDisplayAd(){
   try {
-    if (richadsBusy || Date.now() - lastDisplayAdAt < RICHADS_DISPLAY_EVERY_MS) return;
+    if (!adCfg('richads').enabled || richadsBusy || Date.now() - lastDisplayAdAt < RICHADS_DISPLAY_EVERY_MS) return;
     const c = ensureRichads();
     if (!c) return;
     lastDisplayAdAt = Date.now();
@@ -1071,9 +1071,21 @@ function maybeShowDisplayAd(){
     go(0);
   } catch(e){ console.log('RichAds display ad error', e); }
 }
-const AD_WATCH_LIMIT = 5;
-const AD_COOLDOWN_HOURS = 3;
-const POINTS_PER_AD = 50;
+// Points / limit / cooldown / on-off for each ad network come from the server (Admin > Ad Controls).
+// These defaults are only used if the server cannot be reached.
+const AD_CFG_DEFAULT = { enabled:true, points:50, limit:5, cooldownMinutes:180 };
+let adConfig = {};
+let adConfigAt = 0;
+function adCfg(key){ return Object.assign({}, AD_CFG_DEFAULT, adConfig[key] || {}); }
+async function loadAdConfig(){
+  if (Date.now() - adConfigAt < 20000) return;
+  adConfigAt = Date.now();
+  try{
+    const res = await fetch(`${API_BASE}/ad-config`);
+    const d = await res.json();
+    if (d && typeof d === 'object') adConfig = d;
+  } catch(e){ console.log('ad-config unavailable, using defaults'); }
+}
 const REFERRAL_ELIGIBILITY_ADS = 100;
 const REFERRAL_ELIGIBILITY_CHECKINS = 7;
 
@@ -1434,6 +1446,7 @@ async function claimTask(taskId){
    ============================================================ */
 const SHORTLINK_ICONS = { exe:'🔗', shrinkme:'⛓' };
 let shortlinkBusy = false;
+let linksCountdownInterval = null;
 
 async function loadShortlinks(){
   try{
@@ -1458,6 +1471,7 @@ function renderShortlinks(){
     let btn;
     if (state.banned) btn = `<button class="watch-btn" disabled>Suspended</button>`;
     else if (!l.enabled) btn = `<button class="watch-btn" disabled>Soon</button>`;
+    else if (l.unlockAt && Date.now() < l.unlockAt) btn = `<button class="watch-btn" disabled style="min-width:78px;">${formatCountdown(l.unlockAt - Date.now())}</button>`;
     else if (full) btn = `<button class="watch-btn" disabled>Done</button>`;
     else btn = `<button class="watch-btn" onclick="startShortlink('${l.key}')">Start</button>`;
     return `<div class="ad-row">
@@ -1471,6 +1485,11 @@ function renderShortlinks(){
       ${btn}
     </div>`;
   }).join('');
+
+  // keep cooldown countdowns ticking only while one is running
+  const anyLocked = state.shortlinks.some(l => l.unlockAt && Date.now() < l.unlockAt);
+  if (anyLocked && !linksCountdownInterval) linksCountdownInterval = setInterval(renderShortlinks, 1000);
+  else if (!anyLocked && linksCountdownInterval){ clearInterval(linksCountdownInterval); linksCountdownInterval = null; }
 }
 
 async function startShortlink(provider){
@@ -1487,6 +1506,7 @@ async function startShortlink(provider){
     } else {
       const msgs = {
         limit: "You reached today's limit for this shortlink. Try again after the daily reset.",
+        cooldown: "This shortlink is on cooldown. Please wait for the timer.",
         banned: "Your account is suspended.",
         not_configured: "This shortlink is not available yet.",
         shortener_failed: "Could not create the link right now. Please try again in a moment.",
@@ -1515,6 +1535,7 @@ function renderEarn(){
   document.getElementById('adsSubtotal').textContent = `${state.apFromAds} AP`;
   loadOfferwallFrame();
   renderAds();
+  loadAdConfig().then(renderAds);
   loadShortlinks();
 }
 
@@ -1579,16 +1600,21 @@ function renderAds(){
     const rawSlot = state.adsToday[net.key];
     const slot = (rawSlot && Number.isFinite(rawSlot.count)) ? rawSlot : { count: 0, unlockAt: null };
     const stillLocked = slot.unlockAt && now < slot.unlockAt;
+    const cfg = adCfg(net.key);
     const count = stillLocked ? slot.count : (slot.unlockAt && now >= slot.unlockAt ? 0 : slot.count);
-    const pct = Math.min(100, (count/AD_WATCH_LIMIT)*100);
+    const pct = Math.min(100, (count/cfg.limit)*100);
 
     if (stillLocked) anyLocked = true;
 
     let buttonHtml;
     if (state.banned){
       buttonHtml = `<button class="watch-btn" disabled>Suspended</button>`;
+    } else if (!cfg.enabled){
+      buttonHtml = `<button class="watch-btn" disabled>Paused</button>`;
     } else if (stillLocked){
       buttonHtml = `<button class="watch-btn" disabled style="min-width:78px;">${formatCountdown(slot.unlockAt - now)}</button>`;
+    } else if (count >= cfg.limit){
+      buttonHtml = `<button class="watch-btn" disabled>Done</button>`;
     } else {
       buttonHtml = `<button class="watch-btn" onclick="watchAd('${net.key}')">Watch</button>`;
     }
@@ -1598,9 +1624,9 @@ function renderAds(){
         <div class="icon">${net.icon}</div>
         <div class="info">
           <div class="name">${net.name}</div>
-          <div class="sub">+${POINTS_PER_AD} points per ad</div>
+          <div class="sub">+${cfg.points} points per ad</div>
           <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-          <div class="count">${count}/${AD_WATCH_LIMIT} watched</div>
+          <div class="count">${count}/${cfg.limit} watched</div>
         </div>
         ${buttonHtml}
       </div>`;
@@ -1617,6 +1643,7 @@ function renderAds(){
 
 function watchAd(networkKey){
   if (state.banned) return;
+  if (!adCfg(networkKey).enabled){ alert('This ad source is paused right now. Please try another one.'); return; }
   if (networkKey === 'adsgram'){
     const ctrl = getAdsgram();
     if (!ctrl){ alert('Ad SDK not loaded — try again in a moment.'); return; }
@@ -1689,12 +1716,14 @@ async function reportAdWatched(networkKey){
     const result = await res.json();
     if (!result.success){
       if (result.reason === 'cooldown') alert('This network is on cooldown right now.');
+      if (result.reason === 'limit') alert('You reached the limit for this network today.');
+      if (result.reason === 'disabled') alert('This ad source is paused right now.');
       if (result.reason === 'banned') alert('Your account is suspended.');
       return;
     }
     state.adsToday[networkKey] = { count: result.count || 0, unlockAt: result.unlockAt || null, day: new Date().toISOString().slice(0,10) };
-    state.totalPoints += result.pointsEarned || POINTS_PER_AD;
-    state.apFromAds += result.pointsEarned || POINTS_PER_AD;
+    state.totalPoints += result.pointsEarned || adCfg(networkKey).points;
+    state.apFromAds += result.pointsEarned || adCfg(networkKey).points;
   } catch(e){ console.error("ad-watched failed:", e); alert("Couldn't reach the server."); return; }
   renderEarn();
   if (tg) tg.HapticFeedback?.notificationOccurred('success');
