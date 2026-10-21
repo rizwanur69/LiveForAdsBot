@@ -1043,6 +1043,7 @@ const AD_NETWORKS = [
 const RICHADS_PUB_ID = "1025959";
 const RICHADS_APP_ID = "9330";
 const RICHADS_MIN_WATCH_MS = 5000; // ad closed/finished faster than this = no reward
+const RICHADS_DEBUG = false;        // true = RichAds returns TEST ads (use briefly to check the integration, then set back to false)
 let richadsController = null;
 let richadsBusy = false;           // true while a "Watch" ad is running
 let lastDisplayAdAt = Date.now() + 45000; // first display ad no earlier than ~45s after opening
@@ -1051,9 +1052,11 @@ function ensureRichads(){
   if (richadsController) return richadsController;
   if (typeof window.TelegramAdsController !== 'function') return null;
   richadsController = new window.TelegramAdsController();
-  richadsController.initialize({ pubId: RICHADS_PUB_ID, appId: RICHADS_APP_ID, debug: false });
+  richadsController.initialize({ pubId: RICHADS_PUB_ID, appId: RICHADS_APP_ID, debug: RICHADS_DEBUG });
   return richadsController;
 }
+// Start the SDK as soon as the page loads so RichAds has time to fetch this app's settings before the first ad is requested
+window.addEventListener('load', () => { try { ensureRichads(); } catch(e){ console.log('RichAds init error', e); } });
 // Called on page changes: shows a display (interstitial banner) ad at a regular pace, never mid-task
 function maybeShowDisplayAd(){
   try {
@@ -1646,17 +1649,19 @@ function watchAd(networkKey){
     lastDisplayAdAt = Date.now(); // don't stack a display ad right after a Watch ad
     setTimeout(() => { richadsBusy = false; }, 60000);
     const startedAt = Date.now();
-    const done = (result) => {
-      console.log('RichAds result:', result);
-      if (Date.now() - startedAt < RICHADS_MIN_WATCH_MS){
+    const done = (result, method) => {
+      console.log('RichAds result:', method, result);
+      // Push-style resolves on the user's click (RichAds only calls back on clicks), so the "watched long enough" check applies to the video/banner formats only
+      if (method !== 'triggerNativeNotification' && Date.now() - startedAt < RICHADS_MIN_WATCH_MS){
         alert('Please watch the ad to the end to get your points.');
         return;
       }
       reportAdWatched('richads');
     };
     const reasonOf = (r) => { try { return typeof r === 'string' ? r : (r && (r.message || r.error || r.reason)) || JSON.stringify(r); } catch(e){ return ''; } };
-    // Try every interstitial format in order until one has an ad: video -> mixed (video/banner/playable) -> banner
-    const chain = ['triggerInterstitialVideo', 'triggerInterstitialMixed', 'triggerInterstitialBanner']
+    // Try every format in order until one has an ad: video -> mixed (video/banner/playable) -> banner -> push-style
+    // (push-style is last, but it is the format that has had real demand on this app)
+    const chain = ['triggerInterstitialVideo', 'triggerInterstitialMixed', 'triggerInterstitialBanner', 'triggerNativeNotification']
       .filter(m => typeof richadsController[m] === 'function');
     let firstErr = null;
     const tryNext = (i) => {
@@ -1664,7 +1669,7 @@ function watchAd(networkKey){
         alert('No ad available right now. Please try again in a little while.\n\n(' + String(reasonOf(firstErr)).slice(0, 80) + ')');
         return;
       }
-      richadsController[chain[i]]().then(done).catch((err) => {
+      richadsController[chain[i]]().then((r) => done(r, chain[i])).catch((err) => {
         console.log('RichAds ' + chain[i] + ' failed:', err);
         if (firstErr === null) firstErr = err;
         tryNext(i + 1);
