@@ -635,6 +635,7 @@
       <button class="earn-toggle-btn" id="earnTabAdgem" onclick="setEarnSubTab('adgem')">AdGem</button>
       <button class="earn-toggle-btn" id="earnTabUpwall" onclick="setEarnSubTab('upwall')">Upwall</button>
       <button class="earn-toggle-btn" id="earnTabAdswed" onclick="setEarnSubTab('adswed')">Adswed</button>
+      <button class="earn-toggle-btn" id="earnTabGaintwall" onclick="setEarnSubTab('gaintwall')">Gaintwall</button>
       <button class="earn-toggle-btn" id="earnTabAds" onclick="setEarnSubTab('ads')">ADS</button>
       <button class="earn-toggle-btn" id="earnTabLinks" onclick="setEarnSubTab('links')">Links</button>
     </div>
@@ -692,6 +693,20 @@
         <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Adswed didn't load. Try again below.</div>
         <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('adswed')">Reload</button>
         <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('adswed')">Open directly</button>
+      </div>
+    </div>
+
+    <div class="earn-subpage" id="earnSubpage-gaintwall" style="display:none;">
+      <div class="earn-section-head-premium up">
+        <div class="eshp-title">Gaintwall</div>
+        <div class="eshp-val" id="gaintwallSubtotal">0 UP</div>
+      </div>
+      <div class="ads-note">Complete offers for real USD value. 100 UP = 1 USDT.</div>
+      <iframe id="gaintwallFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
+      <div id="gaintwallFallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
+        <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Gaintwall didn't load. Try again below.</div>
+        <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('gaintwall')">Reload</button>
+        <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('gaintwall')">Open directly</button>
       </div>
     </div>
 
@@ -1039,6 +1054,7 @@ const CPALEAD_OFFERWALL_URL = "https://www.akamaicdn.org/wall/bPjTh";
 const ADGEM_WALL_URL = "https://adunits.adgem.com/wall?appid=33875&playerid=";
 const UPWALL_APP_ID = "YOUR_UPWALL_API_KEY"; // Upwall dashboard > your app > API key (app_id)
 const ADSWED_PUBLIC_KEY = "YOUR_ADSWED_PUBLIC_KEY"; // AdswedMedia > Monetize > Setup > PUBLIC KEY
+const GAINTWALL_API_KEY = "YOUR_GAINTWALL_API_KEY"; // Gaintwall > Placements > your placement > API key (the code next to "Edit Placement")
 const LFA_TERMS_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/terms-and-privacy.pdf";
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { tg.ready(); tg.expand(); }
@@ -1056,13 +1072,14 @@ function getAdsgram(){
   return AdsgramController;
 }
 function setEarnSubTab(tab){
-  ['offerwall','adgem','upwall','adswed','ads','links'].forEach(t=>{
+  ['offerwall','adgem','upwall','adswed','gaintwall','ads','links'].forEach(t=>{
     document.getElementById('earnSubpage-'+t).style.display = tab === t ? 'block' : 'none';
   });
   document.getElementById('earnTabOfferwall').classList.toggle('active', tab === 'offerwall');
   document.getElementById('earnTabAdgem').classList.toggle('active', tab === 'adgem');
   document.getElementById('earnTabUpwall').classList.toggle('active', tab === 'upwall');
   document.getElementById('earnTabAdswed').classList.toggle('active', tab === 'adswed');
+  document.getElementById('earnTabGaintwall').classList.toggle('active', tab === 'gaintwall');
   document.getElementById('earnTabAds').classList.toggle('active', tab === 'ads');
   document.getElementById('earnTabLinks').classList.toggle('active', tab === 'links');
   if (tab === 'links') loadShortlinks();
@@ -1077,6 +1094,10 @@ function setEarnSubTab(tab){
   if (tab === 'adswed'){
     document.getElementById('adswedSubtotal').textContent = `${state.up} UP`;
     loadOfferwallFrame('adswed');
+  }
+  if (tab === 'gaintwall'){
+    document.getElementById('gaintwallSubtotal').textContent = `${state.up} UP`;
+    loadOfferwallFrame('gaintwall');
   }
 }
 
@@ -1589,7 +1610,8 @@ const WALLS = {
   offerwall: { frame:'offerwallFrame', fb:'offerwallFallback', src:()=>`${CPALEAD_OFFERWALL_URL}?subid=${state.user.id}` },
   adgem:     { frame:'adgemFrame',     fb:'adgemFallback',     src:()=>`${ADGEM_WALL_URL}${encodeURIComponent(String(state.user.id).toLowerCase())}` },
   upwall:    { frame:'upwallFrame',    fb:'upwallFallback',    src:()=>`https://offerwall.upwall.io/?app_id=${encodeURIComponent(UPWALL_APP_ID)}&userid=${encodeURIComponent(String(state.user.id))}` },
-  adswed:    { frame:'adswedFrame',    fb:'adswedFallback',    src:()=>`https://adswedmedia.com/offer/${encodeURIComponent(ADSWED_PUBLIC_KEY)}/${encodeURIComponent(String(state.user.id))}` }
+  adswed:    { frame:'adswedFrame',    fb:'adswedFallback',    src:()=>`https://adswedmedia.com/offer/${encodeURIComponent(ADSWED_PUBLIC_KEY)}/${encodeURIComponent(String(state.user.id))}` },
+  gaintwall: { frame:'gaintwallFrame', fb:'gaintwallFallback', src:()=>`https://gaintwall.com/offerwall?apiKey=${encodeURIComponent(GAINTWALL_API_KEY)}&userId=${encodeURIComponent(String(state.user.id))}` }
 };
 
 function getOfferwallSrc(key='offerwall'){ return WALLS[key].src(); }
