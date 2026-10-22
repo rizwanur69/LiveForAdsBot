@@ -105,9 +105,37 @@
   .earn-section-head .ssubtotal.up{color:var(--up-color);}
   .earn-toggle{display:flex; gap:8px;}
   .earn-toggle-btn{flex:1; background:var(--surface); border:1px solid var(--line); color:var(--text-muted); font-family:'Inter',sans-serif; font-weight:700; font-size:13.5px; padding:12px; border-radius:12px; cursor:pointer;}
-  #page-ads .earn-toggle{overflow-x:auto; scrollbar-width:none;}
-  #page-ads .earn-toggle::-webkit-scrollbar{display:none;}
-  #page-ads .earn-toggle-btn{flex:0 0 auto; white-space:nowrap; padding:12px 16px;}
+  /* Earn hub — big colourful cards instead of a tab strip */
+  .earn-hub-head{padding:18px 4px 2px;}
+  .eh-title{font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:700; letter-spacing:-.4px;}
+  .eh-sub{font-size:12.5px; color:var(--text-muted); margin-top:4px; line-height:1.5;}
+  .earn-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0 10px;}
+  .earn-card{
+    --c:#F2B33D; --cs:rgba(242,179,61,.20); --cb:rgba(242,179,61,.55);
+    position:relative; display:flex; flex-direction:column; align-items:center; text-align:center; gap:5px;
+    padding:30px 12px 14px; min-height:186px; border-radius:20px; cursor:pointer; color:var(--text);
+    font-family:'Inter',sans-serif; border:1.5px solid var(--cb);
+    background:radial-gradient(120% 80% at 50% 0%, var(--cs), transparent 72%), linear-gradient(165deg, var(--surface-raised), var(--surface));
+    box-shadow:0 8px 22px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05);
+    transition:transform .15s ease, box-shadow .15s ease; -webkit-appearance:none; appearance:none;
+  }
+  .earn-card:active{transform:scale(.96); box-shadow:0 3px 10px rgba(0,0,0,.25);}
+  .earn-card.ec-rose{--c:#F43F6E; --cs:rgba(244,63,110,.20); --cb:rgba(244,63,110,.55);}
+  .earn-card.ec-teal{--c:#2DD4BF; --cs:rgba(45,212,191,.20); --cb:rgba(45,212,191,.55);}
+  .earn-card.ec-indigo{--c:#818CF8; --cs:rgba(129,140,248,.22); --cb:rgba(129,140,248,.6);}
+  .ec-badge{position:absolute; top:10px; right:10px; font-size:9.5px; font-weight:800; letter-spacing:.8px; padding:3px 9px; border-radius:20px; color:#1B1404; background:linear-gradient(135deg, var(--c), var(--cb)); box-shadow:0 2px 8px var(--cs);}
+  .ec-icon{width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--c); background:var(--cs); border:1px solid var(--cb); box-shadow:0 0 24px var(--cs); margin-bottom:4px;}
+  .ec-icon svg{width:28px; height:28px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
+  .ec-title{font-family:'Space Grotesk',sans-serif; font-size:16.5px; font-weight:700;}
+  .ec-desc{font-size:11.5px; color:var(--text-muted); line-height:1.35;}
+  .ec-rail{display:block; width:100%; height:5px; border-radius:6px; margin-top:auto; background:linear-gradient(90deg, var(--c), var(--cb)); opacity:.9;}
+  .ec-foot{display:flex; justify-content:space-between; align-items:center; width:100%; font-size:11.5px; font-weight:700; padding-top:7px;}
+  .ec-foot .ec-unit{color:var(--c); font-family:'Space Grotesk',sans-serif; letter-spacing:.5px;}
+  .ec-foot .ec-stat{color:var(--text-muted); font-weight:600;}
+  .earn-back{display:none; align-items:center; gap:6px; margin:16px 0 0; padding:8px 14px 8px 8px; background:var(--surface); border:1px solid var(--line); border-radius:30px; color:var(--text); font-family:'Inter',sans-serif; font-weight:700; font-size:13.5px; cursor:pointer;}
+  .earn-back.show{display:inline-flex;}
+  .earn-back svg{width:18px; height:18px; fill:none; stroke:var(--gold); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round;}
+  .earn-back .eb-title{color:var(--gold);}
   .earn-toggle-btn.active{background:var(--gold); color:#1B1404; border-color:var(--gold);}
   .earn-section-head-premium{display:flex; align-items:center; justify-content:space-between; background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border:1px solid var(--line); border-radius:14px; padding:14px 18px; margin:18px 0 10px; box-shadow:0 4px 14px rgba(0,0,0,0.18);}
   .earn-section-head-premium .eshp-title{font-size:13px; color:var(--text-muted); font-weight:600;}
@@ -600,6 +628,7 @@
       <div class="pc-balance">
         <div class="hb-row"><span class="hb-label ap">AP</span><span class="hb-val ap" id="homeAp">0</span></div>
         <div class="hb-row"><span class="hb-label up">UP</span><span class="hb-val up" id="homeUp">0</span></div>
+        <div class="hb-row" id="homePendingRow" style="display:none; opacity:.75;"><span class="hb-label" style="font-size:11px;">⏳ Pending</span><span class="hb-val" id="homePending" style="font-size:12px;">0</span></div>
       </div>
     </div>
 
@@ -630,22 +659,55 @@
 
   <!-- ================= EARN (Offerwall + Ads) ================= -->
   <div class="page" id="page-ads">
-    <div class="earn-toggle" style="margin-top:16px;">
-      <button class="earn-toggle-btn active" id="earnTabOfferwall" onclick="setEarnSubTab('offerwall')">Reward Wall</button>
-      <button class="earn-toggle-btn" id="earnTabAdgem" onclick="setEarnSubTab('adgem')">AdGem</button>
-      <button class="earn-toggle-btn" id="earnTabUpwall" onclick="setEarnSubTab('upwall')">Upwall</button>
-      <button class="earn-toggle-btn" id="earnTabAdswed" onclick="setEarnSubTab('adswed')">Adswed</button>
-      <button class="earn-toggle-btn" id="earnTabGaintwall" onclick="setEarnSubTab('gaintwall')">Gaintwall</button>
-      <button class="earn-toggle-btn" id="earnTabAds" onclick="setEarnSubTab('ads')">ADS</button>
-      <button class="earn-toggle-btn" id="earnTabLinks" onclick="setEarnSubTab('links')">Links</button>
+    <div id="earnHub">
+      <div class="earn-hub-head">
+        <div class="eh-title">Earn</div>
+        <div class="eh-sub">Pick a way to earn. Offer earnings stay pending until they are approved, then they can be withdrawn.</div>
+      </div>
+      <div class="earn-grid">
+        <button class="earn-card" id="earnCardOfferwall" onclick="setEarnSubTab('offerwall')">
+          <span class="ec-badge">HOT</span>
+          <span class="ec-icon"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9M7.5 8a2.5 2.5 0 1 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 1 1 0 5"/></svg></span>
+          <span class="ec-title">Reward Wall</span>
+          <span class="ec-desc">Simple offers for real USD</span>
+          <span class="ec-rail"></span>
+          <span class="ec-foot"><span class="ec-unit">UP</span><span class="ec-stat" id="ecOfferwallStat">0 pending</span></span>
+        </button>
+        <button class="earn-card ec-rose" id="earnCardGaintwall" onclick="setEarnSubTab('gaintwall')">
+          <span class="ec-badge">NEW</span>
+          <span class="ec-icon"><svg viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21 8 9l4-6 4 6z"/></svg></span>
+          <span class="ec-title">Gaintwall</span>
+          <span class="ec-desc">Apps, games and more</span>
+          <span class="ec-rail"></span>
+          <span class="ec-foot"><span class="ec-unit">UP</span><span class="ec-stat" id="ecGaintwallStat">0 pending</span></span>
+        </button>
+        <button class="earn-card ec-teal" id="earnCardAds" onclick="setEarnSubTab('ads')">
+          <span class="ec-badge">DAILY</span>
+          <span class="ec-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></svg></span>
+          <span class="ec-title">Watch Ads</span>
+          <span class="ec-desc">Quick ads, instant AP</span>
+          <span class="ec-rail"></span>
+          <span class="ec-foot"><span class="ec-unit">AP</span><span class="ec-stat">+50 per ad</span></span>
+        </button>
+        <button class="earn-card ec-indigo" id="earnCardLinks" onclick="setEarnSubTab('links')">
+          <span class="ec-badge">DAILY</span>
+          <span class="ec-icon"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3A4 4 0 0 0 11 18.7l1-1"/></svg></span>
+          <span class="ec-title">Shortlinks</span>
+          <span class="ec-desc">Finish links, earn AP</span>
+          <span class="ec-rail"></span>
+          <span class="ec-foot"><span class="ec-unit">AP</span><span class="ec-stat">per link</span></span>
+        </button>
+      </div>
     </div>
 
-    <div class="earn-subpage" id="earnSubpage-offerwall">
+    <button class="earn-back" id="earnBack" onclick="setEarnSubTab('hub')"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span>Earn</span><span style="color:var(--text-muted);">/</span><span class="eb-title" id="earnBackTitle"></span></button>
+
+    <div class="earn-subpage" id="earnSubpage-offerwall" style="display:none;">
       <div class="earn-section-head-premium up">
         <div class="eshp-title">Offerwall</div>
-        <div class="eshp-val" id="offerwallSubtotal">0 UP</div>
+        <div class="eshp-val" id="offerwallSubtotal">0 UP pending</div>
       </div>
-      <div class="ads-note">Complete simple offers for real USD value. 100 UP = 1 USDT.</div>
+      <div class="ads-note">Complete offers for real USD value (100 UP = 1 USDT). Earnings from this wall stay <b>pending</b> until we receive the payment from it and approve them. Then they move to your withdrawable UP.</div>
       <iframe id="offerwallFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
       <div id="offerwallFallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
         <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">The Reward Wall didn't load. This can happen occasionally — try again below.</div>
@@ -654,54 +716,12 @@
       </div>
     </div>
 
-    <div class="earn-subpage" id="earnSubpage-adgem" style="display:none;">
-      <div class="earn-section-head-premium up">
-        <div class="eshp-title">AdGem</div>
-        <div class="eshp-val" id="adgemSubtotal">0 UP</div>
-      </div>
-      <div class="ads-note">Complete offers for real USD value. 100 UP = 1 USDT.</div>
-      <iframe id="adgemFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
-      <div id="adgemFallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
-        <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">AdGem didn't load. Try again below.</div>
-        <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('adgem')">Reload</button>
-        <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('adgem')">Open directly</button>
-      </div>
-    </div>
-
-    <div class="earn-subpage" id="earnSubpage-upwall" style="display:none;">
-      <div class="earn-section-head-premium up">
-        <div class="eshp-title">Upwall</div>
-        <div class="eshp-val" id="upwallSubtotal">0 UP</div>
-      </div>
-      <div class="ads-note">Complete offers for real USD value. 100 UP = 1 USDT.</div>
-      <iframe id="upwallFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
-      <div id="upwallFallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
-        <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Upwall didn't load. Try again below.</div>
-        <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('upwall')">Reload</button>
-        <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('upwall')">Open directly</button>
-      </div>
-    </div>
-
-    <div class="earn-subpage" id="earnSubpage-adswed" style="display:none;">
-      <div class="earn-section-head-premium up">
-        <div class="eshp-title">Adswed</div>
-        <div class="eshp-val" id="adswedSubtotal">0 UP</div>
-      </div>
-      <div class="ads-note">Complete offers for real USD value. 100 UP = 1 USDT.</div>
-      <iframe id="adswedFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
-      <div id="adswedFallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
-        <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Adswed didn't load. Try again below.</div>
-        <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('adswed')">Reload</button>
-        <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('adswed')">Open directly</button>
-      </div>
-    </div>
-
     <div class="earn-subpage" id="earnSubpage-gaintwall" style="display:none;">
       <div class="earn-section-head-premium up">
         <div class="eshp-title">Gaintwall</div>
-        <div class="eshp-val" id="gaintwallSubtotal">0 UP</div>
+        <div class="eshp-val" id="gaintwallSubtotal">0 UP pending</div>
       </div>
-      <div class="ads-note">Complete offers for real USD value. 100 UP = 1 USDT.</div>
+      <div class="ads-note">Complete offers for real USD value (100 UP = 1 USDT). Earnings from this wall stay <b>pending</b> until we receive the payment from it and approve them. Then they move to your withdrawable UP.</div>
       <iframe id="gaintwallFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
       <div id="gaintwallFallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
         <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Gaintwall didn't load. Try again below.</div>
@@ -911,7 +931,13 @@
 
     <div class="wd-balance-row">
       <div class="wd-balance-item ap"><div class="wd-label">AP</div><div class="wd-val" id="wdApTotal">0</div></div>
-      <div class="wd-balance-item up"><div class="wd-label">UP</div><div class="wd-val" id="wdUpTotal">0</div></div>
+      <div class="wd-balance-item up"><div class="wd-label">UP · Available</div><div class="wd-val" id="wdUpTotal">0</div></div>
+    </div>
+
+    <div class="wd-section" id="wdPendingBox" style="display:none;">
+      <div class="wd-section-title">🔒 Pending approval</div>
+      <div id="wdPendingRows"></div>
+      <div class="ads-note" style="margin-top:8px;">These UP are locked per offerwall. Once we receive the payment from an offerwall and approve it, its UP is added to your available UP above and can be withdrawn.</div>
     </div>
 
     <div class="wd-section">
@@ -1051,10 +1077,7 @@ const API_BASE = "https://liveforadsbot-backend.onrender.com/api";
 const LFA_WEBPAGE_URL = "https://rizwanur69.github.io/LiveForAdsWeb/";
 const LFA_WHITEPAPER_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/whitepaper.pdf";
 const CPALEAD_OFFERWALL_URL = "https://www.akamaicdn.org/wall/bPjTh";
-const ADGEM_WALL_URL = "https://adunits.adgem.com/wall?appid=33875&playerid=";
-const UPWALL_APP_ID = "YOUR_UPWALL_API_KEY"; // Upwall dashboard > your app > API key (app_id)
-const ADSWED_PUBLIC_KEY = "YOUR_ADSWED_PUBLIC_KEY"; // AdswedMedia > Monetize > Setup > PUBLIC KEY
-const GAINTWALL_API_KEY = "j5HQjUCvHDb4qLorEjjajfg1g8hTSpXF"; // Gaintwall > Placements > your placement > API key (the code next to "Edit Placement")
+const GAINTWALL_API_KEY = "YOUR_GAINTWALL_API_KEY"; // Gaintwall > Placements > your placement > API key (the code next to "Edit Placement")
 const LFA_TERMS_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/terms-and-privacy.pdf";
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { tg.ready(); tg.expand(); }
@@ -1071,34 +1094,59 @@ function getAdsgram(){
   }
   return AdsgramController;
 }
+/* Earn hub: 4 cards. Offerwalls keep their OWN pending UP; the admin can switch walls on/off */
+const WALL_TABS = [
+  { tab:'offerwall', wall:'cpalead',   label:'Reward Wall', card:'earnCardOfferwall', sub:'offerwallSubtotal', stat:'ecOfferwallStat' },
+  { tab:'gaintwall', wall:'gaintwall', label:'Gaintwall',   card:'earnCardGaintwall', sub:'gaintwallSubtotal', stat:'ecGaintwallStat' },
+];
+const EARN_TITLES = { offerwall:'Reward Wall', gaintwall:'Gaintwall', ads:'Watch Ads', links:'Shortlinks' };
+let currentEarnTab = 'hub';
+function wallEnabled(wall){
+  const c = ((state.settings || {}).offerwalls || {})[wall];
+  return !(c && c.enabled === false);
+}
+function pendingFor(wall){ return (state.pendingUp || {})[wall] || 0; }
+function updateWallSubtotals(){
+  WALL_TABS.forEach(w => {
+    const el = document.getElementById(w.sub);
+    if (el) el.textContent = `${pendingFor(w.wall)} UP pending`;
+    const st = document.getElementById(w.stat);
+    if (st) st.textContent = `${pendingFor(w.wall)} pending`;
+  });
+}
+function applyOfferwallVisibility(){
+  WALL_TABS.forEach(w => {
+    const c = document.getElementById(w.card);
+    if (c) c.style.display = wallEnabled(w.wall) ? '' : 'none';
+  });
+}
+async function refreshPending(){
+  try{
+    const res = await fetch(`${API_BASE}/user/${state.user.id}`);
+    const d = await res.json();
+    state.up = d.up || 0;
+    state.pendingUp = d.pendingUp || {};
+  } catch(e){ console.error("Could not refresh balances:", e); }
+}
 function setEarnSubTab(tab){
-  ['offerwall','adgem','upwall','adswed','gaintwall','ads','links'].forEach(t=>{
+  const wt = WALL_TABS.find(x => x.tab === tab);
+  if (wt && !wallEnabled(wt.wall)) tab = 'hub';   // admin switched this wall off
+  if (!EARN_TITLES[tab]) tab = 'hub';
+  currentEarnTab = tab;
+  ['offerwall','gaintwall','ads','links'].forEach(t=>{
     document.getElementById('earnSubpage-'+t).style.display = tab === t ? 'block' : 'none';
   });
-  document.getElementById('earnTabOfferwall').classList.toggle('active', tab === 'offerwall');
-  document.getElementById('earnTabAdgem').classList.toggle('active', tab === 'adgem');
-  document.getElementById('earnTabUpwall').classList.toggle('active', tab === 'upwall');
-  document.getElementById('earnTabAdswed').classList.toggle('active', tab === 'adswed');
-  document.getElementById('earnTabGaintwall').classList.toggle('active', tab === 'gaintwall');
-  document.getElementById('earnTabAds').classList.toggle('active', tab === 'ads');
-  document.getElementById('earnTabLinks').classList.toggle('active', tab === 'links');
+  document.getElementById('earnHub').style.display = tab === 'hub' ? 'block' : 'none';
+  const back = document.getElementById('earnBack');
+  back.classList.toggle('show', tab !== 'hub');
+  document.getElementById('earnBackTitle').textContent = EARN_TITLES[tab] || '';
   if (tab === 'links') loadShortlinks();
-  if (tab === 'adgem'){
-    document.getElementById('adgemSubtotal').textContent = `${state.up} UP`;
-    loadOfferwallFrame('adgem');
+  if (wt){
+    updateWallSubtotals();
+    loadOfferwallFrame(tab);       // key 'offerwall' or 'gaintwall'
+    refreshPending().then(updateWallSubtotals);
   }
-  if (tab === 'upwall'){
-    document.getElementById('upwallSubtotal').textContent = `${state.up} UP`;
-    loadOfferwallFrame('upwall');
-  }
-  if (tab === 'adswed'){
-    document.getElementById('adswedSubtotal').textContent = `${state.up} UP`;
-    loadOfferwallFrame('adswed');
-  }
-  if (tab === 'gaintwall'){
-    document.getElementById('gaintwallSubtotal').textContent = `${state.up} UP`;
-    loadOfferwallFrame('gaintwall');
-  }
+  if (tab === 'hub') window.scrollTo({ top:0 });
 }
 
 const AD_NETWORKS = [
@@ -1243,6 +1291,7 @@ async function loadUserFromServer(){
     const data = await res.json();
     state.totalPoints = data.points || 0;
     state.up = data.up || 0;
+    state.pendingUp = data.pendingUp || {};
     state.apFromAds = data.apFromAds || 0;
     state.apFromTasks = data.apFromTasks || 0;
     state.apFromShortlinks = data.apFromShortlinks || 0;
@@ -1294,6 +1343,9 @@ function renderHomeHeader(){
   document.getElementById('homeSub').textContent = String(state.user.id).startsWith('guest') ? 'Guest' : 'ID: ' + state.user.id;
   document.getElementById('homeAp').textContent = state.totalPoints;
   document.getElementById('homeUp').textContent = state.up;
+  const pendTotal = Object.values(state.pendingUp || {}).reduce((a, b) => a + (b || 0), 0);
+  document.getElementById('homePending').textContent = pendTotal;
+  document.getElementById('homePendingRow').style.display = pendTotal > 0 ? '' : 'none';
 }
 
 async function loadHome(){
@@ -1597,9 +1649,17 @@ document.addEventListener('visibilitychange', () => {
    EARN PAGE (Offerwall + Ads)
    ============================================================ */
 function renderEarn(){
-  document.getElementById('offerwallSubtotal').textContent = `${state.up} UP`;
+  updateWallSubtotals();
+  applyOfferwallVisibility();
   document.getElementById('adsSubtotal').textContent = `${state.apFromAds} AP`;
-  loadOfferwallFrame();
+  setEarnSubTab(currentEarnTab);
+  // fresh on/off switches + fresh pending balances every time the Earn page opens
+  Promise.all([loadSettings(), refreshPending()]).then(() => {
+    applyOfferwallVisibility();
+    updateWallSubtotals();
+    const cur = WALL_TABS.find(x => x.tab === currentEarnTab);
+    if (cur && !wallEnabled(cur.wall)) setEarnSubTab(currentEarnTab);
+  });
   renderAds();
   loadAdConfig().then(renderAds);
   loadShortlinks();
@@ -1608,9 +1668,6 @@ function renderEarn(){
 const wallTimers = {};
 const WALLS = {
   offerwall: { frame:'offerwallFrame', fb:'offerwallFallback', src:()=>`${CPALEAD_OFFERWALL_URL}?subid=${state.user.id}` },
-  adgem:     { frame:'adgemFrame',     fb:'adgemFallback',     src:()=>`${ADGEM_WALL_URL}${encodeURIComponent(String(state.user.id).toLowerCase())}` },
-  upwall:    { frame:'upwallFrame',    fb:'upwallFallback',    src:()=>`https://offerwall.upwall.io/?app_id=${encodeURIComponent(UPWALL_APP_ID)}&userid=${encodeURIComponent(String(state.user.id))}` },
-  adswed:    { frame:'adswedFrame',    fb:'adswedFallback',    src:()=>`https://adswedmedia.com/offer/${encodeURIComponent(ADSWED_PUBLIC_KEY)}/${encodeURIComponent(String(state.user.id))}` },
   gaintwall: { frame:'gaintwallFrame', fb:'gaintwallFallback', src:()=>`https://gaintwall.com/offerwall?apiKey=${encodeURIComponent(GAINTWALL_API_KEY)}&userId=${encodeURIComponent(String(state.user.id))}` }
 };
 
@@ -2701,6 +2758,11 @@ async function loadWithdrawPage(){
 
   document.getElementById('wdApTotal').textContent = withdrawInfo.ap;
   document.getElementById('wdUpTotal').textContent = withdrawInfo.up;
+  const pend = withdrawInfo.pendingUp || {};
+  const pendRows = WALL_TABS.filter(w => (pend[w.wall] || 0) > 0)
+    .map(w => `<div style="display:flex; justify-content:space-between; padding:9px 2px; border-bottom:1px solid var(--line); font-size:13.5px;"><span>${w.label}</span><b style="color:var(--text-muted);">${pend[w.wall]} UP</b></div>`);
+  document.getElementById('wdPendingRows').innerHTML = pendRows.join('');
+  document.getElementById('wdPendingBox').style.display = pendRows.length ? 'block' : 'none';
   document.getElementById('wdApAllocation').textContent = `$${(withdrawInfo.apAllocationUsdt||0).toFixed(2)}`;
 
   const note = document.getElementById('wdWindowNote');
