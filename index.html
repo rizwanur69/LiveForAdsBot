@@ -130,11 +130,11 @@
   .earn-totals{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px;}
   .et-box{display:flex; flex-direction:column; gap:2px; padding:13px 16px; border-radius:16px; background:linear-gradient(165deg, var(--surface-raised), var(--surface)); border:1px solid var(--line); box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
   .et-box.ap{border-color:rgba(176,122,22,.5);}
-  .et-box.up{border-color:rgba(15,156,134,.5);}
+  .et-box.up{border-color:rgba(31,157,92,.5);}
   .et-label{font-size:11px; font-weight:700; letter-spacing:.7px; text-transform:uppercase; color:var(--text-muted);}
   .et-val{font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700;}
   .et-box.ap .et-val{color:var(--gold);}
-  .et-box.up .et-val{color:#0F9C86;}
+  .et-box.up .et-val{color:var(--up-color);}
   .wd-parts{display:flex; align-items:stretch; justify-content:center; gap:6px; margin-bottom:10px;}
   .wd-part{flex:1 1 0; min-width:0; text-align:center; padding:10px 6px; border-radius:14px; background:var(--surface); border:1px solid var(--line);}
   .wd-part .wp-name{font-size:9.5px; font-weight:800; letter-spacing:.5px; color:var(--text-muted); line-height:1.25;}
@@ -145,13 +145,17 @@
   .ec-desc{font-size:11.5px; color:var(--text-muted); line-height:1.35;}
   .ec-rail{display:block; width:100%; height:5px; border-radius:6px; margin-top:auto; background:linear-gradient(90deg, var(--c), var(--cb)); opacity:.9;}
   .ec-foot{display:flex; justify-content:space-between; align-items:center; width:100%; font-size:11.5px; font-weight:700; padding-top:7px;}
-  .ec-foot .ec-unit{color:var(--c); font-family:'Space Grotesk',sans-serif; letter-spacing:.5px;}
+  .ec-foot .ec-unit{font-family:'Space Grotesk',sans-serif; letter-spacing:.5px; font-weight:700;}
+  .ec-foot .ec-unit.ap{color:var(--gold);}
+  .ec-foot .ec-unit.up{color:var(--up-color);}
   .ec-foot .ec-stat{color:var(--text-muted); font-weight:600;}
   .earn-back{display:none; align-items:center; gap:6px; margin:16px 0 0; padding:8px 14px 8px 8px; background:var(--surface); border:1px solid var(--line); border-radius:30px; color:var(--text); font-family:'Inter',sans-serif; font-weight:700; font-size:13.5px; cursor:pointer;}
   .earn-back.show{display:inline-flex;}
   .earn-back svg{width:18px; height:18px; fill:none; stroke:var(--gold); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round;}
   .earn-back .eb-title{color:var(--gold);}
   .earn-toggle-btn.active{background:var(--gold); color:#FFF8E6; border-color:var(--gold);}
+  .earn-toggle-btn.active.up{background:var(--up-color); color:#fff; border-color:var(--up-color);}
+  .eh-viewall{display:block; width:100%; margin-top:6px; padding:11px; background:var(--surface); border:1px solid var(--line); border-radius:12px; color:var(--text); font-family:'Inter',sans-serif; font-weight:700; font-size:13px; cursor:pointer;}
   .earn-section-head-premium{display:flex; align-items:center; justify-content:space-between; background:linear-gradient(155deg, var(--surface-raised), var(--surface)); border:1px solid var(--line); border-radius:14px; padding:14px 18px; margin:18px 0 10px; box-shadow:0 4px 14px rgba(0,0,0,0.18);}
   .earn-section-head-premium .eshp-title{font-size:13px; color:var(--text-muted); font-weight:600;}
   .earn-section-head-premium .eshp-val{font-size:18px; font-weight:700; font-family:'Space Grotesk',sans-serif;}
@@ -165,6 +169,28 @@
   .ap-tag, .up-tag{font-size:11px; font-weight:700; padding:2px 8px; border-radius:8px; font-family:'Space Grotesk',sans-serif;}
   .ap-tag{background:rgba(176,122,22,0.12); color:var(--gold);}
   .up-tag{background:rgba(31,157,92,0.12); color:var(--up-color);}
+
+  /* Public user profile (from Leaderboard) */
+  .podium-item, .lb-row{cursor:pointer; -webkit-tap-highlight-color:transparent;}
+  .upf-hero{display:flex; align-items:center; gap:14px; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:16px;}
+  .upf-avatar{width:68px; height:68px; border-radius:50%; flex:none; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:700; color:var(--gold); background:var(--surface-raised); border:2px solid var(--gold-dim);}
+  .upf-avatar img{width:100%; height:100%; object-fit:cover;}
+  .upf-name{font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .upf-id{font-size:12px; color:var(--text-muted); margin-top:3px;}
+  .upf-bal{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;}
+  .upf-bal > div{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px; text-align:center;}
+  .upf-bal .l{font-size:11px; font-weight:700; letter-spacing:.6px; font-family:'Space Grotesk',sans-serif;}
+  .upf-bal .v{font-size:24px; font-weight:700; font-family:'Space Grotesk',sans-serif; margin-top:3px;}
+  .upf-bal .r{font-size:11px; color:var(--text-muted); margin-top:3px;}
+  .upf-bal .ap .l,.upf-bal .ap .v{color:var(--gold);}
+  .upf-bal .up .l,.upf-bal .up .v{color:var(--up-color);}
+  .upf-sec{font-size:12px; font-weight:700; letter-spacing:.5px; color:var(--text-muted); text-transform:uppercase; margin:18px 4px 8px;}
+  .upf-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .upf-cell{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px 14px;}
+  .upf-cell .k{font-size:11px; color:var(--text-muted);}
+  .upf-cell .n{font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:700; margin-top:3px;}
+  .upf-cell .n.ap{color:var(--gold);}
+  .upf-cell .n.green{color:var(--up-color);}
 
   /* Settings gear + modal */
   .settings-gear{position:absolute; top:14px; right:14px; background:var(--surface-raised); border:1px solid var(--line); width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; cursor:pointer; color:var(--text-muted);}
@@ -204,6 +230,7 @@
   .podium-avatar img{width:100%; height:100%; object-fit:cover;}
   .podium-item .pname{font-size:12.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .podium-item .ppts{font-size:11.5px; color:var(--gold); margin-top:2px; font-weight:600;}
+  .podium-item .ppts.up{color:var(--up-color);}
 
   .lb-row{display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:10px 14px; margin-bottom:8px;}
   .lb-row .rank{width:26px; font-size:13px; color:var(--text-muted); font-weight:600; text-align:center;}
@@ -351,6 +378,7 @@
   .wds-link{color:var(--teal); font-size:12px; font-weight:600; cursor:pointer; margin-top:8px; display:inline-block;}
   .wds-row{display:flex; justify-content:space-between; gap:10px; font-size:12px; margin-top:6px;}
   .wds-row span:first-child{color:var(--text-muted);}
+  .wds-when{font-size:11px; color:var(--text-muted); margin-top:8px;}
   .wds-block{margin-top:10px; background:var(--surface-raised); border-radius:10px; padding:9px 11px;}
   .wds-k{font-size:10.5px; color:var(--text-muted); margin-bottom:3px;}
   .wds-v{font-size:11.5px; word-break:break-all; line-height:1.5;}
@@ -460,6 +488,7 @@
   .sp-row{display:flex; justify-content:space-between; font-size:11.5px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.06);}
   .sp-row .sp-addr{font-family:monospace; color:var(--text-muted);}
   .sp-item{border-bottom:1px solid rgba(255,255,255,0.06);}
+  .sp-when{font-size:10.5px; color:var(--text-muted); padding:0 0 8px;}
   .sp-item .sp-row{border-bottom:none; padding-bottom:2px;}
   .sp-txline{display:block; font-family:monospace; font-size:10.5px; color:var(--teal); padding:0 0 7px; text-decoration:none; cursor:pointer;}
 
@@ -719,20 +748,21 @@ body{background:radial-gradient(120% 40% at 50% -6%, rgba(var(--accRgb),.20), tr
 .pfl-top .dot{width:8px; height:8px; border-radius:50%; flex:none; background:var(--green,#1F9D5C); box-shadow:0 0 10px var(--green,#1F9D5C); animation:pflPulse 1.6s ease infinite;}
 .pfl-top small{margin-left:auto; font-weight:500; font-size:11px; color:var(--text-muted);}
 @keyframes pflPulse{0%,100%{opacity:1}50%{opacity:.35}}
-.pfl-view{height:186px; overflow:hidden; -webkit-mask-image:linear-gradient(transparent, #000 9%, #000 91%, transparent); mask-image:linear-gradient(transparent, #000 9%, #000 91%, transparent);}
+.pfl-view{height:180px; overflow:hidden; -webkit-mask-image:linear-gradient(transparent, #000 9%, #000 91%, transparent); mask-image:linear-gradient(transparent, #000 9%, #000 91%, transparent);}
 .pfl-view.static{height:auto; -webkit-mask-image:none; mask-image:none;}
-.pfl-track{animation:pflScroll var(--dur,30s) linear infinite;}
+.pfl-track{animation:pflScroll var(--dur,30s) linear infinite; will-change:transform; backface-visibility:hidden;}
 .pfl-view.static .pfl-track{animation:none;}
 .pfl-view:active .pfl-track{animation-play-state:paused;}
-@keyframes pflScroll{from{transform:translateY(0)}to{transform:translateY(-50%)}}
-.pfl-row{display:flex; align-items:center; gap:10px; height:62px; padding:0 4px; border-bottom:1px solid var(--line);}
-.pfl-ic{width:34px; height:34px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font-size:16px; background:rgba(var(--accRgb),.12); border:1px solid rgba(var(--accRgb),.30);}
+@keyframes pflScroll{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,-50%,0)}}
+.pfl-row{display:flex; align-items:center; gap:12px; height:60px; padding:0 6px; border-bottom:1px solid var(--line);}
+.pfl-ic{width:38px; height:38px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; font-family:'Space Grotesk',sans-serif; color:var(--up-color); background:linear-gradient(145deg, rgba(31,157,92,.20), rgba(31,157,92,.06)); border:1px solid rgba(31,157,92,.35); box-shadow:0 3px 10px rgba(31,157,92,.14);}
 .pfl-mid{flex:1; min-width:0;}
-.pfl-l1{font-size:12.5px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.pfl-l1 b{color:var(--text);}
+.pfl-l1{font-size:14px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.pfl-l1 b{color:var(--text); font-weight:700;}
+.pfl-sub{margin-top:2px; font-size:11.5px; color:var(--text-muted);}
 .pfl-tx{display:block; margin-top:3px; font-size:11px; color:var(--acc); text-decoration:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-family:'Space Grotesk',sans-serif;}
 .pfl-r{text-align:right; flex:none;}
-.pfl-r b{display:block; font-family:'Space Grotesk',sans-serif; font-size:14.5px; color:var(--green,#1F9D5C);}
+.pfl-r b{display:block; font-family:'Space Grotesk',sans-serif; font-size:15px; color:var(--green,#1F9D5C);}
 .pfl-r small{font-size:10.5px; color:var(--text-muted);}
 
 /* ===== Dark mode (Settings > Theme > Dark). Ivory stays the default look. ===== */
@@ -799,11 +829,6 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
       </div>
     </div>
 
-    <div class="trust" id="trustStrip" style="display:none;">
-      <div><b id="tsPaid">$0.00</b><small>paid out</small></div>
-      <div><b id="tsPayouts">0</b><small>payments</small></div>
-      <div><b id="tsMembers">0</b><small>members</small></div>
-    </div>
     <div class="payflow" id="payFlow" style="display:none;">
       <div class="pfl-top"><span class="dot"></span><span>Live payments</span><small id="pflCount"></small></div>
       <div class="pfl-view" id="pflView"><div class="pfl-track" id="pflTrack"></div></div>
@@ -865,7 +890,7 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
           <span class="ec-title">REWARD WALL 1</span>
           <span class="ec-desc">Simple offers for real USD</span>
           <span class="ec-rail"></span>
-          <span class="ec-foot"><span class="ec-unit">UP</span><span class="ec-stat" id="ecOfferwallStat">0</span></span>
+          <span class="ec-foot"><span class="ec-unit up">UP</span><span class="ec-stat" id="ecOfferwallStat">0</span></span>
         </button>
         <button class="earn-card ec-rose" id="earnCardGaintwall" onclick="setEarnSubTab('gaintwall')">
           <span class="ec-badge">NEW</span>
@@ -873,7 +898,7 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
           <span class="ec-title">REWARD WALL 2</span>
           <span class="ec-desc">Apps, games and more</span>
           <span class="ec-rail"></span>
-          <span class="ec-foot"><span class="ec-unit">UP</span><span class="ec-stat" id="ecGaintwallStat">0</span></span>
+          <span class="ec-foot"><span class="ec-unit up">UP</span><span class="ec-stat" id="ecGaintwallStat">0</span></span>
         </button>
         <button class="earn-card ec-teal" id="earnCardAds" onclick="setEarnSubTab('ads')">
           <span class="ec-badge">DAILY</span>
@@ -881,7 +906,7 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
           <span class="ec-title">WATCH ADS</span>
           <span class="ec-desc">Quick ads, instant AP</span>
           <span class="ec-rail"></span>
-          <span class="ec-foot"><span class="ec-unit">AP</span><span class="ec-stat" id="ecAdsStat">0</span></span>
+          <span class="ec-foot"><span class="ec-unit ap">AP</span><span class="ec-stat" id="ecAdsStat">0</span></span>
         </button>
         <button class="earn-card ec-indigo" id="earnCardLinks" onclick="setEarnSubTab('links')">
           <span class="ec-badge">DAILY</span>
@@ -889,8 +914,18 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
           <span class="ec-title">SHORTLINKS</span>
           <span class="ec-desc">Finish links, earn AP</span>
           <span class="ec-rail"></span>
-          <span class="ec-foot"><span class="ec-unit">AP</span><span class="ec-stat" id="ecLinksStat">0</span></span>
+          <span class="ec-foot"><span class="ec-unit ap">AP</span><span class="ec-stat" id="ecLinksStat">0</span></span>
         </button>
+      </div>
+
+      <div class="eh-hist">
+        <div class="section-label" style="margin-top:22px;">History</div>
+        <div class="earn-toggle">
+          <button class="earn-toggle-btn active ap" id="ehTabAp" onclick="setEarnHist('ap')">AP History</button>
+          <button class="earn-toggle-btn up" id="ehTabUp" onclick="setEarnHist('up')">UP History</button>
+        </div>
+        <div id="earnHistList" style="margin-top:12px;"></div>
+        <button class="eh-viewall" onclick="openHistory(earnHistKind, 'ads')">View all ›</button>
       </div>
     </div>
 
@@ -1005,8 +1040,8 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
         <div class="pf-id" id="pfId">ID: —</div>
       </div>
       <div class="pf-bal">
-        <div class="pf-slot ap" onclick="showPage('ap-history', null)"><span class="pl">AP</span><span class="pv" id="pbTotalAp">0</span><span class="pc">›</span></div>
-        <div class="pf-slot up" onclick="showPage('up-history', null)"><span class="pl">UP</span><span class="pv" id="pbTotalUp">0</span><span class="pc">›</span></div>
+        <div class="pf-slot ap" onclick="openHistory('ap','profile')"><span class="pl">AP</span><span class="pv" id="pbTotalAp">0</span><span class="pc">›</span></div>
+        <div class="pf-slot up" onclick="openHistory('up','profile')"><span class="pl">UP</span><span class="pv" id="pbTotalUp">0</span><span class="pc">›</span></div>
       </div>
     </div>
 
@@ -1237,7 +1272,7 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
   <!-- ================= AP HISTORY (hidden page) ================= -->
   <div class="page" id="page-ap-history">
     <div class="withdraw-page-header">
-      <button class="wp-back" onclick="showPage('profile', document.querySelectorAll('.nav-item')[5])">‹ Back</button>
+      <button class="wp-back" onclick="histBack()">‹ Back</button>
       <div class="wp-title">AP History</div>
     </div>
     <div id="apHistoryList" style="margin-top:14px;"></div>
@@ -1246,10 +1281,19 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
   <!-- ================= UP HISTORY (hidden page) ================= -->
   <div class="page" id="page-up-history">
     <div class="withdraw-page-header">
-      <button class="wp-back" onclick="showPage('profile', document.querySelectorAll('.nav-item')[5])">‹ Back</button>
+      <button class="wp-back" onclick="histBack()">‹ Back</button>
       <div class="wp-title">UP History</div>
     </div>
     <div id="upHistoryList" style="margin-top:14px;"></div>
+  </div>
+
+  <!-- ================= USER PROFILE (opened from Leaderboard) ================= -->
+  <div class="page" id="page-user-profile">
+    <div class="withdraw-page-header">
+      <button class="wp-back" onclick="showPage('leaderboard', document.querySelectorAll('.nav-item')[2])">‹ Back</button>
+      <div class="wp-title">Profile</div>
+    </div>
+    <div id="userProfileBody" style="margin-top:14px;"></div>
   </div>
 
   <div class="bottom-nav">
@@ -1611,32 +1655,22 @@ async function loadPublicStats(){
     }
   } catch(e){ console.error("Could not load public stats:", e); }
 }
-// Home: totals + a running list of every payment made so far (newest first), each with its transaction #
+// Home: running list of every payment made so far (newest first) - full name, amount, time
 function renderTrust(){
-  const d = state.publicStats;
-  const strip = document.getElementById('trustStrip'), flow = document.getElementById('payFlow');
-  if (!strip || !flow) return;
-  if (!d){ strip.style.display = 'none'; flow.style.display = 'none'; return; }
+  const flow = document.getElementById('payFlow');
+  if (!flow) return;
   const feed = state.payoutFeed || [];
-  document.getElementById('tsPaid').textContent = fmtMoney(d.paidUsdt || 0);
-  document.getElementById('tsPayouts').textContent = (d.payouts || feed.length || 0).toLocaleString();
-  document.getElementById('tsMembers').textContent = (d.members || 0).toLocaleString();
-  strip.style.display = 'grid';
   if (!feed.length){ flow.style.display = 'none'; return; }
   const rowHtml = r => {
-    const url = payoutTxUrl(r);
-    const tx = r.txHash ? 'Tx# ' + escHtmlRw(shortHash(r.txHash)) : 'Tx# —';
-    const txEl = url
-      ? `<a class="pfl-tx" href="${escHtmlRw(url)}" onclick="event.preventDefault(); openExternal(this.href)">${tx} ›</a>`
-      : `<span class="pfl-tx">${tx}</span>`;
-    return `<div class="pfl-row"><div class="pfl-ic">💸</div><div class="pfl-mid"><div class="pfl-l1"><b>${escHtmlRw(r.name)}</b> was paid</div>${txEl}</div><div class="pfl-r"><b>${fmtMoney(r.amount)}</b><small>${escHtmlRw(timeAgoShort(r.at))}</small></div></div>`;
+    const nm = String(r.name || 'A member');
+    return `<div class="pfl-row"><div class="pfl-ic">${escHtmlRw((Array.from(nm)[0] || 'U').toUpperCase())}</div><div class="pfl-mid"><div class="pfl-l1"><b>${escHtmlRw(nm)}</b></div><div class="pfl-sub">was paid</div></div><div class="pfl-r"><b>${fmtMoney(r.amount)}</b><small>${escHtmlRw(timeAgoShort(r.at))}</small></div></div>`;
   };
   const html = feed.map(rowHtml).join('');
   const view = document.getElementById('pflView'), track = document.getElementById('pflTrack');
   const run = feed.length > 3; // 3 or fewer: just show them; more: scroll one after another
   view.classList.toggle('static', !run);
   track.innerHTML = run ? html + html : html; // doubled so the loop has no jump
-  track.style.setProperty('--dur', Math.max(12, feed.length * 3.2) + 's');
+  track.style.setProperty('--dur', Math.max(14, feed.length * 3.6) + 's');
   document.getElementById('pflCount').textContent = feed.length + ' so far';
   flow.style.display = 'block';
 }
@@ -2164,6 +2198,7 @@ function renderEarn(){
   renderAds();
   loadAdConfig().then(renderAds);
   loadShortlinks();
+  loadEarnHistory();
 }
 
 const wallTimers = {};
@@ -2517,11 +2552,11 @@ function renderLeaderboard(data){
   const hats = {1:'👑',2:'🥈',3:'🥉'};
   const order = {1:'gold',2:'silver',3:'bronze'};
   document.getElementById('podium').innerHTML = top3.map(u=>`
-    <div class="podium-item ${order[u.rank]}">
+    <div class="podium-item ${order[u.rank]}" onclick="openUserProfile('${escHtmlRw(u.tgId)}')">
       <div class="podium-hat">${hats[u.rank]}</div>
       <div class="podium-avatar">${avatarHtml(u)}</div>
       <div class="pname">${u.name}</div>
-      <div class="ppts">${primaryStat(u)}</div>
+      <div class="ppts ${leaderboardTab==='up'?'up':'ap'}">${primaryStat(u)}</div>
       ${(showSecondary || showStreak) ? `<div style="margin-top:2px; display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
         ${showSecondary ? `<span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(u)}</span>` : ''}
         ${showStreak ? `<span class="ap-tag">🔥 ${u.streak||0}</span>` : ''}
@@ -2529,7 +2564,7 @@ function renderLeaderboard(data){
     </div>`).join('');
 
   document.getElementById('lbList').innerHTML = rest.map(u=>`
-    <div class="lb-row ${u.tgId===String(state.user.id)?'you':''}">
+    <div class="lb-row ${u.tgId===String(state.user.id)?'you':''}" onclick="openUserProfile('${escHtmlRw(u.tgId)}')">
       <div class="rank">${u.rank}</div>
       <div class="avatar">${avatarHtml(u)}</div>
       <div class="name">${u.name}</div>
@@ -2542,7 +2577,7 @@ function renderLeaderboard(data){
   const youBox = document.getElementById('lbYou');
   if (you && you.outsideTop){
     youBox.innerHTML = `<div class="section-label">Your rank</div>
-      <div class="lb-row you">
+      <div class="lb-row you" onclick="openUserProfile('${escHtmlRw(you.tgId)}')">
         <div class="rank">${you.rank}</div>
         <div class="avatar">${avatarHtml(you)}</div>
         <div class="name">${you.name} (You)</div>
@@ -2552,6 +2587,61 @@ function renderLeaderboard(data){
       </div>`;
   } else {
     youBox.innerHTML = '';
+  }
+}
+
+/* ============================================================
+   USER PROFILE (tap a person on the Leaderboard)
+   ============================================================ */
+async function openUserProfile(tgId){
+  showPage('user-profile', document.querySelectorAll('.nav-item')[2]);
+  window.scrollTo({ top:0 });
+  const body = document.getElementById('userProfileBody');
+  body.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:30px 0;">Loading…</div>`;
+  try{
+    const res = await fetch(`${API_BASE}/public-profile/${encodeURIComponent(tgId)}`);
+    if (!res.ok) throw new Error('not found');
+    const u = await res.json();
+    const num = v => (v || 0).toLocaleString();
+    const cell = (k, n, cls) => `<div class="upf-cell"><div class="k">${k}</div><div class="n ${cls||''}">${n}</div></div>`;
+    body.innerHTML = `
+      <div class="upf-hero">
+        <div class="upf-avatar">${avatarHtml(u)}</div>
+        <div style="min-width:0;">
+          <div class="upf-name">${escHtmlRw(u.name)}</div>
+          <div class="upf-id">ID: ${escHtmlRw(u.tgId)}</div>
+        </div>
+      </div>
+      <div class="upf-bal">
+        <div class="ap"><div class="l">AP</div><div class="v">${num(u.points)}</div><div class="r">Rank #${num(u.rankAp)}</div></div>
+        <div class="up"><div class="l">UP</div><div class="v">${num(u.up)}</div><div class="r">Rank #${num(u.rankUp)}</div></div>
+      </div>
+
+      <div class="upf-sec">Activity</div>
+      <div class="upf-grid">
+        ${cell('Joined', escHtmlRw(u.joinedAt ? new Date(u.joinedAt).toLocaleDateString([], {day:'2-digit', month:'short', year:'numeric'}) : '—'))}
+        ${cell('Streak', '🔥 ' + num(u.streak) + ' days')}
+        ${cell('Ads watched', num(u.totalAdsWatched))}
+        ${cell('Check-ins', num(u.totalCheckins))}
+        ${cell('Referrals', num(u.referrals))}
+        ${cell('Referral AP', num(u.referralEarnings), 'ap')}
+      </div>
+
+      <div class="upf-sec">AP breakdown</div>
+      <div class="upf-grid">
+        ${cell('Watch ads', num(u.apFromAds), 'ap')}
+        ${cell('Shortlinks', num(u.apFromShortlinks), 'ap')}
+        ${cell('Tasks', num(u.apFromTasks), 'ap')}
+        ${cell('Daily check-in', num(u.apFromCheckin), 'ap')}
+      </div>
+
+      <div class="upf-sec">Withdrawals</div>
+      <div class="upf-grid">
+        ${cell('Total paid out', '$' + (u.paidUsdt || 0).toFixed(2), 'green')}
+        ${cell('Payments', num(u.payments))}
+      </div>`;
+  } catch(e){
+    body.innerHTML = `<div style="text-align:center; color:var(--red); font-size:12.5px; padding:30px 0;">Could not load this profile.</div>`;
   }
 }
 
@@ -3099,9 +3189,10 @@ async function loadWithdrawHistory(){
       <div class="wds-block"><div class="wds-k">Wallet address</div><div class="wds-v">${escHtml(w.address)}</div>
         <button class="wds-copy" onclick="copyWd('${w.id}','address',this)">Copy address</button></div>
       ${w.status === 'paid' && w.txHash ? `<div class="wds-block"><div class="wds-k">Transaction hash</div><div class="wds-v">${escHtml(w.txHash)}</div>
+        <div class="wds-when">🕒 Withdraw date: ${escHtml(fmtDT(w.createdAt))}${w.processedAt ? ' · Paid: ' + escHtml(fmtDT(w.processedAt)) : ''}</div>
         <button class="wds-copy" onclick="copyWd('${w.id}','txHash',this)">Copy hash</button>
         ${txLink(w) ? `<button class="wds-copy" onclick="openWdTx('${w.id}')">View transaction ›</button>` : ''}</div>` : ''}
-      ${w.status === 'paid' && !w.txHash ? `<div class="wds-meta">Paid. No transaction hash was added.</div>` : ''}
+      ${w.status === 'paid' && !w.txHash ? `<div class="wds-meta">Paid. No transaction hash was added.<br>🕒 Withdraw date: ${escHtml(fmtDT(w.createdAt))}</div>` : ''}
       ${w.status === 'rejected' && w.note ? `<div class="wds-meta">Reason: ${escHtml(w.note)}</div>` : ''}
       ${w.status === 'rejected' && w.upSpent > 0 ? `<div class="wds-meta">${w.upSpent} UP returned to your balance.</div>` : ''}
       ${w.status === 'rejected' ? `<button class="wds-help" onclick="showPage('support', null)">🎧 Talk to Support</button>` : ''}
@@ -3484,6 +3575,12 @@ function maskAddress(addr){
   return addr.slice(0,5) + '•••' + addr.slice(-5);
 }
 
+function fmtDT(iso){
+  if (!iso) return '—';
+  const d = new Date(iso);
+  if (isNaN(d)) return '—';
+  return d.toLocaleString([], { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
 function shortHash(t){ t = String(t||''); return t.length > 18 ? t.slice(0,10) + '…' + t.slice(-6) : t; }
 // Explorer link for a payout; only ever http(s) links
 function payoutTxUrl(p){
@@ -3511,7 +3608,8 @@ async function toggleSeasonParticipants(boxId, el){
           const url = payoutTxUrl(p);
           const txLine = (p.txHash && url)
             ? `<a class="sp-txline" href="${escHtml(url)}" onclick="event.preventDefault(); openExternal(this.href)">🔗 ${escHtml(shortHash(p.txHash))} · View on ${p.network === 'polygon' ? 'PolygonScan' : 'BscScan'} ›</a>` : '';
-          return `<div class="sp-item"><div class="sp-row"><span>${escHtml(p.name)}</span><span class="sp-addr">${escHtml(p.maskedAddress)}</span><span>$${(p.totalUsdt||0).toFixed(2)}</span></div>${txLine}</div>`;
+          const when = (p.requestedAt || p.paidAt) ? `<div class="sp-when">🕒 Withdraw date: ${escHtml(fmtDT(p.requestedAt || p.paidAt))}${p.paidAt ? ' · Paid: ' + escHtml(fmtDT(p.paidAt)) : ''}</div>` : '';
+          return `<div class="sp-item"><div class="sp-row"><span>${escHtml(p.name)}</span><span class="sp-addr">${escHtml(p.maskedAddress)}</span><span>$${(p.totalUsdt||0).toFixed(2)}</span></div>${txLine}${when}</div>`;
         }).join('');
     panel.dataset.loaded = '1';
   } catch(e){ panel.innerHTML = `<div style="font-size:11.5px;color:var(--red);">Could not load participants.</div>`; }
@@ -3522,20 +3620,9 @@ const UP_ACTIVITY_TYPES = ['offerwall'];
 const ACTIVITY_ICONS = { ad:'▶', task:'✓', shortlink:'🔗', checkin:'🔥', referral_bonus:'◎', referral_commission:'◎', offerwall:'$' };
 const ACTIVITY_LABELS = { ad:'Watched ad', task:'Completed task', shortlink:'Shortlink', checkin:'Daily check-in', referral_bonus:'Referral bonus', referral_commission:'Referral commission', offerwall:'Offerwall' };
 
-async function loadHistoryPage(kind){
-  const listEl = document.getElementById(kind === 'up' ? 'upHistoryList' : 'apHistoryList');
-  listEl.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:20px 0;">Loading…</div>`;
-  try{
-    const res = await fetch(`${API_BASE}/user/${state.user.id}/activity`);
-    const all = await res.json();
-    const types = kind === 'up' ? UP_ACTIVITY_TYPES : AP_ACTIVITY_TYPES;
-    const filtered = all.filter(a => types.includes(a.type));
-    if (filtered.length === 0){
-      listEl.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:20px 0;">No ${kind.toUpperCase()} activity yet.</div>`;
-      return;
-    }
-    const color = kind === 'up' ? 'var(--up-color)' : 'var(--gold)';
-    listEl.innerHTML = filtered.map(a=>`
+function activityRowsHtml(list, kind){
+  const color = kind === 'up' ? 'var(--up-color)' : 'var(--gold)';
+  return list.map(a=>`
       <div class="ad-row">
         <div class="icon">${ACTIVITY_ICONS[a.type]||'•'}</div>
         <div class="info">
@@ -3544,6 +3631,57 @@ async function loadHistoryPage(kind){
         </div>
         <div style="font-weight:700; color:${color}; font-family:'Space Grotesk',sans-serif;">+${a.points}</div>
       </div>`).join('');
+}
+async function fetchActivity(){
+  const res = await fetch(`${API_BASE}/user/${state.user.id}/activity`);
+  const all = await res.json();
+  return Array.isArray(all) ? all : [];
+}
+
+let histFrom = 'profile';
+function openHistory(kind, from){
+  histFrom = from || 'profile';
+  showPage(kind + '-history', null);
+}
+function histBack(){
+  if (histFrom === 'ads') showPage('ads', document.querySelectorAll('.nav-item')[1]);
+  else showPage('profile', document.querySelectorAll('.nav-item')[5]);
+}
+
+// Earn page: recent AP / UP history right on the hub
+let earnHistKind = 'ap', earnActivity = [];
+function setEarnHist(kind){
+  earnHistKind = kind === 'up' ? 'up' : 'ap';
+  document.getElementById('ehTabAp').classList.toggle('active', earnHistKind === 'ap');
+  document.getElementById('ehTabUp').classList.toggle('active', earnHistKind === 'up');
+  const box = document.getElementById('earnHistList');
+  const types = earnHistKind === 'up' ? UP_ACTIVITY_TYPES : AP_ACTIVITY_TYPES;
+  const list = earnActivity.filter(a => types.includes(a.type)).slice(0, 10);
+  box.innerHTML = list.length
+    ? activityRowsHtml(list, earnHistKind)
+    : `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:16px 0;">No ${earnHistKind.toUpperCase()} activity yet.</div>`;
+}
+async function loadEarnHistory(){
+  const box = document.getElementById('earnHistList');
+  if (!box) return;
+  if (!earnActivity.length) box.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:16px 0;">Loading…</div>`;
+  try{ earnActivity = await fetchActivity(); }
+  catch(e){ box.innerHTML = `<div style="text-align:center; color:var(--red); font-size:12.5px; padding:16px 0;">Could not load history.</div>`; return; }
+  setEarnHist(earnHistKind);
+}
+
+async function loadHistoryPage(kind){
+  const listEl = document.getElementById(kind === 'up' ? 'upHistoryList' : 'apHistoryList');
+  listEl.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:20px 0;">Loading…</div>`;
+  try{
+    const all = await fetchActivity();
+    const types = kind === 'up' ? UP_ACTIVITY_TYPES : AP_ACTIVITY_TYPES;
+    const filtered = all.filter(a => types.includes(a.type));
+    if (filtered.length === 0){
+      listEl.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:20px 0;">No ${kind.toUpperCase()} activity yet.</div>`;
+      return;
+    }
+    listEl.innerHTML = activityRowsHtml(filtered, kind);
   } catch(e){
     listEl.innerHTML = `<div style="text-align:center; color:var(--red); font-size:12.5px; padding:20px 0;">Could not load history.</div>`;
   }
