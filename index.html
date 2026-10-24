@@ -712,9 +712,65 @@ body{background:radial-gradient(120% 40% at 50% -6%, rgba(var(--accRgb),.20), tr
 .netchips span.on{color:var(--onAcc); background:linear-gradient(135deg,var(--acc),var(--accL)); border-color:transparent; box-shadow:0 8px 20px rgba(var(--accRgb),.35);}
 .wd-ready.closed .i-pill{background:linear-gradient(135deg,#9C8E78,#B9AC95);}
 .wd-ready.empty .i-pill{background:linear-gradient(135deg,#9C8E78,#B9AC95);}
+
+/* ===== Live payment flow (home) ===== */
+.payflow{margin-top:12px; padding:12px 12px 4px; border-radius:20px; background:var(--surf); border:1px solid rgba(var(--accRgb),.28); box-shadow:0 10px 24px rgba(var(--accRgb),.08);}
+.pfl-top{display:flex; align-items:center; gap:8px; margin:0 4px 6px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13.5px; color:var(--text);}
+.pfl-top .dot{width:8px; height:8px; border-radius:50%; flex:none; background:var(--green,#1F9D5C); box-shadow:0 0 10px var(--green,#1F9D5C); animation:pflPulse 1.6s ease infinite;}
+.pfl-top small{margin-left:auto; font-weight:500; font-size:11px; color:var(--text-muted);}
+@keyframes pflPulse{0%,100%{opacity:1}50%{opacity:.35}}
+.pfl-view{height:186px; overflow:hidden; -webkit-mask-image:linear-gradient(transparent, #000 9%, #000 91%, transparent); mask-image:linear-gradient(transparent, #000 9%, #000 91%, transparent);}
+.pfl-view.static{height:auto; -webkit-mask-image:none; mask-image:none;}
+.pfl-track{animation:pflScroll var(--dur,30s) linear infinite;}
+.pfl-view.static .pfl-track{animation:none;}
+.pfl-view:active .pfl-track{animation-play-state:paused;}
+@keyframes pflScroll{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+.pfl-row{display:flex; align-items:center; gap:10px; height:62px; padding:0 4px; border-bottom:1px solid var(--line);}
+.pfl-ic{width:34px; height:34px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font-size:16px; background:rgba(var(--accRgb),.12); border:1px solid rgba(var(--accRgb),.30);}
+.pfl-mid{flex:1; min-width:0;}
+.pfl-l1{font-size:12.5px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.pfl-l1 b{color:var(--text);}
+.pfl-tx{display:block; margin-top:3px; font-size:11px; color:var(--acc); text-decoration:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-family:'Space Grotesk',sans-serif;}
+.pfl-r{text-align:right; flex:none;}
+.pfl-r b{display:block; font-family:'Space Grotesk',sans-serif; font-size:14.5px; color:var(--green,#1F9D5C);}
+.pfl-r small{font-size:10.5px; color:var(--text-muted);}
+
+/* ===== Dark mode (Settings > Theme > Dark). Ivory stays the default look. ===== */
+html:has(body.dark-theme){background:#09110F;}
+body.dark-theme{
+  color-scheme:dark;
+  --bg:#09110F; --bgc:#09110F; --surface:#0F1C1A; --surf:#0F1C1A; --surface-raised:#162B28; --line:#24413D;
+  --text:#EAF2F1; --text-muted:#93A8A5;
+  --gold:#F2B33D; --gold-dim:#6A5222; --acc:#F2B33D; --accL:#FFD27A; --acc2:#2DD4BF;
+  --accRgb:242,179,61; --acc2Rgb:45,212,191; --onAcc:#1B1404;
+  --teal:#2DD4BF; --red:#F0654E; --green:#3DD68C; --up-color:#3DD68C; --up-dim:#14391F;
+  --indigo-bg:#1E1F3B; --indigo-text:#C7C9FB; --c2:#F06A8D; --c4:#8B97F5;
+  --rc-btn-bg:#F2B33D; --rc-btn-text:#1B1404;
+  --gift-left:#1E1E1E; --gift-right:#0E0E0E; --gift-top:#2C2C2C;
+  --shadow-card:0 10px 26px rgba(0,0,0,.45);
+  --card-grad:linear-gradient(160deg, rgba(242,179,61,.07), transparent 42%), linear-gradient(180deg, var(--surface-raised), var(--surface));
+}
+body.dark-theme{background:radial-gradient(120% 40% at 50% -6%, rgba(242,179,61,.14), transparent 66%), var(--bgc) !important; background-attachment:fixed;}
+body.dark-theme .profile-card,body.dark-theme .reward-card,body.dark-theme .lb-row,body.dark-theme .ref-user,body.dark-theme .season-box,body.dark-theme .podium-item,body.dark-theme .wd-part,body.dark-theme .wd-balance-item,body.dark-theme .wd-allocation-box,body.dark-theme .ref-stat,body.dark-theme .earn-card,body.dark-theme .et-box{
+  background:linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,0) 55%), var(--surf) !important; box-shadow:0 12px 30px rgba(0,0,0,.45) !important; border-color:rgba(242,179,61,.26) !important;}
+body.dark-theme .profile-card{background:linear-gradient(140deg, rgba(242,179,61,.16), rgba(45,212,191,.06) 55%, transparent 80%), var(--surf) !important;}
+body.dark-theme .reward-card{background:radial-gradient(90% 130% at 100% 0%, rgba(242,179,61,.28), transparent 62%), linear-gradient(135deg,#1B2C28,#0F1C1A) !important; border-color:rgba(242,179,61,.45) !important;}
+body.dark-theme .bottom-nav{background:rgba(15,28,26,.92) !important; box-shadow:0 16px 40px rgba(0,0,0,.55) !important;}
+body.dark-theme .rw-card{background:linear-gradient(160deg,#1B2E2A,#0F1C1A); box-shadow:0 30px 70px rgba(0,0,0,.65);}
+body.dark-theme .rw-overlay{background:rgba(0,0,0,.65);}
+body.dark-theme .wheel{border-color:#24413D;}
+body.dark-theme .wheel::after{border-color:#24413D;}
+body.dark-theme .i-card{box-shadow:0 12px 30px rgba(0,0,0,.40);}
+body.dark-theme .sgrid{background:rgba(0,0,0,.18);}
+body.dark-theme .payflow{box-shadow:0 10px 24px rgba(0,0,0,.35);}
+/* gold buttons: dark text on the bright dark-mode gold so it stays readable */
+body.dark-theme .week-day.done .dcircle,body.dark-theme .checkin-btn,body.dark-theme .earn-toggle-btn.active,body.dark-theme .theme-switch button.active,
+body.dark-theme .edit-toggle-btn,body.dark-theme .edit-toggle-btn.done,body.dark-theme .range-toggle button.active,body.dark-theme .withdraw-submit,
+body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-theme .watch-btn:not(:disabled),body.dark-theme .copy-btn{color:var(--onAcc) !important;}
 </style>
 </head>
 <body class="light-theme">
+<script>try{ if (localStorage.getItem('lfaTheme') === 'dark'){ document.body.classList.remove('light-theme'); document.body.classList.add('dark-theme'); } }catch(e){}</script>
 
   <div class="topbar">
     <div class="brand-wrap">
@@ -743,11 +799,14 @@ body{background:radial-gradient(120% 40% at 50% -6%, rgba(var(--accRgb),.20), tr
       </div>
     </div>
 
-    <div class="tick" id="payTicker" style="display:none;"><span class="dot"></span><span class="t" id="payTickerText"></span><small id="payTickerAgo"></small></div>
     <div class="trust" id="trustStrip" style="display:none;">
-      <div><b id="tsPaid">$0.00</b><small id="tsPaidLabel">paid out</small></div>
+      <div><b id="tsPaid">$0.00</b><small>paid out</small></div>
+      <div><b id="tsPayouts">0</b><small>payments</small></div>
       <div><b id="tsMembers">0</b><small>members</small></div>
-      <div><b>3rd-5th</b><small>payout days</small></div>
+    </div>
+    <div class="payflow" id="payFlow" style="display:none;">
+      <div class="pfl-top"><span class="dot"></span><span>Live payments</span><small id="pflCount"></small></div>
+      <div class="pfl-view" id="pflView"><div class="pfl-track" id="pflTrack"></div></div>
     </div>
 
     <div class="reward-card">
@@ -1205,14 +1264,14 @@ body{background:radial-gradient(120% 40% at 50% -6%, rgba(var(--accRgb),.20), tr
   <div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this) closeSettings()">
     <div class="settings-sheet">
       <h3>Settings</h3>
-      <div class="settings-row" style="display:none;">
+      <div class="settings-row">
         <div>
           <div class="slabel">Theme</div>
-          <div class="shint">Choose light or dark mode</div>
+          <div class="shint">Ivory (light) or Dark mode</div>
         </div>
         <div class="theme-switch">
+          <button id="themeLightBtn" onclick="setTheme('light')">Ivory</button>
           <button id="themeDarkBtn" onclick="setTheme('dark')">Dark</button>
-          <button id="themeLightBtn" onclick="setTheme('light')">Light</button>
         </div>
       </div>
       <div class="settings-row">
@@ -1387,7 +1446,7 @@ let state = {
   apFromShortlinks: 0,
   shortlinks: [],
   apFromCheckin: 0,
-  theme: 'dark',
+  theme: 'light',
   lastSpinDay: null, chestWeek: null, rewards: null, publicStats: null,
   adsToday: {},
   tasksCompleted: {},
@@ -1461,7 +1520,7 @@ async function loadUserFromServer(){
     state.apFromTasks = data.apFromTasks || 0;
     state.apFromShortlinks = data.apFromShortlinks || 0;
     state.apFromCheckin = data.apFromCheckin || 0;
-    state.theme = data.theme || 'dark';
+    state.theme = getSavedTheme(); // the choice is remembered on this device; Ivory is the default
     applyTheme(state.theme);
     state.adsToday = {};
     const _utcDay = new Date().toISOString().slice(0,10), _nowMs = Date.now();
@@ -1531,44 +1590,50 @@ function fmtHMS(ms){
 }
 
 /* ----- Trust strip + live payout ticker (real numbers from the server) ----- */
-let tickTimer = null, tickIdx = 0;
 async function loadPublicStats(){
   try{
-    const res = await fetch(`${API_BASE}/public-stats`);
-    const d = await res.json();
-    if (d && d.members !== undefined){ state.publicStats = d; renderTrust(); }
+    const [r1, r2] = await Promise.all([
+      fetch(`${API_BASE}/public-stats`),
+      fetch(`${API_BASE}/payout-feed`).catch(() => null),
+    ]);
+    const d = await r1.json();
+    let feed = [];
+    try{ if (r2 && r2.ok) feed = await r2.json(); } catch(e){}
+    if (d && d.members !== undefined){
+      state.publicStats = d;
+      state.payoutFeed = Array.isArray(feed) ? feed : [];
+      renderTrust();
+    }
   } catch(e){ console.error("Could not load public stats:", e); }
 }
+// Home: totals + a running list of every payment made so far (newest first), each with its transaction #
 function renderTrust(){
   const d = state.publicStats;
-  const strip = document.getElementById('trustStrip'), tick = document.getElementById('payTicker');
-  if (!strip || !tick) return;
-  if (!d){ strip.style.display = 'none'; tick.style.display = 'none'; return; }
-  if (d.payouts > 0){
-    document.getElementById('tsPaid').textContent = fmtMoney(d.paidUsdt);
-    document.getElementById('tsPaidLabel').textContent = 'paid out';
-  } else {
-    document.getElementById('tsPaid').textContent = 'Monthly';
-    document.getElementById('tsPaidLabel').textContent = 'payout cycle';
-  }
+  const strip = document.getElementById('trustStrip'), flow = document.getElementById('payFlow');
+  if (!strip || !flow) return;
+  if (!d){ strip.style.display = 'none'; flow.style.display = 'none'; return; }
+  const feed = state.payoutFeed || [];
+  document.getElementById('tsPaid').textContent = fmtMoney(d.paidUsdt || 0);
+  document.getElementById('tsPayouts').textContent = (d.payouts || feed.length || 0).toLocaleString();
   document.getElementById('tsMembers').textContent = (d.members || 0).toLocaleString();
   strip.style.display = 'grid';
-  if (tickTimer){ clearInterval(tickTimer); tickTimer = null; }
-  const rec = d.recent || [];
-  if (!rec.length){ tick.style.display = 'none'; return; }
-  tick.style.display = 'flex';
-  const show = () => {
-    const r = rec[tickIdx % rec.length]; tickIdx++;
-    const t = document.getElementById('payTickerText');
-    t.style.opacity = 0;
-    setTimeout(() => {
-      t.innerHTML = `💸 <b>${escHtmlRw(r.name)}</b> was paid <b>${fmtMoney(r.amount)}</b>`;
-      document.getElementById('payTickerAgo').textContent = timeAgoShort(r.at);
-      t.style.opacity = 1;
-    }, 250);
+  if (!feed.length){ flow.style.display = 'none'; return; }
+  const rowHtml = r => {
+    const url = payoutTxUrl(r);
+    const tx = r.txHash ? 'Tx# ' + escHtmlRw(shortHash(r.txHash)) : 'Tx# —';
+    const txEl = url
+      ? `<a class="pfl-tx" href="${escHtmlRw(url)}" onclick="event.preventDefault(); openExternal(this.href)">${tx} ›</a>`
+      : `<span class="pfl-tx">${tx}</span>`;
+    return `<div class="pfl-row"><div class="pfl-ic">💸</div><div class="pfl-mid"><div class="pfl-l1"><b>${escHtmlRw(r.name)}</b> was paid</div>${txEl}</div><div class="pfl-r"><b>${fmtMoney(r.amount)}</b><small>${escHtmlRw(timeAgoShort(r.at))}</small></div></div>`;
   };
-  show();
-  if (rec.length > 1) tickTimer = setInterval(show, 4500);
+  const html = feed.map(rowHtml).join('');
+  const view = document.getElementById('pflView'), track = document.getElementById('pflTrack');
+  const run = feed.length > 3; // 3 or fewer: just show them; more: scroll one after another
+  view.classList.toggle('static', !run);
+  track.innerHTML = run ? html + html : html; // doubled so the loop has no jump
+  track.style.setProperty('--dur', Math.max(12, feed.length * 3.2) + 's');
+  document.getElementById('pflCount').textContent = feed.length + ' so far';
+  flow.style.display = 'block';
 }
 
 /* ----- Rewards config (prizes the admin set; the odds stay on the server) ----- */
@@ -2629,15 +2694,21 @@ async function saveProfile(){
 
 function openSettings(){
   document.getElementById('settingsOverlay').classList.add('active');
-  document.getElementById('themeDarkBtn').classList.toggle('active', state.theme !== 'light');
-  document.getElementById('themeLightBtn').classList.toggle('active', state.theme === 'light');
+  document.getElementById('themeDarkBtn').classList.toggle('active', state.theme === 'dark');
+  document.getElementById('themeLightBtn').classList.toggle('active', state.theme !== 'dark');
 }
 function closeSettings(){
   document.getElementById('settingsOverlay').classList.remove('active');
 }
 
+function getSavedTheme(){
+  try{ return localStorage.getItem('lfaTheme') === 'dark' ? 'dark' : 'light'; }catch(e){ return 'light'; }
+}
+
 async function setTheme(theme){
+  theme = theme === 'dark' ? 'dark' : 'light';
   state.theme = theme;
+  try{ localStorage.setItem('lfaTheme', theme); }catch(e){}
   applyTheme(theme);
   document.getElementById('themeDarkBtn').classList.toggle('active', theme === 'dark');
   document.getElementById('themeLightBtn').classList.toggle('active', theme === 'light');
@@ -2650,7 +2721,16 @@ async function setTheme(theme){
 }
 
 function applyTheme(theme){
-  document.body.classList.add('light-theme'); // Look 6 (Ivory Porcelain) is the app look
+  // Two looks: Ivory Porcelain (light, default) and Dark. Everything colour-related follows the body class.
+  const dark = theme === 'dark';
+  document.body.classList.toggle('dark-theme', dark);
+  document.body.classList.toggle('light-theme', !dark);
+  try{
+    const c = dark ? '#09110F' : '#F6F2EA';
+    if (tg && tg.setHeaderColor) tg.setHeaderColor(c);
+    if (tg && tg.setBackgroundColor) tg.setBackgroundColor(c);
+    if (tg && tg.setBottomBarColor) tg.setBottomBarColor(c);
+  }catch(e){}
 }
 
 function setStatsRange(range, el){
