@@ -930,6 +930,7 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
         <div class="eshp-val" id="adsSubtotal">0 AP</div>
       </div>
       <div class="ads-note">Each ad gives 50 AP. 5 ads per network, then a 3-hour cooldown. Counts reset daily at 6:00 AM.</div>
+      <div class="ads-note" id="adsterraNote" style="display:none;">Adsterra: tap Open, look at the offer for a few seconds, then come back and tap Claim to get your AP.</div>
       <div id="adList"></div>
     </div>
 
@@ -1373,7 +1374,11 @@ function setEarnSubTab(tab){
 const AD_NETWORKS = [
   { key:"adsgram", name:"Adsgram", icon:"▲" },
   { key:"monetag", name:"Monetag", icon:"●" },
-  { key:"richads", name:"RichAds", icon:"★" }
+  { key:"richads", name:"RichAds", icon:"★" },
+  // Adsterra Smartlinks: "link" rows are opened, then claimed after a short wait (see openAdsterra / claimAdsterra).
+  // They stay hidden until the admin has pasted a Smartlink URL in Admin > Ad Controls.
+  { key:"adsterra1", name:"Adsterra 1", icon:"◆", link:true },
+  { key:"adsterra2", name:"Adsterra 2", icon:"◇", link:true }
 ];
 const RICHADS_PUB_ID = "1025959";
 const RICHADS_APP_ID = "9330";
@@ -2219,6 +2224,7 @@ function renderAds(){
   let anyLocked = false;
 
   adList.innerHTML = AD_NETWORKS.map(net=>{
+    if (net.link && !adCfg(net.key).configured) return '';   // Smartlink not set up by the admin yet
     const rawSlot = state.adsToday[net.key];
     const slot = (rawSlot && Number.isFinite(rawSlot.count)) ? rawSlot : { count: 0, unlockAt: null };
     const stillLocked = slot.unlockAt && now < slot.unlockAt;
@@ -2237,6 +2243,19 @@ function renderAds(){
       buttonHtml = `<button class="watch-btn" disabled style="min-width:78px;">${formatCountdown(slot.unlockAt - now)}</button>`;
     } else if (count >= cfg.limit){
       buttonHtml = `<button class="watch-btn" disabled>Done</button>`;
+    } else if (net.link){
+      const p = adsterraPendingFor(net.key);
+      if (p){
+        const left = p.startedAt + p.minMs - now;
+        if (left > 0){
+          anyLocked = true;   // keeps the 1-second refresh running while the wait counts down
+          buttonHtml = `<button class="watch-btn" disabled style="min-width:78px;">Claim ${Math.ceil(left/1000)}s</button>`;
+        } else {
+          buttonHtml = `<button class="watch-btn" onclick="claimAdsterra('${net.key}')">Claim</button>`;
+        }
+      } else {
+        buttonHtml = `<button class="watch-btn" onclick="openAdsterra('${net.key}')">Open</button>`;
+      }
     } else {
       buttonHtml = `<button class="watch-btn" onclick="watchAd('${net.key}')">Watch</button>`;
     }
@@ -2246,13 +2265,16 @@ function renderAds(){
         <div class="icon">${net.icon}</div>
         <div class="info">
           <div class="name">${net.name}</div>
-          <div class="sub">+${cfg.points} points per ad</div>
+          <div class="sub">+${cfg.points} points per ${net.link ? 'visit' : 'ad'}</div>
           <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-          <div class="count">${count}/${cfg.limit} watched</div>
+          <div class="count">${count}/${cfg.limit} ${net.link ? 'done' : 'watched'}</div>
         </div>
         ${buttonHtml}
       </div>`;
   }).join('');
+
+  const adsterraNote = document.getElementById('adsterraNote');
+  if (adsterraNote) adsterraNote.style.display = AD_NETWORKS.some(n => n.link && adCfg(n.key).configured) ? 'block' : 'none';
 
   // Keep the countdowns ticking every second while any slot is on cooldown
   if (anyLocked && !adsCountdownInterval){
@@ -2326,6 +2348,109 @@ function watchAd(networkKey){
     };
     tryNext(0);
     return;
+  }
+}
+
+/* ============================================================
+   ADSTERRA SMARTLINKS (Earn > Watch Ads)
+   A Smartlink gives no "ad finished" signal, so it is a server-checked visit:
+   Open -> server starts a timed session and hands out the link -> wait the minimum seconds -> Claim.
+   ============================================================ */
+const ADSTERRA_PENDING_KEY = 'lfa_adsterra_pending';
+const ADSTERRA_PENDING_TTL_MS = 10 * 60 * 1000; // same as the server: an unclaimed visit expires after 10 min
+let adsterraPending = {};
+let adsterraBusy = false;
+(function loadAdsterraPending(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(ADSTERRA_PENDING_KEY) || '{}');
+    Object.keys(raw).forEach(k => { const p = raw[k]; if (p && Date.now() - p.startedAt < ADSTERRA_PENDING_TTL_MS) adsterraPending[k] = p; });
+  } catch(e){}
+})();
+function saveAdsterraPending(){
+  try{ localStorage.setItem(ADSTERRA_PENDING_KEY, JSON.stringify(adsterraPending)); } catch(e){}
+}
+function adsterraPendingFor(key){
+  const p = adsterraPending[key];
+  if (!p) return null;
+  if (Date.now() - p.startedAt > ADSTERRA_PENDING_TTL_MS || !state.user || String(p.userId) !== String(state.user.id)){
+    delete adsterraPending[key]; saveAdsterraPending();
+    return null;
+  }
+  return p;
+}
+
+async function openAdsterra(key){
+  if (state.banned || adsterraBusy) return;
+  adsterraBusy = true;
+  try{
+    const res = await fetch(`${API_BASE}/adsterra/start`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId: state.user.id, key, initData: getInitData() })
+    });
+    const r = await res.json();
+    if (r.success && r.url){
+      // use the server's clock for "how long ago did this start", so a wrong phone clock can't matter
+      const elapsed = Math.max(0, (r.serverNow || Date.now()) - (r.startedAtMs || Date.now()));
+      adsterraPending[key] = { startedAt: Date.now() - elapsed, minMs: (r.minSeconds || 15) * 1000, userId: String(state.user.id) };
+      saveAdsterraPending();
+      renderAds();
+      openExternal(r.url);
+    } else {
+      const msgs = {
+        disabled: "This offer is paused right now. Please try another one.",
+        banned: "Your account is suspended.",
+        login_required: "Please open the app from Telegram to use this.",
+      };
+      alert(msgs[r.reason] || "Something went wrong. Please try again.");
+    }
+  } catch(e){
+    console.error("Adsterra start failed:", e);
+    alert("Network error. Please try again.");
+  } finally { adsterraBusy = false; }
+}
+
+async function claimAdsterra(key){
+  if (state.banned || adsterraBusy) return;
+  adsterraBusy = true;
+  let paid = false;
+  try{
+    const res = await fetch(`${API_BASE}/adsterra/claim`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId: state.user.id, key, initData: getInitData() })
+    });
+    const r = await res.json();
+    if (r.success){
+      paid = true;
+      delete adsterraPending[key]; saveAdsterraPending();
+      state.adsToday[key] = { count: r.count || 0, unlockAt: r.unlockAt || null, day: new Date().toISOString().slice(0,10) };
+      const pts = r.pointsEarned || adCfg(key).points;
+      state.totalPoints += pts;
+      state.apFromAds += pts;
+    } else if (r.reason === 'too_fast'){
+      const p = adsterraPending[key];
+      if (p && r.waitMs){ p.startedAt = Date.now() + r.waitMs - p.minMs; saveAdsterraPending(); }
+      alert("Please stay a little longer on the offer, then tap Claim again.");
+    } else {
+      delete adsterraPending[key]; saveAdsterraPending();
+      const msgs = {
+        no_session: "This visit is no longer valid. Tap Open to start again.",
+        expired: "This visit expired. Tap Open to start again.",
+        limit: "You reached today's limit for this offer. Try again after the daily reset.",
+        cooldown: "This offer is on cooldown right now.",
+        disabled: "This offer is paused right now.",
+        banned: "Your account is suspended.",
+      };
+      alert(msgs[r.reason] || "Something went wrong. Please try again.");
+    }
+  } catch(e){
+    console.error("Adsterra claim failed:", e);
+    alert("Couldn't reach the server.");
+  } finally { adsterraBusy = false; }
+  if (paid){
+    renderEarn();
+    if (tg) tg.HapticFeedback?.notificationOccurred('success');
+  } else {
+    renderAds();
   }
 }
 
