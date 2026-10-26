@@ -191,6 +191,20 @@
   .upf-cell .n.ap{color:var(--gold);}
   .upf-cell .n.green{color:var(--up-color);}
 
+  /* Promo code card + maintenance screen */
+  .promo-card{margin-top:16px; padding:14px; background:var(--surface); border:1px solid var(--line); border-radius:18px;}
+  .promo-t{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px; margin-bottom:10px;}
+  .promo-row{display:flex; gap:8px;}
+  .promo-in{flex:1; min-width:0; padding:11px 12px; border-radius:12px; border:1px solid var(--line); background:var(--surface-raised, rgba(128,128,128,.08)); color:var(--text); font-size:14px; letter-spacing:1px; text-transform:uppercase; outline:none;}
+  .promo-btn{padding:11px 18px; border:none; border-radius:12px; background:linear-gradient(135deg,#B8791A,#D4A03A); color:#fff; font-weight:700; font-size:13.5px; cursor:pointer;}
+  .promo-btn:disabled{opacity:.6;}
+  .promo-msg{font-size:12.5px; margin-top:8px; min-height:16px;}
+  .promo-msg.ok{color:var(--up-color);} .promo-msg.err{color:var(--red,#e5484d);}
+  #maintOverlay{position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center; flex-direction:column; gap:12px; padding:30px; text-align:center; background:var(--bg, #0d1512); color:var(--text);}
+  #maintOverlay .mt-ic{font-size:54px;}
+  #maintOverlay .mt-t{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:22px;}
+  #maintOverlay .mt-s{font-size:14px; color:var(--text-muted); max-width:300px; line-height:1.5;}
+
   /* Settings gear + modal */
   .settings-gear{position:absolute; top:14px; right:14px; background:var(--surface-raised); border:1px solid var(--line); width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; cursor:pointer; color:var(--text-muted);}
   .settings-overlay{position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:900; display:none; align-items:flex-end; justify-content:center;}
@@ -1123,6 +1137,15 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
       </div>
     </div>
 
+    <div class="promo-card">
+      <div class="promo-t">🎁 Promo code</div>
+      <div class="promo-row">
+        <input id="promoInput" class="promo-in" placeholder="Enter code" maxlength="24" autocapitalize="characters" autocomplete="off">
+        <button class="promo-btn" id="promoBtn" onclick="redeemPromo()">Redeem</button>
+      </div>
+      <div class="promo-msg" id="promoMsg"></div>
+    </div>
+
   </div>
 
   <!-- ================= EDIT PROFILE (hidden page) ================= -->
@@ -1317,6 +1340,8 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
     <div id="userProfileBody" style="margin-top:14px;"></div>
   </div>
 
+  <div id="maintOverlay"><div class="mt-ic">🛠️</div><div class="mt-t">Under maintenance</div><div class="mt-s" id="maintMsg">We are making improvements. Please come back soon.</div></div>
+
   <div class="bottom-nav">
     <button class="nav-item active" onclick="showPage('home', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5h4v5"/></svg><span>Home</span></button>
     <button class="nav-item" onclick="showPage('ads', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg><span>Earn</span></button>
@@ -1491,8 +1516,9 @@ async function loadAdConfig(){
     if (d && typeof d === 'object') adConfig = d;
   } catch(e){ console.log('ad-config unavailable, using defaults'); }
 }
-const REFERRAL_ELIGIBILITY_ADS = 100;
-const REFERRAL_ELIGIBILITY_CHECKINS = 7;
+let REFERRAL_ELIGIBILITY_ADS = 100;       // updated from the server (Admin > Rules)
+let REFERRAL_ELIGIBILITY_CHECKINS = 7;
+let CHECKIN_RULES = { base: 10, step: 5, max: 0 };
 
 function getInitData(){
   return tg && tg.initData ? tg.initData : null;
@@ -1959,7 +1985,54 @@ function openWeekPopup(){
 
 function nextCheckinPoints(){
   const streak = state.checkin.streak || 0;
-  return 10 + (streak > 0 ? streak * 5 : 0);
+  let r = CHECKIN_RULES.base + (streak > 0 ? streak * CHECKIN_RULES.step : 0);
+  if (CHECKIN_RULES.max > 0) r = Math.min(r, CHECKIN_RULES.max);
+  return r;
+}
+
+// App config from the server: maintenance mode + the rules the admin can change
+async function loadAppConfig(){
+  try{
+    const res = await fetch(`${API_BASE}/maintenance`);
+    const c = await res.json();
+    const ov = document.getElementById('maintOverlay');
+    if (ov){
+      document.getElementById('maintMsg').textContent = c.message || 'We are making improvements. Please come back soon.';
+      ov.style.display = c.on ? 'flex' : 'none';
+    }
+    if (c.rules){
+      REFERRAL_ELIGIBILITY_ADS = c.rules.referralEligibilityAds;
+      REFERRAL_ELIGIBILITY_CHECKINS = c.rules.referralEligibilityCheckins;
+      CHECKIN_RULES = { base: c.rules.checkinBase, step: c.rules.checkinStep, max: c.rules.checkinMax };
+    }
+  } catch(e){ /* keep the last known values */ }
+}
+setInterval(loadAppConfig, 60000);
+
+async function redeemPromo(){
+  const input = document.getElementById('promoInput'), msg = document.getElementById('promoMsg'), btn = document.getElementById('promoBtn');
+  const code = (input.value || '').trim();
+  msg.className = 'promo-msg';
+  if (!code){ msg.textContent = 'Enter a code first.'; msg.classList.add('err'); return; }
+  btn.disabled = true; msg.textContent = 'Checking…';
+  try{
+    const res = await fetch(`${API_BASE}/promo/redeem`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId: state.user.id, code, initData: getInitData() })
+    });
+    const r = await res.json().catch(()=>({}));
+    if (r.success){
+      const parts = []; if (r.ap) parts.push(`+${r.ap} AP`); if (r.up) parts.push(`+${r.up} UP`);
+      msg.textContent = `🎉 Code accepted! ${parts.join(' and ')} added.`; msg.classList.add('ok');
+      input.value = '';
+      if (typeof refreshBalances === 'function') refreshBalances();
+    } else {
+      const reasons = { invalid_code:'That code is not valid.', expired:'This code has expired.', used_up:'This code has been fully used.', already_redeemed:'You already used this code.', banned:'Your account is suspended.', maintenance:'The app is under maintenance. Try again later.' };
+      const k = r.reason || r.error;
+      msg.textContent = reasons[k] || 'Could not redeem this code. Try again.'; msg.classList.add('err');
+    }
+  } catch(e){ msg.textContent = "Couldn't reach the server."; msg.classList.add('err'); }
+  btn.disabled = false;
 }
 
 function renderCheckin(){
@@ -3687,10 +3760,10 @@ async function toggleSeasonParticipants(boxId, el){
   } catch(e){ panel.innerHTML = `<div style="font-size:11.5px;color:var(--red);">Could not load participants.</div>`; }
 }
 
-const AP_ACTIVITY_TYPES = ['ad','task','shortlink','checkin','referral_bonus','referral_commission'];
-const UP_ACTIVITY_TYPES = ['offerwall'];
-const ACTIVITY_ICONS = { ad:'▶', task:'✓', shortlink:'🔗', checkin:'🔥', referral_bonus:'◎', referral_commission:'◎', offerwall:'$' };
-const ACTIVITY_LABELS = { ad:'Watched ad', task:'Completed task', shortlink:'Shortlink', checkin:'Daily check-in', referral_bonus:'Referral bonus', referral_commission:'Referral commission', offerwall:'Offerwall' };
+const AP_ACTIVITY_TYPES = ['ad','task','shortlink','checkin','referral_bonus','referral_commission','admin_ap','prize_ap','promo_ap'];
+const UP_ACTIVITY_TYPES = ['offerwall','admin_up','prize_up','promo_up'];
+const ACTIVITY_ICONS = { ad:'▶', task:'✓', shortlink:'🔗', checkin:'🔥', referral_bonus:'◎', referral_commission:'◎', offerwall:'$', admin_ap:'⚙', admin_up:'⚙', prize_ap:'🏆', prize_up:'🏆', promo_ap:'🎁', promo_up:'🎁' };
+const ACTIVITY_LABELS = { ad:'Watched ad', task:'Completed task', shortlink:'Shortlink', checkin:'Daily check-in', referral_bonus:'Referral bonus', referral_commission:'Referral commission', offerwall:'Offerwall', admin_ap:'Balance update', admin_up:'Balance update', prize_ap:'Leaderboard prize', prize_up:'Leaderboard prize', promo_ap:'Promo code', promo_up:'Promo code' };
 
 function activityRowsHtml(list, kind){
   const color = kind === 'up' ? 'var(--up-color)' : 'var(--gold)';
@@ -3701,7 +3774,7 @@ function activityRowsHtml(list, kind){
           <div class="name">${ACTIVITY_LABELS[a.type]||a.type}</div>
           <div class="sub">${a.detail||''} · ${a.createdAt ? new Date(a.createdAt).toLocaleString() : '—'}</div>
         </div>
-        <div style="font-weight:700; color:${color}; font-family:'Space Grotesk',sans-serif;">+${a.points}</div>
+        <div style="font-weight:700; color:${color}; font-family:'Space Grotesk',sans-serif;">${a.points >= 0 ? '+' : ''}${a.points}</div>
       </div>`).join('');
 }
 async function fetchActivity(){
@@ -3766,6 +3839,9 @@ async function submitWithdraw(){
       withdraw_closed: "Withdrawals are currently closed.",
       invalid_address: "That wallet address looks wrong. It must start with 0x and be 42 characters long.",
       bad_network: "Only BEP20 is supported.",
+      wallet_blocked: "This wallet address can't be used. Please use a different address or contact support.",
+      below_minimum: `The minimum withdrawal is $${result.min || ''}. Keep earning and try again.`,
+      maintenance: "The app is under maintenance. Please try again later.",
       banned: "Your account is suspended.",
       user_not_found: "Account not found. Close the app and open it again from Telegram.",
       invalid_init_data: "Your session expired. Close the app and open it again from Telegram, then retry.",
@@ -3784,6 +3860,7 @@ async function submitWithdraw(){
 /* ============================================================
    INIT
    ============================================================ */
+loadAppConfig().then(() => { try { if (state.checkin) renderCheckin(); } catch(e){} });
 loadHome();
 </script>
 </body>
