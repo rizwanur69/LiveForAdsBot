@@ -110,6 +110,7 @@
   .eh-title{font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:700; letter-spacing:-.4px;}
   .eh-sub{font-size:12.5px; color:var(--text-muted); margin-top:4px; line-height:1.5;}
   .earn-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0 10px;}
+  .earn-grid > .earn-card:last-child:nth-child(odd){grid-column:1 / -1;}
   .earn-card{
     --c:#B07A16; --cs:rgba(176,122,22,.20); --cb:rgba(176,122,22,.55);
     position:relative; display:flex; flex-direction:column; align-items:center; text-align:center; gap:5px;
@@ -122,6 +123,7 @@
   .earn-card:active{transform:scale(.96); box-shadow:0 3px 10px rgba(0,0,0,.25);}
   .earn-card.ec-rose{--c:#D6456B; --cs:rgba(214,69,107,.20); --cb:rgba(214,69,107,.55);}
   .earn-card.ec-teal{--c:#0F9C86; --cs:rgba(15,156,134,.20); --cb:rgba(15,156,134,.55);}
+  .earn-card.ec-blue{--c:#2F7DE1; --cs:rgba(47,125,225,.22); --cb:rgba(47,125,225,.6);}
   .earn-card.ec-indigo{--c:#5B6CE0; --cs:rgba(91,108,224,.22); --cb:rgba(91,108,224,.6);}
   .ec-badge{position:absolute; top:10px; right:10px; font-size:9.5px; font-weight:800; letter-spacing:.8px; padding:3px 9px; border-radius:20px; color:#FFF8E6; background:linear-gradient(135deg, var(--c), var(--cb)); box-shadow:0 2px 8px var(--cs);}
   .ec-icon{width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--c); background:var(--cs); border:1px solid var(--cb); box-shadow:0 0 24px var(--cs); margin-bottom:4px;}
@@ -932,6 +934,14 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
           <span class="ec-rail"></span>
           <span class="ec-foot"><span class="ec-unit up">UP</span><span class="ec-stat" id="ecGaintwallStat">0</span></span>
         </button>
+        <button class="earn-card ec-blue" id="earnCardClickwall" onclick="setEarnSubTab('clickwall')">
+          <span class="ec-badge">NEW</span>
+          <span class="ec-icon"><svg viewBox="0 0 24 24"><path d="M9 3 5 14h5l-1 7 10-12h-6l2-6z"/></svg><span class="ec-num">3</span></span>
+          <span class="ec-title">REWARD WALL 3</span>
+          <span class="ec-desc">Offers, games and surveys</span>
+          <span class="ec-rail"></span>
+          <span class="ec-foot"><span class="ec-unit up">UP</span><span class="ec-stat" id="ecClickwallStat">0</span></span>
+        </button>
         <button class="earn-card ec-teal" id="earnCardAds" onclick="setEarnSubTab('ads')">
           <span class="ec-badge">DAILY</span>
           <span class="ec-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></svg></span>
@@ -978,6 +988,20 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
         <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Gaintwall didn't load. Try again below.</div>
         <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('gaintwall')">Reload</button>
         <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('gaintwall')">Open directly</button>
+      </div>
+    </div>
+
+    <div class="earn-subpage" id="earnSubpage-clickwall" style="display:none;">
+      <div class="earn-section-head-premium up">
+        <div class="eshp-title">REWARD WALL 3</div>
+        <div class="eshp-val" id="clickwallSubtotal">0 UP</div>
+      </div>
+      <div class="ads-note">Complete offers for real USD value. 100 UP = 1 USDT.</div>
+      <iframe id="clickwallFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
+      <div id="clickwallFallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
+        <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Reward Wall 3 didn't load. Try again below.</div>
+        <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('clickwall')">Reload</button>
+        <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('clickwall')">Open directly</button>
       </div>
     </div>
 
@@ -1382,6 +1406,7 @@ const LFA_WEBPAGE_URL = "https://rizwanur69.github.io/LiveForAdsWeb/";
 const LFA_WHITEPAPER_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/whitepaper.pdf";
 const CPALEAD_OFFERWALL_URL = "https://www.akamaicdn.org/wall/bPjTh";
 const GAINTWALL_API_KEY = "j5HQjUCvHDb4qLorEjjajfg1g8hTSpXF"; // Gaintwall > Placements > your placement > API key (the code next to "Edit Placement")
+const CLICKWALL_APP_ID = "10812"; // ClickWall dashboard > your placement > App ID (the number in the iframe link)
 const LFA_TERMS_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/terms-and-privacy.pdf";
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { tg.ready(); tg.expand(); }
@@ -1398,12 +1423,13 @@ function getAdsgram(){
   }
   return AdsgramController;
 }
-/* Earn hub: 4 cards. The admin can switch each reward wall on/off */
+/* Earn hub: 5 cards. The admin can switch each reward wall on/off */
 const WALL_TABS = [
   { tab:'offerwall', wall:'cpalead',   label:'REWARD WALL 1', card:'earnCardOfferwall', sub:'offerwallSubtotal', stat:'ecOfferwallStat' },
   { tab:'gaintwall', wall:'gaintwall', label:'REWARD WALL 2', card:'earnCardGaintwall', sub:'gaintwallSubtotal', stat:'ecGaintwallStat' },
+  { tab:'clickwall', wall:'clickwall', label:'REWARD WALL 3', card:'earnCardClickwall', sub:'clickwallSubtotal', stat:'ecClickwallStat' },
 ];
-const EARN_TITLES = { offerwall:'REWARD WALL 1', gaintwall:'REWARD WALL 2', ads:'WATCH ADS', links:'SHORTLINKS' };
+const EARN_TITLES = { offerwall:'REWARD WALL 1', gaintwall:'REWARD WALL 2', clickwall:'REWARD WALL 3', ads:'WATCH ADS', links:'SHORTLINKS' };
 let currentEarnTab = 'hub';
 function wallEnabled(wall){
   const c = ((state.settings || {}).offerwalls || {})[wall];
@@ -1442,7 +1468,7 @@ function setEarnSubTab(tab){
   if (wt && !wallEnabled(wt.wall)) tab = 'hub';   // admin switched this wall off
   if (!EARN_TITLES[tab]) tab = 'hub';
   currentEarnTab = tab;
-  ['offerwall','gaintwall','ads','links'].forEach(t=>{
+  ['offerwall','gaintwall','clickwall','ads','links'].forEach(t=>{
     document.getElementById('earnSubpage-'+t).style.display = tab === t ? 'block' : 'none';
   });
   document.getElementById('earnHub').style.display = tab === 'hub' ? 'block' : 'none';
@@ -1452,7 +1478,7 @@ function setEarnSubTab(tab){
   if (tab === 'links') loadShortlinks();
   if (wt){
     updateEarnTotals();
-    loadOfferwallFrame(tab);       // key 'offerwall' or 'gaintwall'
+    loadOfferwallFrame(tab);       // key 'offerwall', 'gaintwall' or 'clickwall'
     refreshBalances().then(updateEarnTotals);
   }
   if (tab === 'hub') window.scrollTo({ top:0 });
@@ -2320,7 +2346,8 @@ function renderEarn(){
 const wallTimers = {};
 const WALLS = {
   offerwall: { frame:'offerwallFrame', fb:'offerwallFallback', src:()=>`${CPALEAD_OFFERWALL_URL}?subid=${state.user.id}` },
-  gaintwall: { frame:'gaintwallFrame', fb:'gaintwallFallback', src:()=>`https://gaintwall.com/offerwall?apiKey=${encodeURIComponent(GAINTWALL_API_KEY)}&userId=${encodeURIComponent(String(state.user.id))}` }
+  gaintwall: { frame:'gaintwallFrame', fb:'gaintwallFallback', src:()=>`https://gaintwall.com/offerwall?apiKey=${encodeURIComponent(GAINTWALL_API_KEY)}&userId=${encodeURIComponent(String(state.user.id))}` },
+  clickwall: { frame:'clickwallFrame', fb:'clickwallFallback', src:()=>`https://clickwall.net/app/iframe/${encodeURIComponent(CLICKWALL_APP_ID)}/${encodeURIComponent(String(state.user.id))}` }
 };
 
 function getOfferwallSrc(key='offerwall'){ return WALLS[key].src(); }
@@ -3686,10 +3713,10 @@ async function loadWithdrawPage(){
   loadWithdrawHistory();
 }
 
-// Reward Wall 1 + Reward Wall 2 (+ other UP) = all UP the user holds
+// Reward Wall 1 + 2 + 3 (+ other UP) = all UP the user holds
 function getUpParts(){
   const bw = withdrawInfo.upByWall || {};
-  const items = [['REWARD WALL 1', bw.cpalead || 0], ['REWARD WALL 2', bw.gaintwall || 0]];
+  const items = [['REWARD WALL 1', bw.cpalead || 0], ['REWARD WALL 2', bw.gaintwall || 0], ['REWARD WALL 3', bw.clickwall || 0]];
   if ((withdrawInfo.upOther || 0) > 0) items.push(['OTHER UP', withdrawInfo.upOther]);
   return items;
 }
