@@ -782,23 +782,20 @@ body{background:radial-gradient(120% 40% at 50% -6%, rgba(var(--accRgb),.20), tr
 .pfl-top .dot{width:8px; height:8px; border-radius:50%; flex:none; background:var(--green,#1F9D5C); box-shadow:0 0 10px var(--green,#1F9D5C); animation:pflPulse 1.6s ease infinite;}
 .pfl-top small{margin-left:auto; font-weight:500; font-size:11px; color:var(--text-muted);}
 @keyframes pflPulse{0%,100%{opacity:1}50%{opacity:.35}}
-.pfl-view{height:132px; overflow:hidden; -webkit-mask-image:linear-gradient(transparent, #000 9%, #000 91%, transparent); mask-image:linear-gradient(transparent, #000 9%, #000 91%, transparent);}
-.pfl-view.static{height:auto; -webkit-mask-image:none; mask-image:none;}
-.pfl-track{animation:pflScroll var(--dur,30s) linear infinite; will-change:transform; backface-visibility:hidden;}
-.pfl-view.static .pfl-track{animation:none;}
-.pfl-view:active .pfl-track{animation-play-state:paused;}
-@keyframes pflScroll{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,-50%,0)}}
-.pfl-row{display:flex; align-items:center; gap:10px; height:44px; padding:0 2px; border-bottom:1px solid rgba(128,128,128,.14);}
-.pfl-row:last-child{border-bottom:none;}
-.pfl-ic{width:28px; height:28px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; font-family:'Space Grotesk',sans-serif; color:var(--up-color); background:linear-gradient(145deg, rgba(31,157,92,.20), rgba(31,157,92,.06)); border:1px solid rgba(31,157,92,.35); box-shadow:none;}
+.pfl-stage{position:relative; height:56px; overflow:hidden;}
+.pfl-row{position:absolute; inset:0; display:flex; align-items:center; gap:10px; padding:0 2px; will-change:transform,opacity; transition:transform .7s cubic-bezier(.22,1,.36,1), opacity .7s ease;}
+.pfl-row.enter{transform:translate3d(0,100%,0); opacity:0;}
+.pfl-row.now{transform:translate3d(0,0,0); opacity:1;}
+.pfl-row.leave{transform:translate3d(0,-100%,0); opacity:0;}
+.pfl-ic{width:36px; height:36px; border-radius:50%; flex:none; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; font-family:'Space Grotesk',sans-serif; color:var(--up-color); background:linear-gradient(145deg, rgba(31,157,92,.20), rgba(31,157,92,.06)); border:1px solid rgba(31,157,92,.35);}
+.pfl-ic img{width:100%; height:100%; object-fit:cover; display:block;}
 .pfl-mid{flex:1; min-width:0;}
-.pfl-l1{font-size:13px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.pfl-l1 b{color:var(--text); font-weight:700;}
+.pfl-l1{font-size:13.5px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .pfl-sub{margin-top:1px; font-size:10.5px; color:var(--text-muted);}
-.pfl-tx{display:block; margin-top:3px; font-size:11px; color:var(--acc); text-decoration:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-family:'Space Grotesk',sans-serif;}
-.pfl-r{text-align:right; flex:none;}
-.pfl-r b{display:block; font-family:'Space Grotesk',sans-serif; font-size:13.5px; color:var(--green,#1F9D5C);}
-.pfl-r small{font-size:10px; color:var(--text-muted);}
+.pfl-chip{flex:none; display:inline-flex; align-items:center; gap:5px; padding:3px 7px 3px 3px; border-radius:20px; border:1px solid rgba(var(--accRgb),.28); background:rgba(var(--accRgb),.07); text-decoration:none; color:var(--text-muted); font-family:ui-monospace,Menlo,Consolas,monospace; font-size:9.5px; line-height:1;}
+.pfl-chip .bsc{padding:3px 5px; border-radius:14px; background:#F3BA2F; color:#1b1500; font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:8.5px; letter-spacing:.3px;}
+.pfl-r{text-align:right; flex:none; min-width:48px;}
+.pfl-r b{display:block; font-family:'Space Grotesk',sans-serif; font-size:14.5px; color:var(--green,#1F9D5C);}
 
 /* ===== Dark mode (Settings > Theme > Dark). Ivory stays the default look. ===== */
 html:has(body.dark-theme){background:#09110F;}
@@ -866,7 +863,7 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
 
     <div class="payflow" id="payFlow" style="display:none;">
       <div class="pfl-top"><span class="dot"></span><span>Live payments</span><small id="pflCount"></small></div>
-      <div class="pfl-view" id="pflView"><div class="pfl-track" id="pflTrack"></div></div>
+      <div class="pfl-stage" id="pflStage"></div>
     </div>
 
     <div class="reward-card">
@@ -1706,22 +1703,44 @@ async function loadPublicStats(){
     }
   } catch(e){ console.error("Could not load public stats:", e); }
 }
-// Home: running list of every payment made so far (newest first) - full name, amount, time
+// Home: payments are shown one at a time and swap smoothly (newest first)
+let pflTimer = null;
+function openExt(href){ if (tg && tg.openLink) { tg.openLink(href); return false; } return true; }
+function pflRow(r){
+  const nm = String(r.name || 'A member');
+  const initial = escHtmlRw((Array.from(nm)[0] || 'U').toUpperCase());
+  const av = r.tgId ? `<img src="${API_BASE}/avatar/${encodeURIComponent(r.tgId)}" alt="" onerror="this.parentElement.textContent='${initial}'">` : initial;
+  const h = String(r.txHash || '');
+  const short = h ? h.slice(0, 6) + '…' + h.slice(-4) : '';
+  const chip = h
+    ? `<a class="pfl-chip" ${r.txUrl ? `href="${escHtmlRw(r.txUrl)}" target="_blank" rel="noopener" onclick="return openExt(this.href)"` : ''}><span class="bsc">BSC</span>${escHtmlRw(short)}</a>`
+    : `<span class="pfl-chip"><span class="bsc">BSC</span>paid</span>`;
+  return `<div class="pfl-ic">${av}</div><div class="pfl-mid"><div class="pfl-l1">${escHtmlRw(nm)}</div><div class="pfl-sub">${escHtmlRw(timeAgoShort(r.at))}</div></div>${chip}<div class="pfl-r"><b>${fmtMoney(r.amount)}</b></div>`;
+}
 function renderTrust(){
   const flow = document.getElementById('payFlow');
   if (!flow) return;
   const feed = state.payoutFeed || [];
+  clearInterval(pflTimer);
   if (!feed.length){ flow.style.display = 'none'; return; }
-  const rowHtml = r => {
-    const nm = String(r.name || 'A member');
-    return `<div class="pfl-row"><div class="pfl-ic">${escHtmlRw((Array.from(nm)[0] || 'U').toUpperCase())}</div><div class="pfl-mid"><div class="pfl-l1"><b>${escHtmlRw(nm)}</b> <span style="color:var(--text-muted);font-size:11px;">was paid</span></div><div class="pfl-sub">${escHtmlRw(timeAgoShort(r.at))}</div></div><div class="pfl-r"><b>${fmtMoney(r.amount)}</b></div></div>`;
+  const stage = document.getElementById('pflStage');
+  stage.innerHTML = '';
+  let idx = 0;
+  const show = (i, first) => {
+    const el = document.createElement('div');
+    el.className = 'pfl-row ' + (first ? 'now' : 'enter');
+    el.innerHTML = pflRow(feed[i]);
+    const old = stage.querySelector('.pfl-row.now');
+    stage.appendChild(el);
+    if (!first){
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        el.className = 'pfl-row now';
+        if (old){ old.className = 'pfl-row leave'; setTimeout(() => old.remove(), 800); }
+      }));
+    }
   };
-  const html = feed.map(rowHtml).join('');
-  const view = document.getElementById('pflView'), track = document.getElementById('pflTrack');
-  const run = feed.length > 3; // 3 or fewer: just show them; more: scroll one after another
-  view.classList.toggle('static', !run);
-  track.innerHTML = run ? html + html : html; // doubled so the loop has no jump
-  track.style.setProperty('--dur', Math.max(14, feed.length * 3.6) + 's');
+  show(0, true);
+  if (feed.length > 1) pflTimer = setInterval(() => { idx = (idx + 1) % feed.length; show(idx, false); }, 3800);
   document.getElementById('pflCount').textContent = feed.length + ' so far';
   flow.style.display = 'block';
 }
@@ -1993,7 +2012,7 @@ function nextCheckinPoints(){
 // App config from the server: maintenance mode + the rules the admin can change
 async function loadAppConfig(){
   try{
-    const res = await fetch(`${API_BASE}/maintenance`);
+    const res = await fetch(`${API_BASE}/maintenance?userId=${encodeURIComponent(state.user.id)}`);
     const c = await res.json();
     const ov = document.getElementById('maintOverlay');
     if (ov){
@@ -2700,6 +2719,19 @@ async function openUserProfile(tgId){
     if (!res.ok) throw new Error('not found');
     const u = await res.json();
     const num = v => (v || 0).toLocaleString();
+    if (u.hidden){
+      body.innerHTML = `
+        <div class="hero" id="upfCover">
+          <div class="hero-av">${avatarHtml(u)}</div>
+          <div class="hero-txt"><div class="hero-name">${escHtmlRw(u.name)}</div></div>
+        </div>
+        <div class="upf-bal">
+          <div class="ap"><div class="l">AP</div><div class="v">${num(u.points)}</div></div>
+          <div class="up"><div class="l">UP</div><div class="v">${num(u.up)}</div></div>
+        </div>`;
+      setCover(document.getElementById('upfCover'), u.coverUrl || u.avatarUrl || (u.hasTelegramAvatar ? `${API_BASE}/avatar/${u.tgId}` : null));
+      return;
+    }
     const coverSrc = u.coverUrl || u.avatarUrl || (u.hasTelegramAvatar ? `${API_BASE}/avatar/${u.tgId}` : null);
     const cell = (k, n, cls) => `<div class="upf-cell"><div class="k">${k}</div><div class="n ${cls||''}">${n}</div></div>`;
     body.innerHTML = `
