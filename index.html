@@ -124,6 +124,7 @@
   .earn-card.ec-rose{--c:#D6456B; --cs:rgba(214,69,107,.20); --cb:rgba(214,69,107,.55);}
   .earn-card.ec-teal{--c:#0F9C86; --cs:rgba(15,156,134,.20); --cb:rgba(15,156,134,.55);}
   .earn-card.ec-blue{--c:#2F7DE1; --cs:rgba(47,125,225,.22); --cb:rgba(47,125,225,.6);}
+  .earn-card.ec-violet{--c:#8A4FD8; --cs:rgba(138,79,216,.22); --cb:rgba(138,79,216,.6);}
   .earn-card.ec-indigo{--c:#5B6CE0; --cs:rgba(91,108,224,.22); --cb:rgba(91,108,224,.6);}
   .ec-badge{position:absolute; top:10px; right:10px; font-size:9.5px; font-weight:800; letter-spacing:.8px; padding:3px 9px; border-radius:20px; color:#FFF8E6; background:linear-gradient(135deg, var(--c), var(--cb)); box-shadow:0 2px 8px var(--cs);}
   .ec-icon{width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--c); background:var(--cs); border:1px solid var(--cb); box-shadow:0 0 24px var(--cs); margin-bottom:4px;}
@@ -942,6 +943,14 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
           <span class="ec-rail"></span>
           <span class="ec-foot"><span class="ec-unit up">UP</span><span class="ec-stat" id="ecClickwallStat">0</span></span>
         </button>
+        <button class="earn-card ec-violet" id="earnCardTimewall" onclick="setEarnSubTab('timewall')">
+          <span class="ec-badge">NEW</span>
+          <span class="ec-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="ec-num">4</span></span>
+          <span class="ec-title">REWARD WALL 4</span>
+          <span class="ec-desc">Tasks, surveys and offers</span>
+          <span class="ec-rail"></span>
+          <span class="ec-foot"><span class="ec-unit up">UP</span><span class="ec-stat" id="ecTimewallStat">0</span></span>
+        </button>
         <button class="earn-card ec-teal" id="earnCardAds" onclick="setEarnSubTab('ads')">
           <span class="ec-badge">DAILY</span>
           <span class="ec-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></svg></span>
@@ -1002,6 +1011,20 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
         <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Reward Wall 3 didn't load. Try again below.</div>
         <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('clickwall')">Reload</button>
         <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('clickwall')">Open directly</button>
+      </div>
+    </div>
+
+    <div class="earn-subpage" id="earnSubpage-timewall" style="display:none;">
+      <div class="earn-section-head-premium up">
+        <div class="eshp-title">REWARD WALL 4</div>
+        <div class="eshp-val" id="timewallSubtotal">0 UP</div>
+      </div>
+      <div class="ads-note">Complete tasks and surveys for real USD value. 100 UP = 1 USDT.</div>
+      <iframe id="timewallFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
+      <div id="timewallFallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
+        <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Reward Wall 4 didn't load. Try again below.</div>
+        <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('timewall')">Reload</button>
+        <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('timewall')">Open directly</button>
       </div>
     </div>
 
@@ -1406,6 +1429,7 @@ const LFA_WEBPAGE_URL = "https://rizwanur69.github.io/LiveForAdsWeb/";
 const LFA_WHITEPAPER_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/whitepaper.pdf";
 const CPALEAD_OFFERWALL_URL = "https://www.akamaicdn.org/wall/bPjTh";
 const GAINTWALL_API_KEY = "j5HQjUCvHDb4qLorEjjajfg1g8hTSpXF"; // Gaintwall > Placements > your placement > API key (the code next to "Edit Placement")
+const TIMEWALL_PLACEMENT_ID = "7bb6852112cbec56"; // TimeWall > Placements > your placement > Integration (the oid / placement id)
 const CLICKWALL_APP_ID = "10812"; // ClickWall dashboard > your placement > App ID (the number in the iframe link)
 const LFA_TERMS_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/terms-and-privacy.pdf";
 const tg = window.Telegram ? window.Telegram.WebApp : null;
@@ -1428,8 +1452,9 @@ const WALL_TABS = [
   { tab:'offerwall', wall:'cpalead',   label:'REWARD WALL 1', card:'earnCardOfferwall', sub:'offerwallSubtotal', stat:'ecOfferwallStat' },
   { tab:'gaintwall', wall:'gaintwall', label:'REWARD WALL 2', card:'earnCardGaintwall', sub:'gaintwallSubtotal', stat:'ecGaintwallStat' },
   { tab:'clickwall', wall:'clickwall', label:'REWARD WALL 3', card:'earnCardClickwall', sub:'clickwallSubtotal', stat:'ecClickwallStat' },
+  { tab:'timewall', wall:'timewall', label:'REWARD WALL 4', card:'earnCardTimewall', sub:'timewallSubtotal', stat:'ecTimewallStat' },
 ];
-const EARN_TITLES = { offerwall:'REWARD WALL 1', gaintwall:'REWARD WALL 2', clickwall:'REWARD WALL 3', ads:'WATCH ADS', links:'SHORTLINKS' };
+const EARN_TITLES = { offerwall:'REWARD WALL 1', gaintwall:'REWARD WALL 2', clickwall:'REWARD WALL 3', timewall:'REWARD WALL 4', ads:'WATCH ADS', links:'SHORTLINKS' };
 let currentEarnTab = 'hub';
 function wallEnabled(wall){
   const c = ((state.settings || {}).offerwalls || {})[wall];
@@ -1468,7 +1493,7 @@ function setEarnSubTab(tab){
   if (wt && !wallEnabled(wt.wall)) tab = 'hub';   // admin switched this wall off
   if (!EARN_TITLES[tab]) tab = 'hub';
   currentEarnTab = tab;
-  ['offerwall','gaintwall','clickwall','ads','links'].forEach(t=>{
+  ['offerwall','gaintwall','clickwall','timewall','ads','links'].forEach(t=>{
     document.getElementById('earnSubpage-'+t).style.display = tab === t ? 'block' : 'none';
   });
   document.getElementById('earnHub').style.display = tab === 'hub' ? 'block' : 'none';
@@ -2347,7 +2372,8 @@ const wallTimers = {};
 const WALLS = {
   offerwall: { frame:'offerwallFrame', fb:'offerwallFallback', src:()=>`${CPALEAD_OFFERWALL_URL}?subid=${state.user.id}` },
   gaintwall: { frame:'gaintwallFrame', fb:'gaintwallFallback', src:()=>`https://gaintwall.com/offerwall?apiKey=${encodeURIComponent(GAINTWALL_API_KEY)}&userId=${encodeURIComponent(String(state.user.id))}` },
-  clickwall: { frame:'clickwallFrame', fb:'clickwallFallback', src:()=>`https://clickwall.net/app/iframe/${encodeURIComponent(CLICKWALL_APP_ID)}/${encodeURIComponent(String(state.user.id))}` }
+  clickwall: { frame:'clickwallFrame', fb:'clickwallFallback', src:()=>`https://clickwall.net/app/iframe/${encodeURIComponent(CLICKWALL_APP_ID)}/${encodeURIComponent(String(state.user.id))}` },
+  timewall: { frame:'timewallFrame', fb:'timewallFallback', src:()=>`https://timewall.io/users/login?oid=${encodeURIComponent(TIMEWALL_PLACEMENT_ID)}&uid=${encodeURIComponent(String(state.user.id))}` }
 };
 
 function getOfferwallSrc(key='offerwall'){ return WALLS[key].src(); }
@@ -3716,7 +3742,7 @@ async function loadWithdrawPage(){
 // Reward Wall 1 + 2 + 3 (+ other UP) = all UP the user holds
 function getUpParts(){
   const bw = withdrawInfo.upByWall || {};
-  const items = [['REWARD WALL 1', bw.cpalead || 0], ['REWARD WALL 2', bw.gaintwall || 0], ['REWARD WALL 3', bw.clickwall || 0]];
+  const items = [['REWARD WALL 1', bw.cpalead || 0], ['REWARD WALL 2', bw.gaintwall || 0], ['REWARD WALL 3', bw.clickwall || 0], ['REWARD WALL 4', bw.timewall || 0]];
   if ((withdrawInfo.upOther || 0) > 0) items.push(['OTHER UP', withdrawInfo.upOther]);
   return items;
 }
