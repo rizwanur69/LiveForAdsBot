@@ -203,9 +203,9 @@
   .lb-row.you, .podium-item.you{border-color:var(--gold) !important; animation:youGlow 2.4s ease-in-out infinite;}
   @keyframes youGlow{0%,100%{filter:drop-shadow(0 0 5px rgba(242,179,61,.45));} 50%{filter:drop-shadow(0 0 14px rgba(242,179,61,.95));}}
   @media (prefers-reduced-motion: reduce){ .lb-row.you, .podium-item.you{animation:none; filter:drop-shadow(0 0 8px rgba(242,179,61,.7));} }
-  /* Another person's profile: their photo/cover is the background of the details block (30% blur),
-     and the text + boxes float on top of it as soft glass. Blur strength = percent x 0.2px. */
-  .upf-details{--upf-blur:6px; position:relative; margin:16px -20px 0; padding:6px 20px 120px; border-radius:26px 26px 0 0; overflow:hidden; min-height:60vh; isolation:isolate;}
+  /* Another person's profile: their photo/cover is the background of the details block (10% blur),
+     and the text + boxes float on top of it as soft glass. Blur strength = percent x 0.2px (covers 2% = 0.4px, background 10% = 2px). */
+  .upf-details{--upf-blur:2px; position:relative; margin:16px -20px 0; padding:6px 20px 120px; border-radius:26px 26px 0 0; overflow:hidden; min-height:60vh; isolation:isolate;}
   .upf-dbg{position:absolute; inset:-24px; z-index:-2; background-size:cover; background-position:center; filter:blur(var(--upf-blur)) saturate(1.1); transform:scale(1.06); opacity:0; transition:opacity .4s;}
   .upf-dbg.on{opacity:1;}
   .upf-details::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.34));}
@@ -722,7 +722,7 @@
   /* ===== Profile redesign ===== */
   /* Cover hero: the photo fills the whole box (Twitter/Facebook style); name + ID glow so they read on any picture */
   .hero{position:relative; aspect-ratio:16/9; border-radius:20px; overflow:hidden; display:flex; align-items:flex-end; gap:12px; padding:14px; border:1px solid var(--line); background:linear-gradient(135deg, var(--gold), #E9C46A 55%, var(--up-color)); box-shadow:0 10px 28px rgba(0,0,0,.28);}
-  .hero .hero-img{position:absolute; inset:0; background-size:cover; background-position:center; z-index:0; filter:blur(2px); transform:scale(1.05);}
+  .hero .hero-img{position:absolute; inset:0; background-size:cover; background-position:center; z-index:0; filter:blur(0.4px); transform:scale(1.02);}
   .hero::after{content:""; position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,0) 38%, rgba(0,0,0,.62) 100%);}
   .hero > .hero-av, .hero > .hero-txt{position:relative; z-index:2;}
   .hero .hero-av{width:68px; height:68px; flex:none; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:700; color:var(--gold); background:var(--surface-raised); border:3px solid #fff; box-shadow:0 0 0 2px rgba(255,200,70,.55), 0 6px 16px rgba(0,0,0,.45);}
@@ -1164,7 +1164,7 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
     <div class="lb-pick" id="lbPick">
       <button type="button" class="lb-pick-btn" id="lbPickBtn" onclick="toggleLbPick(event)" aria-haspopup="listbox" aria-expanded="false">
         <span class="lb-pick-ic">🏆</span>
-        <span class="lb-pick-txt"><small>Past seasons · AP &amp; UP</small><b id="lbPickLabel">Pick a season</b></span>
+        <span class="lb-pick-txt"><small>Ended seasons · AP &amp; UP</small><b id="lbPickLabel">All seasons</b></span>
         <svg class="lb-pick-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
       </button>
       <div class="lb-pick-panel" id="lbPickPanel" role="listbox"></div>
@@ -2845,16 +2845,21 @@ function renderLbPickPanel(){
   const panel = document.getElementById('lbPickPanel');
   if (!panel) return;
   const ended = (lbBoxes || []).filter(b => b.status !== 'active');
-  panel.innerHTML = ended.length ? ended.map(b => `
+  const all = `<div class="lb-opt ${leaderboardTab === 'all' ? 'sel' : ''}" role="option" onclick="setLeaderboardTab('all')">
+      <div class="lb-opt-t"><div class="lb-opt-name">All seasons</div><div class="lb-opt-date">Total of every season together</div></div><span class="lb-opt-ck">✓</span></div>`;
+  panel.innerHTML = all + (ended.length ? ended.map(b => `
     <div class="lb-opt ${leaderboardTab === 'pick' && lbPickBox === b.id ? 'sel' : ''}" role="option" onclick="setLeaderboardSeason('${escHtmlRw(b.id)}')">
       <div class="lb-opt-t"><div class="lb-opt-name">${escHtmlRw(b.seasonName || 'Season')}</div><div class="lb-opt-date">${escHtmlRw(b.startDate || '—')} → ${escHtmlRw(b.endDate || '—')}</div></div>
       <span class="lb-opt-ck">✓</span>
-    </div>`).join('') : `<div class="lb-opt-none">No ended season yet.</div>`;
+    </div>`).join('') : `<div class="lb-opt-none">No ended season yet.</div>`);
   const lab = document.getElementById('lbPickLabel');
   if (lab){
     const cur = leaderboardTab === 'pick' ? (lbBoxes || []).find(b => b.id === lbPickBox) : null;
-    lab.textContent = cur ? (cur.seasonName || 'Season') : 'Pick a season';
+    lab.textContent = cur ? (cur.seasonName || 'Season') : 'All seasons';
   }
+  // the dropdown belongs to the "All Season" section only
+  const pick = document.getElementById('lbPick');
+  if (pick) pick.style.display = (leaderboardTab === 'all' || leaderboardTab === 'pick') ? '' : 'none';
 }
 function toggleLbPick(ev){
   if (ev) ev.stopPropagation();
@@ -2884,7 +2889,9 @@ function setLeaderboardTab(tab){
 function setLeaderboardSeason(boxId){
   if (!boxId){ setLeaderboardTab('all'); return; }
   leaderboardTab = 'pick'; lbPickBox = boxId;
-  ['lbTabAll','lbTabCur','lbTabPrev'].forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById('lbTabAll').classList.add('active');
+  document.getElementById('lbTabCur').classList.remove('active');
+  document.getElementById('lbTabPrev').classList.remove('active');
   closeLbPick(); renderLbPickPanel();
   loadLeaderboard();
 }
@@ -3636,19 +3643,46 @@ function drawChart(data){
 /* ============================================================
    WITHDRAW + SEASON PAYOUT BOXES
    ============================================================ */
+/* The running season's "has started" announcement runs on this notice board for 7 days after the season starts. */
+let runSeasonBox = null, runSeasonBoxTried = false;
+async function ensureRunSeasonBox(){
+  if (runSeasonBoxTried) return;
+  runSeasonBoxTried = true;
+  try{
+    const b = await (await fetch(`${API_BASE}/season-boxes`)).json();
+    runSeasonBox = (Array.isArray(b) ? b : []).find(x => x.status === 'active') || null;
+  } catch(e){}
+  renderWithdrawInfo();
+}
+function seasonAnnounceText(){
+  const b = runSeasonBox;
+  if (!b || !b.startDate) return '';
+  const age = Date.now() - Date.parse(b.startDate + 'T00:00:00Z');
+  if (!(age >= 0 && age <= 7 * 86400000)) return '';
+  return `🏆 ${b.seasonName} has started (${b.startDate} to ${b.endDate}) · AP is back to 0 for everyone · the new Leaderboard is live · your AP of the last season is saved on the LFA page`;
+}
 function renderWithdrawInfo(){
   const sub = document.getElementById('withdrawSub');
   const noticeBox = document.getElementById('withdrawNoticeBox');
   const noticeText = document.getElementById('withdrawNoticeText');
+  ensureRunSeasonBox();
 
   // Force ON -> the notice board switches to an automatic "withdraw is open" message.
   // Auto / Force OFF -> it keeps showing the admin's own notice text.
+  // The season announcement (first 7 days of a season) runs next to it.
+  const msgs = [];
+  const ann = seasonAnnounceText();
+  if (ann) msgs.push(ann);
   if (state.settings.withdrawMode === 'on'){
-    noticeBox.style.display = 'block';
-    noticeText.textContent = `🟢 Withdrawals are OPEN now for ${state.settings.seasonName}! Tap Withdraw below to submit your request.`;
+    msgs.push(`🟢 Withdrawals are OPEN now for ${state.settings.seasonName}! Tap Withdraw below to submit your request.`);
   } else if (state.settings.withdrawNotice){
+    msgs.push(state.settings.withdrawNotice);
+  }
+  if (msgs.length){
+    const text = msgs.join('      ✦      ');
     noticeBox.style.display = 'block';
-    noticeText.textContent = state.settings.withdrawNotice;
+    noticeText.textContent = text;
+    noticeText.style.animationDuration = Math.max(18, Math.round(text.length * 0.2)) + 's';
   } else {
     noticeBox.style.display = 'none';
   }
@@ -3835,15 +3869,13 @@ function updateBellBadge(){
      2 notices ->  5 seconds each
      3 or more ->  4 seconds each (the queue keeps going until all have been shown)       */
 const POP_MAX_AGE_MS = 14 * 86400000;
-const SEASON_ANNOUNCE_MS = 7 * 86400000;
 let popQueue = null, popPer = 4000, popTimer = null, popCurKey = null;
 const popHidden = new Set();                         // opened / dismissed during this visit
 function isSeasonAnnounce(n){ return !n.personal && String(n.id || '').startsWith('season-start-'); }
-// "<Season> has started" is announced on every visit for 7 days (even after it was read); other auto notices only while unseen
+// "<Season> has started" is NOT a pop-up: it runs on the Withdraw page notice board (see renderWithdrawInfo)
 function popValid(n){
-  if (popHidden.has(noticeKey(n))) return false;
+  if (popHidden.has(noticeKey(n)) || isSeasonAnnounce(n)) return false;
   const age = Date.now() - new Date(n.createdAt).getTime();
-  if (isSeasonAnnounce(n)) return age <= SEASON_ANNOUNCE_MS;
   return isNoticeUnread(n) && age <= POP_MAX_AGE_MS;
 }
 function popDuration(total){ return total <= 1 ? 10000 : (total === 2 ? 5000 : 4000); }
@@ -4174,7 +4206,7 @@ async function loadSeasonBoxes(){
       const usersLine = (b.totalUsers || 0) > 0
         ? `<div style="display:flex;align-items:center;gap:8px;margin:0 0 10px;padding:8px 12px;border-radius:12px;background:rgba(232,185,80,.10);border:1px solid rgba(232,185,80,.35);font-size:12.5px;">${SI.users}<span><b style="font-family:'Space Grotesk',sans-serif;font-size:15px;color:var(--gold);">${Number(b.totalUsers).toLocaleString()}</b> <span style="color:var(--text-muted);">total users this season</span></span></div>` : '';
       const note = early
-        ? `<div style="margin-top:6px;padding:12px;border-radius:12px;text-align:center;font-size:12px;color:var(--text-muted);background:rgba(0,0,0,.06);border:1px dashed rgba(232,185,80,.45);">🚀 This season is already running. Full details count from <b style="color:var(--gold);">${dayLabel(fullFrom(b))}</b>.</div>` : '';
+        ? `<div style="margin-top:6px;padding:12px;border-radius:12px;text-align:center;font-size:12px;color:var(--text-muted);background:rgba(0,0,0,.06);border:1px dashed rgba(232,185,80,.45);">🚀 This season is already running. Full details show from <b style="color:var(--gold);">${dayLabel(fullFrom(b))}, 6:00 AM</b>.</div>` : '';
       const grid = early ? '' : `
         <div class="sgrid">
           ${cell('users', b.participants||0, 'Participants')}
@@ -4192,7 +4224,7 @@ async function loadSeasonBoxes(){
       return `
       <div class="season-box">
         <div class="sname">${escHtmlRw(b.seasonName)}${tag}</div>
-        <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}${updating ? ` · live until ${dayLabel(liveUntil(b))}` : ''}</div>
+        <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}${updating ? ` · live until ${dayLabel(liveUntil(b))}, 6:00 AM` : ''}</div>
         ${usersLine}${note}${grid}${toggle}
       </div>`;
     }).join('');
