@@ -179,9 +179,30 @@
 
   /* Public user profile (from Leaderboard) */
   .podium-item, .lb-row{cursor:pointer; -webkit-tap-highlight-color:transparent;}
-  .lb-pick{margin-top:10px;}
-  .lb-pick select{width:100%; -webkit-appearance:none; appearance:none; background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23B07A16' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center; border:1px solid var(--line); color:var(--text); font-family:'Inter',sans-serif; font-weight:700; font-size:13px; padding:12px 38px 12px 14px; border-radius:12px; cursor:pointer;}
-  .lb-pick select:focus{outline:none; border-color:var(--gold);}
+  .lb-pick{position:relative; margin-top:10px; z-index:20;}
+  .lb-pick-btn{width:100%; display:flex; align-items:center; gap:12px; text-align:left; cursor:pointer; padding:11px 14px; border-radius:16px; color:var(--text); font-family:'Inter',sans-serif; background:linear-gradient(135deg, rgba(242,179,61,.16), rgba(176,122,22,.05)); border:1px solid rgba(232,185,80,.55); box-shadow:0 6px 20px rgba(176,122,22,.16), inset 0 1px 0 rgba(255,255,255,.18); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); transition:box-shadow .2s, border-color .2s;}
+  .lb-pick.open .lb-pick-btn{border-color:var(--gold); box-shadow:0 8px 26px rgba(242,179,61,.32), inset 0 1px 0 rgba(255,255,255,.22);}
+  .lb-pick-ic{flex:none; width:34px; height:34px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:16px; background:rgba(232,185,80,.16); border:1px solid rgba(232,185,80,.4);}
+  .lb-pick-txt{flex:1; min-width:0; display:flex; flex-direction:column; gap:1px;}
+  .lb-pick-txt small{font-size:10px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--text-muted);}
+  .lb-pick-txt b{font-size:14px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; background:linear-gradient(90deg,#B07A16,#F2B33D,#B07A16); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent;}
+  .lb-pick-chev{flex:none; color:var(--gold); transition:transform .25s;}
+  .lb-pick.open .lb-pick-chev{transform:rotate(180deg);}
+  .lb-pick-panel{position:absolute; left:0; right:0; top:calc(100% + 8px); max-height:272px; overflow-y:auto; padding:6px; border-radius:16px; background:var(--surface); border:1px solid rgba(232,185,80,.55); box-shadow:0 18px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.04) inset; transform-origin:top center; opacity:0; transform:translateY(-8px) scaleY(.92); pointer-events:none; visibility:hidden; transition:opacity .2s, transform .22s cubic-bezier(.2,.9,.3,1.1), visibility 0s .22s;}
+  .lb-pick.open .lb-pick-panel{opacity:1; transform:none; pointer-events:auto; visibility:visible; transition:opacity .2s, transform .22s cubic-bezier(.2,.9,.3,1.1);}
+  .lb-opt{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; cursor:pointer; -webkit-tap-highlight-color:transparent;}
+  .lb-opt:active{background:rgba(232,185,80,.14);}
+  .lb-opt.sel{background:linear-gradient(135deg, rgba(242,179,61,.22), rgba(176,122,22,.08)); box-shadow:inset 0 0 0 1px rgba(232,185,80,.5);}
+  .lb-opt-t{flex:1; min-width:0;}
+  .lb-opt-name{font-size:13.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .lb-opt-date{font-size:10.5px; color:var(--text-muted); margin-top:2px;}
+  .lb-opt-ck{flex:none; color:var(--gold); font-weight:900; opacity:0;}
+  .lb-opt.sel .lb-opt-ck{opacity:1;}
+  .lb-opt-none{padding:14px 12px; font-size:12px; color:var(--text-muted); text-align:center;}
+  /* your own place on the Leaderboard glows */
+  .lb-row.you, .podium-item.you{border-color:var(--gold) !important; animation:youGlow 2.4s ease-in-out infinite;}
+  @keyframes youGlow{0%,100%{filter:drop-shadow(0 0 5px rgba(242,179,61,.45));} 50%{filter:drop-shadow(0 0 14px rgba(242,179,61,.95));}}
+  @media (prefers-reduced-motion: reduce){ .lb-row.you, .podium-item.you{animation:none; filter:drop-shadow(0 0 8px rgba(242,179,61,.7));} }
   /* Another person's profile: their photo/cover is the background of the details block (30% blur),
      and the text + boxes float on top of it as soft glass. Blur strength = percent x 0.2px. */
   .upf-details{--upf-blur:6px; position:relative; margin:16px -20px 0; padding:6px 20px 120px; border-radius:26px 26px 0 0; overflow:hidden; min-height:60vh; isolation:isolate;}
@@ -202,13 +223,25 @@
   #page-user-profile .upf-grid > .upf-cell:nth-child(3n){animation-delay:-1.5s;}
   @keyframes upfFloat{0%,100%{transform:translateY(0);} 50%{transform:translateY(-3px);}}
   @media (prefers-reduced-motion: reduce){ #page-user-profile .upf-bal > div, #page-user-profile .upf-cell{animation:none;} }
-  /* Hidden profile: details are blurred, crossed out with a red line and labelled */
-  .upf-locked{position:relative; margin-top:4px; border-radius:16px; overflow:hidden;}
-  .upf-locked-inner{filter:blur(7px); pointer-events:none; user-select:none; -webkit-user-select:none;}
-  .upf-locked-ov{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;}
-  .upf-locked-ov svg{position:absolute; inset:0; width:100%; height:100%;}
-  .upf-locked-msg{position:relative; z-index:1; background:rgba(122,12,12,.86); color:#fff; border:1px solid rgba(255,110,110,.65); border-radius:12px; padding:9px 16px; text-align:center; font-size:13px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,.35);}
-  .upf-locked-msg small{display:block; font-weight:500; font-size:10.5px; opacity:.85; margin-top:2px;}
+  /* Hidden profile: a "classified file" - the details exist but are blurred, with a stamp on top */
+  .fbi-head{display:flex; align-items:center; gap:8px; margin:6px 0 10px; padding:7px 10px; border-radius:9px; background:rgba(8,8,10,.78); border:1px solid rgba(229,50,45,.55); font-family:'Courier New',ui-monospace,monospace; font-size:10.5px; font-weight:700; letter-spacing:1.6px; color:#FF6A63; text-transform:uppercase; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);}
+  .fbi-head .sp{flex:1;}
+  .fbi-head .redact{display:inline-block; width:54px; height:9px; border-radius:2px; background:#000; box-shadow:0 0 0 1px rgba(255,255,255,.12);}
+  .upf-locked{position:relative; margin-top:4px; border-radius:16px; overflow:hidden; border:1px solid rgba(229,50,45,.4);}
+  .upf-locked-inner{filter:blur(8px); pointer-events:none; user-select:none; -webkit-user-select:none; padding:0 2px 8px;}
+  .upf-locked-ov{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 3px, rgba(0,0,0,.20) 3px 4px), linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.34));}
+  .fbi-stamp{position:relative; transform:rotate(-8deg); text-align:center; padding:11px 20px 10px; border:3px double #E5322D; border-radius:6px; background:rgba(10,10,12,.74); color:#FF4B44; font-family:'Courier New',ui-monospace,monospace; text-shadow:0 0 12px rgba(229,50,45,.6); box-shadow:0 0 0 1px rgba(229,50,45,.35), 0 12px 32px rgba(0,0,0,.55), 0 0 26px rgba(229,50,45,.38); animation:fbiPulse 2.6s ease-in-out infinite;}
+  .fbi-stamp .lock{font-size:20px; line-height:1; margin-bottom:3px;}
+  .fbi-stamp .big{font-size:25px; font-weight:900; letter-spacing:5px; line-height:1.05;}
+  .fbi-stamp .sm{margin-top:5px; font-size:9.5px; font-weight:700; letter-spacing:2.4px; color:#FFB9B4;}
+  .fbi-stamp .tiny{margin-top:3px; font-size:8.5px; letter-spacing:2px; color:rgba(255,255,255,.55);}
+  @keyframes fbiPulse{0%,100%{box-shadow:0 0 0 1px rgba(229,50,45,.35), 0 12px 32px rgba(0,0,0,.55), 0 0 18px rgba(229,50,45,.28);} 50%{box-shadow:0 0 0 1px rgba(229,50,45,.55), 0 12px 32px rgba(0,0,0,.55), 0 0 34px rgba(229,50,45,.6);}}
+  .upf-seasons{display:flex; flex-direction:column; gap:8px;}
+  #page-user-profile .upf-srow{display:flex; align-items:center; justify-content:space-between; gap:10px; animation-delay:-2s;}
+  .upf-srow .sr-r{text-align:right; white-space:nowrap; font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700;}
+  .upf-srow .sr-r .a{color:#FFD772;} .upf-srow .sr-r .u{color:#7DF0B0; margin-left:8px;}
+  .upf-details:not(.has-bg) .upf-srow .sr-r .a{color:var(--gold);} .upf-details:not(.has-bg) .upf-srow .sr-r .u{color:var(--up-color);}
+  .upf-live{display:inline-block; margin-left:6px; font-size:9px; font-weight:800; padding:2px 7px; border-radius:20px; background:rgba(74,222,128,.22); color:#7DF0B0; vertical-align:middle;}
   .upf-bal{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;}
   .upf-bal > div{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px; text-align:center;}
   .upf-bal .l{font-size:11px; font-weight:700; letter-spacing:.6px; font-family:'Space Grotesk',sans-serif;}
@@ -1128,7 +1161,14 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
       <button class="earn-toggle-btn" id="lbTabCur" onclick="setLeaderboardTab('current')">This Season</button>
       <button class="earn-toggle-btn" id="lbTabPrev" onclick="setLeaderboardTab('prev')">Last Season</button>
     </div>
-    <div class="lb-pick"><select id="lbSeasonSelect" onchange="setLeaderboardSeason(this.value)" aria-label="Pick a season"><option value="">Pick a season · AP &amp; UP</option></select></div>
+    <div class="lb-pick" id="lbPick">
+      <button type="button" class="lb-pick-btn" id="lbPickBtn" onclick="toggleLbPick(event)" aria-haspopup="listbox" aria-expanded="false">
+        <span class="lb-pick-ic">🏆</span>
+        <span class="lb-pick-txt"><small>Past seasons · AP &amp; UP</small><b id="lbPickLabel">Pick a season</b></span>
+        <svg class="lb-pick-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="lb-pick-panel" id="lbPickPanel" role="listbox"></div>
+    </div>
     <div class="section-label" id="lbTitle">Top 20 earners</div>
     <div class="podium" id="podium"></div>
     <div id="lbList"></div>
@@ -2798,28 +2838,54 @@ async function ensureLbBoxes(){
     const b = await (await fetch(`${API_BASE}/season-boxes`)).json();
     if (Array.isArray(b)) lbBoxes = b.filter(x => x.startDate).sort((x, y) => String(y.startDate).localeCompare(String(x.startDate)));
   } catch(e){ if (!lbBoxes) lbBoxes = []; }
-  const sel = document.getElementById('lbSeasonSelect');
-  if (sel){
-    sel.innerHTML = '<option value="">Pick a season · AP &amp; UP</option>' + (lbBoxes || []).map(b =>
-      `<option value="${escHtmlRw(b.id)}">${escHtmlRw(b.seasonName || 'Season')}${b.status === 'active' ? ' · LIVE' : ''}</option>`).join('');
-    sel.value = leaderboardTab === 'pick' ? lbPickBox : '';
+  renderLbPickPanel();
+}
+// the dropdown lists the ENDED seasons only (their final, all-time AP and UP); the running one has its own tab
+function renderLbPickPanel(){
+  const panel = document.getElementById('lbPickPanel');
+  if (!panel) return;
+  const ended = (lbBoxes || []).filter(b => b.status !== 'active');
+  panel.innerHTML = ended.length ? ended.map(b => `
+    <div class="lb-opt ${leaderboardTab === 'pick' && lbPickBox === b.id ? 'sel' : ''}" role="option" onclick="setLeaderboardSeason('${escHtmlRw(b.id)}')">
+      <div class="lb-opt-t"><div class="lb-opt-name">${escHtmlRw(b.seasonName || 'Season')}</div><div class="lb-opt-date">${escHtmlRw(b.startDate || '—')} → ${escHtmlRw(b.endDate || '—')}</div></div>
+      <span class="lb-opt-ck">✓</span>
+    </div>`).join('') : `<div class="lb-opt-none">No ended season yet.</div>`;
+  const lab = document.getElementById('lbPickLabel');
+  if (lab){
+    const cur = leaderboardTab === 'pick' ? (lbBoxes || []).find(b => b.id === lbPickBox) : null;
+    lab.textContent = cur ? (cur.seasonName || 'Season') : 'Pick a season';
   }
 }
+function toggleLbPick(ev){
+  if (ev) ev.stopPropagation();
+  const box = document.getElementById('lbPick');
+  const open = !box.classList.contains('open');
+  box.classList.toggle('open', open);
+  document.getElementById('lbPickBtn').setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+function closeLbPick(){
+  const box = document.getElementById('lbPick');
+  if (box) box.classList.remove('open');
+  const btn = document.getElementById('lbPickBtn'); if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+document.addEventListener('click', e => { if (!e.target.closest || !e.target.closest('#lbPick')) closeLbPick(); });
 function lbPrevBox(){ return (lbBoxes || []).find(b => b.status !== 'active') || null; }
 
 function setLeaderboardTab(tab){
   leaderboardTab = tab;
   lbPickBox = '';
-  const sel = document.getElementById('lbSeasonSelect'); if (sel) sel.value = '';
+  closeLbPick();
   document.getElementById('lbTabAll').classList.toggle('active', tab === 'all');
   document.getElementById('lbTabCur').classList.toggle('active', tab === 'current');
   document.getElementById('lbTabPrev').classList.toggle('active', tab === 'prev');
+  renderLbPickPanel();
   loadLeaderboard();
 }
 function setLeaderboardSeason(boxId){
   if (!boxId){ setLeaderboardTab('all'); return; }
   leaderboardTab = 'pick'; lbPickBox = boxId;
   ['lbTabAll','lbTabCur','lbTabPrev'].forEach(id => document.getElementById(id).classList.remove('active'));
+  closeLbPick(); renderLbPickPanel();
   loadLeaderboard();
 }
 
@@ -2862,7 +2928,7 @@ function renderLeaderboard(data, emptyMsg){
   const hats = {1:'👑',2:'🥈',3:'🥉'};
   const order = {1:'gold',2:'silver',3:'bronze'};
   document.getElementById('podium').innerHTML = top3.map(u=>`
-    <div class="podium-item ${order[u.rank]}" onclick="openUserProfile('${escHtmlRw(u.tgId)}')">
+    <div class="podium-item ${order[u.rank]} ${u.tgId===String(state.user.id)?'you':''}" onclick="openUserProfile('${escHtmlRw(u.tgId)}')">
       <div class="podium-hat">${hats[u.rank]}</div>
       <div class="podium-avatar">${avatarHtml(u)}</div>
       <div class="pname">${escHtmlRw(u.name)}</div>
@@ -2918,6 +2984,22 @@ function setProfileBg(src){
   el.style.backgroundImage = 'url("' + String(src).replace(/"/g, '%22') + '")';
   el.classList.add('on'); wrap.classList.add('has-bg');
 }
+async function loadUpfSeasons(tgId){
+  const box = document.getElementById('upfSeasons');
+  if (!box) return;
+  try{
+    const d = await (await fetch(`${API_BASE}/user/${encodeURIComponent(tgId)}/seasons`)).json();
+    const nf = v => Number(v || 0).toLocaleString();
+    const rows = (d.seasons || []).filter(x => (x.ap || 0) > 0 || (x.up || 0) > 0);
+    if (!document.getElementById('upfSeasons')) return;          // the person went to another profile meanwhile
+    box.innerHTML = rows.length ? rows.map(x => `
+      <div class="upf-cell upf-srow">
+        <div style="min-width:0;"><div class="k">${escHtmlRw(x.startDate || '')}${x.endDate ? ' → ' + escHtmlRw(x.endDate) : ''}</div>
+          <div class="n" style="font-size:14px;">${escHtmlRw(x.seasonName || 'Season')}${x.status === 'active' ? '<span class="upf-live">LIVE</span>' : ''}</div></div>
+        <div class="sr-r"><span class="a">${nf(x.ap)} AP</span><span class="u">${nf(x.up)} UP</span></div>
+      </div>`).join('') : `<div class="upf-cell" style="text-align:center;"><div class="k">No season activity yet</div></div>`;
+  } catch(e){ box.innerHTML = `<div class="upf-cell" style="text-align:center;"><div class="k">Could not load season history</div></div>`; }
+}
 async function openUserProfile(tgId){
   showPage('user-profile', document.querySelectorAll('.nav-item')[2]);
   window.scrollTo({ top:0 });
@@ -2929,7 +3011,9 @@ async function openUserProfile(tgId){
     const u = await res.json();
     const num = v => (v || 0).toLocaleString();
     if (u.hidden){
-      const hcell = (k) => `<div class="upf-cell"><div class="k">${k}</div><div class="n">000</div></div>`;
+      const hcell = (k, v) => `<div class="upf-cell"><div class="k">${k}</div><div class="n">${v}</div></div>`;
+      const hrow = (nm, v) => `<div class="upf-cell upf-srow"><div><div class="k">2026</div><div class="n" style="font-size:14px;">${nm}</div></div><div class="sr-r"><span class="a">${v} AP</span><span class="u">${v} UP</span></div></div>`;
+      const cid = String(u.tgId || '').slice(-4).padStart(4, '0');
       body.innerHTML = `
         <div class="hero" id="upfCover">
           <div class="hero-av">${avatarHtml(u)}</div>
@@ -2939,18 +3023,25 @@ async function openUserProfile(tgId){
           <div class="ap"><div class="l">AP</div><div class="v">${num(u.points)}</div></div>
           <div class="up"><div class="l">UP</div><div class="v">${num(u.up)}</div></div>
         </div>
+        <div class="fbi-head"><span>⛨ Case file</span><span>No. ${cid}</span><span class="sp"></span><span class="redact"></span></div>
         <div class="upf-locked">
           <div class="upf-locked-inner" aria-hidden="true">
             <div class="upf-sec">Activity</div>
-            <div class="upf-grid">${hcell('Joined')}${hcell('Streak')}${hcell('Ads watched')}${hcell('Check-ins')}${hcell('Referrals')}${hcell('Referral AP')}</div>
+            <div class="upf-grid">${hcell('Joined','Sep 04, 2026')}${hcell('Streak','🔥 59 days')}${hcell('Ads watched','1,284')}${hcell('Check-ins','412')}${hcell('Referrals','37')}${hcell('Referral AP','5,960')}</div>
             <div class="upf-sec">AP breakdown</div>
-            <div class="upf-grid">${hcell('Watch ads')}${hcell('Shortlinks')}${hcell('Tasks')}${hcell('Daily check-in')}</div>
+            <div class="upf-grid">${hcell('Watch ads','8,410')}${hcell('Shortlinks','2,236')}${hcell('Tasks','1,905')}${hcell('Daily check-in','3,174')}</div>
             <div class="upf-sec">Withdrawals</div>
-            <div class="upf-grid">${hcell('Total paid out')}${hcell('Payments')}</div>
+            <div class="upf-grid">${hcell('Total paid out','$128.40')}${hcell('Payments','6')}</div>
+            <div class="upf-sec">Season history</div>
+            <div class="upf-seasons">${hrow('Season 3','4,120')}${hrow('Season 2','3,056')}${hrow('Season 1','2,718')}</div>
           </div>
           <div class="upf-locked-ov">
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="100" x2="100" y2="0" stroke="#E5322D" stroke-width="3.5" vector-effect="non-scaling-stroke" stroke-linecap="round"/></svg>
-            <div class="upf-locked-msg">🔒 Hidden profile<small>This user keeps their details private</small></div>
+            <div class="fbi-stamp">
+              <div class="lock">🔒</div>
+              <div class="big">CLASSIFIED</div>
+              <div class="sm">ACCESS RESTRICTED</div>
+              <div class="tiny">EYES ONLY · PRIVATE PROFILE</div>
+            </div>
           </div>
         </div>`;
       wrapUpfDetails();
@@ -2995,8 +3086,12 @@ async function openUserProfile(tgId){
       <div class="upf-grid">
         ${cell('Total paid out', '$' + (u.paidUsdt || 0).toFixed(2), 'green')}
         ${cell('Payments', num(u.payments))}
-      </div>`;
+      </div>
+
+      <div class="upf-sec">Season history</div>
+      <div class="upf-seasons" id="upfSeasons"><div class="upf-cell" style="text-align:center;"><div class="k">Loading…</div></div></div>`;
     wrapUpfDetails();
+    loadUpfSeasons(u.tgId);
     setCover(document.getElementById('upfCover'), coverSrc);
     setProfileBg(coverSrc);
   } catch(e){
@@ -3094,14 +3189,9 @@ async function loadLfaSeasonHistory(){
       <div class="season-box">
         <div class="sname">${escHtml(b.seasonName||'')}${tag}</div>
         <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}</div>
-        <div class="srow" style="margin-bottom:8px;">
+        <div class="srow">
           ${cell(n(my.ap), running ? 'My AP so far' : 'My AP')}
           ${cell(running ? 'In progress' : n(b.totalPointsEarned), 'Season Total AP')}
-        </div>
-        <div class="srow">
-          ${cell(n(my.up), 'My UP earned')}
-          ${cell(n(b.participants), 'Participants')}
-          ${cell('$' + (b.apAllocation||0).toFixed(2), 'AP Allocation')}
         </div>
       </div>`;
     }).join('');
@@ -3745,7 +3835,17 @@ function updateBellBadge(){
      2 notices ->  5 seconds each
      3 or more ->  4 seconds each (the queue keeps going until all have been shown)       */
 const POP_MAX_AGE_MS = 14 * 86400000;
+const SEASON_ANNOUNCE_MS = 7 * 86400000;
 let popQueue = null, popPer = 4000, popTimer = null, popCurKey = null;
+const popHidden = new Set();                         // opened / dismissed during this visit
+function isSeasonAnnounce(n){ return !n.personal && String(n.id || '').startsWith('season-start-'); }
+// "<Season> has started" is announced on every visit for 7 days (even after it was read); other auto notices only while unseen
+function popValid(n){
+  if (popHidden.has(noticeKey(n))) return false;
+  const age = Date.now() - new Date(n.createdAt).getTime();
+  if (isSeasonAnnounce(n)) return age <= SEASON_ANNOUNCE_MS;
+  return isNoticeUnread(n) && age <= POP_MAX_AGE_MS;
+}
 function popDuration(total){ return total <= 1 ? 10000 : (total === 2 ? 5000 : 4000); }
 function popFind(key){
   const i = cachedNotices.findIndex(n => noticeKey(n) === key);
@@ -3754,15 +3854,14 @@ function popFind(key){
 function renderNoticePops(){
   if (popQueue === null){                       // first time in this visit: build the queue once
     if (!noticesFetchedOnce) return;
-    const list = cachedNotices.filter(n => n.type === 'auto' && isNoticeUnread(n) &&
-        Date.now() - new Date(n.createdAt).getTime() <= POP_MAX_AGE_MS)
+    const list = cachedNotices.filter(n => n.type === 'auto' && popValid(n))
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     popQueue = list.map(noticeKey);
     popPer = popDuration(popQueue.length);
     popNext();
   } else if (popCurKey){                        // the one on screen was read somewhere else -> move on
     const f = popFind(popCurKey);
-    if (!f || !isNoticeUnread(f.n)) popNext();
+    if (!f || !popValid(f.n)) popNext();
   }
 }
 function popNext(){
@@ -3772,7 +3871,7 @@ function popNext(){
   while (popQueue.length){
     const key = popQueue.shift();
     const f = popFind(key);
-    if (!f || !isNoticeUnread(f.n)) continue;
+    if (!f || !popValid(f.n)) continue;
     const { n, i } = f;
     popCurKey = key;
     const prev = String(n.body || '').replace(/\s+/g, ' ').trim();
@@ -3787,11 +3886,11 @@ function popNext(){
   }
   box.innerHTML = '';
 }
-function popOpen(i){ openNotice(i); }
+function popOpen(i){ const n = cachedNotices[i]; if (n) popHidden.add(noticeKey(n)); openNotice(i); }
 function popDismiss(i, ev){
   if (ev) ev.stopPropagation();
   const n = cachedNotices[i];
-  if (n) markNoticeRead(n);
+  if (n){ popHidden.add(noticeKey(n)); markNoticeRead(n); }
   updateBellBadge();
 }
 
@@ -4056,10 +4155,27 @@ async function loadSeasonBoxes(){
       shield: sv('<path d="M12 3 5 6v5.5c0 4.3 3 7.6 7 9 4-1.4 7-4.7 7-9V6z"/><path d="m9 12 2.2 2.2L15 10"/>')
     };
     const cell = (icon, num, label) => `<div class="sg"><span class="sg-ic">${SI[icon]}</span><div><div class="snum">${num}</div><div class="slabel">${label}</div></div></div>`;
-    list.innerHTML = boxes.map(b=>`
-      <div class="season-box">
-        <div class="sname">${b.seasonName}${b.status==='active' ? ' <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:rgba(74,222,128,.18);color:#4ADE80;vertical-align:middle;">LIVE</span>' : ''}</div>
-        <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}</div>
+    // Dates (UTC): an ended season's box keeps updating until the 6th day after it ended;
+    // the running season is live from day 1 but its full details only count from the 6th.
+    const DAY = 86400000, dms = d => Date.parse(String(d) + 'T00:00:00Z');
+    const dayLabel = ms => new Date(ms).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+    const nowMs = Date.now();
+    const fullFrom = b => dms(b.startDate) + 5 * DAY;                      // the 6th
+    const liveUntil = b => dms(b.endDate) + 6 * DAY;                       // 6th of the next month
+    const earlyRunning = b => b.status === 'active' && b.startDate && nowMs < fullFrom(b);
+    // during the first days the old (payout) season stays on top
+    boxes.sort((x, y) => (earlyRunning(x) ? 1 : 0) - (earlyRunning(y) ? 1 : 0) || String(y.startDate||'').localeCompare(String(x.startDate||'')));
+    const pill = (t, bg, fg) => `<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:${bg};color:${fg};vertical-align:middle;margin-left:6px;">${t}</span>`;
+    list.innerHTML = boxes.map(b=>{
+      const early = earlyRunning(b);
+      const updating = b.status !== 'active' && b.endDate && nowMs < liveUntil(b) && b.auto && Object.keys(b.auto).some(k => b.auto[k]);
+      const tag = b.status === 'active' ? pill('LIVE', 'rgba(74,222,128,.18)', '#4ADE80')
+                : updating ? pill('UPDATING', 'rgba(232,185,80,.18)', '#E8B950') : '';
+      const usersLine = (b.totalUsers || 0) > 0
+        ? `<div style="display:flex;align-items:center;gap:8px;margin:0 0 10px;padding:8px 12px;border-radius:12px;background:rgba(232,185,80,.10);border:1px solid rgba(232,185,80,.35);font-size:12.5px;">${SI.users}<span><b style="font-family:'Space Grotesk',sans-serif;font-size:15px;color:var(--gold);">${Number(b.totalUsers).toLocaleString()}</b> <span style="color:var(--text-muted);">total users this season</span></span></div>` : '';
+      const note = early
+        ? `<div style="margin-top:6px;padding:12px;border-radius:12px;text-align:center;font-size:12px;color:var(--text-muted);background:rgba(0,0,0,.06);border:1px dashed rgba(232,185,80,.45);">🚀 This season is already running. Full details count from <b style="color:var(--gold);">${dayLabel(fullFrom(b))}</b>.</div>` : '';
+      const grid = early ? '' : `
         <div class="sgrid">
           ${cell('users', b.participants||0, 'Participants')}
           ${cell('coins', b.totalPointsEarned||0, 'Total AP')}
@@ -4067,12 +4183,19 @@ async function loadSeasonBoxes(){
           ${cell('wallet', '$' + (b.totalUsdtPaid||0).toFixed(2), 'Total Paid')}
           ${cell('shield', '$' + (b.apAllocation||0).toFixed(2), 'AP Allocation')}
           ${cell('up', '$' + ((b.totalUp||0)/100).toFixed(2), 'UP Allocation')}
-        </div>
+        </div>`;
+      const toggle = early ? '' : `
         <div class="season-box-toggle" onclick="toggleSeasonParticipants('${b.id}', this)">
           <span>View participants</span><span class="arrow">▾</span>
         </div>
-        <div class="season-participants" id="sp-${b.id}"></div>
-      </div>`).join('');
+        <div class="season-participants" id="sp-${b.id}"></div>`;
+      return `
+      <div class="season-box">
+        <div class="sname">${escHtmlRw(b.seasonName)}${tag}</div>
+        <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}${updating ? ` · live until ${dayLabel(liveUntil(b))}` : ''}</div>
+        ${usersLine}${note}${grid}${toggle}
+      </div>`;
+    }).join('');
   } catch(e){ console.error("Could not load season boxes:", e); }
 }
 
