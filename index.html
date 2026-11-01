@@ -180,7 +180,7 @@
   /* Public user profile (from Leaderboard) */
   .podium-item, .lb-row{cursor:pointer; -webkit-tap-highlight-color:transparent;}
   /* leaderboard profile: that person's cover/photo fills the whole screen, softly blurred */
-  .upf-bg{position:fixed; inset:-30px; z-index:-2; background-size:cover; background-position:center; filter:blur(14px) saturate(1.1); transform:scale(1.06); opacity:0; transition:opacity .4s;}
+  .upf-bg{position:fixed; inset:-20px; z-index:-2; background-size:cover; background-position:center; filter:blur(5px) saturate(1.1); transform:scale(1.04); opacity:0; transition:opacity .4s;}
   .upf-bg.on{opacity:1;}
   .upf-veil{position:fixed; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.34));}
   #page-user-profile .wp-title, #page-user-profile .upf-sec{color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.65);}
@@ -189,6 +189,13 @@
   #page-user-profile .upf-cell .k, #page-user-profile .upf-bal .r{color:#6d6350;}
   body.dark-theme #page-user-profile .upf-bal > div, body.dark-theme #page-user-profile .upf-cell{background:rgba(18,18,22,.62); border-color:rgba(255,255,255,.14); color:#F3EEE2;}
   body.dark-theme #page-user-profile .upf-cell .k, body.dark-theme #page-user-profile .upf-bal .r{color:#b9b09c;}
+  /* Hidden profile: details are blurred, crossed out with a red line and labelled */
+  .upf-locked{position:relative; margin-top:4px; border-radius:16px; overflow:hidden;}
+  .upf-locked-inner{filter:blur(7px); pointer-events:none; user-select:none; -webkit-user-select:none;}
+  .upf-locked-ov{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;}
+  .upf-locked-ov svg{position:absolute; inset:0; width:100%; height:100%;}
+  .upf-locked-msg{position:relative; z-index:1; background:rgba(122,12,12,.86); color:#fff; border:1px solid rgba(255,110,110,.65); border-radius:12px; padding:9px 16px; text-align:center; font-size:13px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,.35);}
+  .upf-locked-msg small{display:block; font-weight:500; font-size:10.5px; opacity:.85; margin-top:2px;}
   .upf-bal{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;}
   .upf-bal > div{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px; text-align:center;}
   .upf-bal .l{font-size:11px; font-weight:700; letter-spacing:.6px; font-family:'Space Grotesk',sans-serif;}
@@ -2855,6 +2862,7 @@ async function openUserProfile(tgId){
     const u = await res.json();
     const num = v => (v || 0).toLocaleString();
     if (u.hidden){
+      const hcell = (k) => `<div class="upf-cell"><div class="k">${k}</div><div class="n">000</div></div>`;
       body.innerHTML = `
         <div class="hero" id="upfCover">
           <div class="hero-av">${avatarHtml(u)}</div>
@@ -2863,6 +2871,20 @@ async function openUserProfile(tgId){
         <div class="upf-bal">
           <div class="ap"><div class="l">AP</div><div class="v">${num(u.points)}</div></div>
           <div class="up"><div class="l">UP</div><div class="v">${num(u.up)}</div></div>
+        </div>
+        <div class="upf-locked">
+          <div class="upf-locked-inner" aria-hidden="true">
+            <div class="upf-sec">Activity</div>
+            <div class="upf-grid">${hcell('Joined')}${hcell('Streak')}${hcell('Ads watched')}${hcell('Check-ins')}${hcell('Referrals')}${hcell('Referral AP')}</div>
+            <div class="upf-sec">AP breakdown</div>
+            <div class="upf-grid">${hcell('Watch ads')}${hcell('Shortlinks')}${hcell('Tasks')}${hcell('Daily check-in')}</div>
+            <div class="upf-sec">Withdrawals</div>
+            <div class="upf-grid">${hcell('Total paid out')}${hcell('Payments')}</div>
+          </div>
+          <div class="upf-locked-ov">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="100" x2="100" y2="0" stroke="#E5322D" stroke-width="3.5" vector-effect="non-scaling-stroke" stroke-linecap="round"/></svg>
+            <div class="upf-locked-msg">🔒 Hidden profile<small>This user keeps their details private</small></div>
+          </div>
         </div>`;
       setCover(document.getElementById('upfCover'), u.coverUrl || u.avatarUrl || (u.hasTelegramAvatar ? `${API_BASE}/avatar/${u.tgId}` : null));
       setProfileBg(u.coverUrl || u.avatarUrl || (u.hasTelegramAvatar ? `${API_BASE}/avatar/${u.tgId}` : null));
