@@ -179,6 +179,16 @@
 
   /* Public user profile (from Leaderboard) */
   .podium-item, .lb-row{cursor:pointer; -webkit-tap-highlight-color:transparent;}
+  /* leaderboard profile: that person's cover/photo fills the whole screen, softly blurred */
+  .upf-bg{position:fixed; inset:-30px; z-index:-2; background-size:cover; background-position:center; filter:blur(14px) saturate(1.1); transform:scale(1.06); opacity:0; transition:opacity .4s;}
+  .upf-bg.on{opacity:1;}
+  .upf-veil{position:fixed; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.34));}
+  #page-user-profile .wp-title, #page-user-profile .upf-sec{color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.65);}
+  #page-user-profile .wp-back{background:rgba(0,0,0,.32); color:#fff; border-color:rgba(255,255,255,.25); backdrop-filter:blur(8px);}
+  #page-user-profile .upf-bal > div, #page-user-profile .upf-cell{background:rgba(255,255,255,.80); border-color:rgba(255,255,255,.35); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); color:#1F1A12;}
+  #page-user-profile .upf-cell .k, #page-user-profile .upf-bal .r{color:#6d6350;}
+  body.dark-theme #page-user-profile .upf-bal > div, body.dark-theme #page-user-profile .upf-cell{background:rgba(18,18,22,.62); border-color:rgba(255,255,255,.14); color:#F3EEE2;}
+  body.dark-theme #page-user-profile .upf-cell .k, body.dark-theme #page-user-profile .upf-bal .r{color:#b9b09c;}
   .upf-bal{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;}
   .upf-bal > div{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px; text-align:center;}
   .upf-bal .l{font-size:11px; font-weight:700; letter-spacing:.6px; font-family:'Space Grotesk',sans-serif;}
@@ -353,6 +363,38 @@
   .lfa-modal-card h3{font-size:16px; margin-bottom:4px;}
   .lfa-modal-date{font-size:10.5px; color:var(--text-muted); margin-bottom:12px;}
   .lfa-modal-body{font-size:13.5px; line-height:1.6; white-space:pre-wrap; word-break:break-word;}
+  /* ---- premium notice card ---- */
+  .lfa-modal-card.prem{--pa:#E8B950; --pa2:#FFF0C2; --pg:rgba(232,185,80,.16); position:relative; overflow-x:hidden;
+    background:radial-gradient(120% 70% at 50% -10%, var(--pg), transparent 60%), linear-gradient(165deg,#1C160C 0%,#241B0D 55%,#15100A 100%);
+    border:1px solid rgba(232,185,80,.42); border-radius:20px; padding:22px 20px 18px; color:#F1E8D2;
+    box-shadow:0 0 0 1px rgba(0,0,0,.65), 0 22px 60px rgba(0,0,0,.65), 0 0 46px var(--pg);}
+  .lfa-modal-card.prem::before{content:""; position:absolute; left:18px; right:18px; top:0; height:2px; border-radius:0 0 4px 4px; background:linear-gradient(90deg,transparent,var(--pa),var(--pa2),var(--pa),transparent);}
+  .lfa-modal-card.prem.pm-green{--pa:#4ADE80; --pa2:#C9F7DA; --pg:rgba(74,222,128,.14); border-color:rgba(74,222,128,.42);}
+  .lfa-modal-card.prem.pm-red{--pa:#F2705F; --pa2:#FFD0C9; --pg:rgba(242,112,95,.15); border-color:rgba(242,112,95,.42);}
+  .prem .pm-top{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  .prem .pm-ico{width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:19px; background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.02)); border:1px solid var(--pa); box-shadow:0 0 16px var(--pg);}
+  .prem .pm-tag{font-size:10.5px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase; color:var(--pa);}
+  .prem .pm-title{font-size:19px; line-height:1.25; font-weight:800; margin:0 0 4px; background:linear-gradient(90deg,var(--pa2),var(--pa) 60%,var(--pa2)); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent;}
+  .prem .pm-date{font-size:11px; color:#9C906F; margin-bottom:14px; letter-spacing:.2px;}
+  .prem .pm-body{font-size:13.8px; line-height:1.7; color:#EFE6D2; white-space:pre-wrap; word-break:break-word; background:rgba(255,255,255,.045); border:1px solid rgba(232,185,80,.16); border-left:3px solid var(--pa); border-radius:12px; padding:13px 14px;}
+  .prem .pm-none{color:#9C906F;}
+  .prem .wds-copy, .prem .wds-help{background:rgba(255,255,255,.06); color:var(--pa2); border:1px solid rgba(232,185,80,.35); border-radius:10px;}
+  .prem .lfa-modal-close{background:linear-gradient(135deg,var(--pa2),var(--pa)); color:#1B1404; border:none; font-weight:800; letter-spacing:.3px; box-shadow:0 6px 18px rgba(0,0,0,.35);}
+  /* ---- landscape pop-ups on top of the app ---- */
+  .notice-pops{position:fixed; top:calc(env(safe-area-inset-top, 0px) + 8px); left:50%; transform:translateX(-50%); width:min(456px, calc(100% - 20px)); z-index:150; display:flex; flex-direction:column; gap:7px; pointer-events:none;}
+  .npop{pointer-events:auto; position:relative; display:flex; align-items:center; gap:11px; min-height:58px; padding:9px 10px 9px 11px; border-radius:15px; cursor:pointer; overflow:hidden;
+    background:linear-gradient(135deg,#1D170C,#2A1F0E 60%,#1A140B); border:1px solid rgba(232,185,80,.5);
+    box-shadow:0 10px 28px rgba(0,0,0,.55), 0 0 22px rgba(232,185,80,.16); animation:npopIn .45s cubic-bezier(.2,.9,.3,1.2) both;}
+  .npop::before{content:""; position:absolute; inset:0 auto 0 0; width:3px; background:linear-gradient(180deg,#FFF0C2,#E8B950);}
+  .npop::after{content:""; position:absolute; top:0; bottom:0; width:60px; left:-80px; background:linear-gradient(100deg,transparent,rgba(255,240,194,.22),transparent); animation:npopShine 3.8s ease-in-out 1s infinite;}
+  .npop-ico{flex:none; width:36px; height:36px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:17px; background:rgba(232,185,80,.12); border:1px solid rgba(232,185,80,.4);}
+  .npop-txt{min-width:0; flex:1;}
+  .npop-t{font-size:13px; font-weight:800; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; background:linear-gradient(90deg,#FFF0C2,#E8B950); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent;}
+  .npop-b{font-size:11.5px; line-height:1.3; color:#D9CFB8; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .npop-x{flex:none; width:26px; height:26px; border-radius:50%; border:1px solid rgba(232,185,80,.3); background:rgba(255,255,255,.06); color:#E8D9AE; font-size:12px; cursor:pointer; line-height:1;}
+  .npop-more{pointer-events:auto; align-self:center; font-size:10.5px; font-weight:700; color:#E8D9AE; background:rgba(28,22,12,.92); border:1px solid rgba(232,185,80,.35); padding:3px 10px; border-radius:20px;}
+  @keyframes npopIn{from{transform:translateY(-26px) scale(.96); opacity:0;} to{transform:none; opacity:1;}}
+  @keyframes npopShine{0%{left:-80px;} 55%,100%{left:110%;}}
   .lfa-modal-close{width:100%; margin-top:16px; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-weight:600; font-size:13.5px; padding:11px; border-radius:10px; cursor:pointer; font-family:'Inter',sans-serif;}
   .withdraw-box textarea{width:100%; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:13.5px; padding:11px 12px; border-radius:10px; margin-bottom:10px; font-family:'Inter',sans-serif; resize:vertical;}
   .tk-attach{display:inline-block; background:var(--surface-raised); border:1px dashed var(--line); color:var(--text-muted); font-size:12.5px; padding:9px 14px; border-radius:10px; cursor:pointer; margin-bottom:10px;}
@@ -1353,6 +1395,7 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
       <button class="rw-btn" style="margin-top:16px;" onclick="closeRewardSheet()">Nice!</button>
     </div>
   </div>
+  <div class="notice-pops" id="noticePops"></div>
   <div class="lfa-modal" id="lfaModal" onclick="if(event.target===this) closeLfaModal()">
     <div class="lfa-modal-card" id="lfaModalCard"></div>
   </div>
@@ -1377,6 +1420,7 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
 
   <!-- ================= USER PROFILE (opened from Leaderboard) ================= -->
   <div class="page" id="page-user-profile">
+    <div class="upf-bg" id="upfBg"></div><div class="upf-veil"></div>
     <div class="withdraw-page-header">
       <button class="wp-back" onclick="showPage('leaderboard', document.querySelectorAll('.nav-item')[2])">‹ Back</button>
       <div class="wp-title">Profile</div>
@@ -1618,10 +1662,17 @@ let wdCooldownInterval = null;
 /* ============================================================
    NAVIGATION
    ============================================================ */
+function scrollToTopNow(){
+  const go = () => { try{ window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }catch(e){} };
+  go();
+  requestAnimationFrame(go);       // once more after the new page has been laid out
+  setTimeout(go, 120);             // and after quick async renders
+}
 function showPage(name, el){
   setTimeout(maybeShowDisplayAd, 600);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
+  scrollToTopNow();
   if (el){
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
     el.classList.add('active');
@@ -2019,12 +2070,30 @@ async function loadHome(){
   }
 }
 
+// Points a skipped day would have paid if the streak had continued (shown next to its ✕)
+function checkinWouldBe(key){
+  const h = state.checkinHistory || {};
+  for (let back = 1; back <= 21; back++){
+    const d = new Date(key + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() - back);
+    const e = h[d.toISOString().slice(0,10)];
+    if (e && e.points){
+      let r = e.points + CHECKIN_RULES.step * back;
+      if (CHECKIN_RULES.max > 0) r = Math.min(r, CHECKIN_RULES.max);
+      return r;
+    }
+  }
+  return CHECKIN_RULES.base;
+}
+
 function buildWeekStripHtml(){
   const dayLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   const now = new Date();
   const todayIdx = (now.getUTCDay() + 6) % 7; // Monday = 0
   const monday = new Date(now);
   monday.setUTCDate(now.getUTCDate() - todayIdx);
+  const todayKey = now.toISOString().slice(0,10);
+  const doneKeys = Object.keys(state.checkinHistory || {}).filter(k => state.checkinHistory[k] && state.checkinHistory[k].status === 'done').sort();
+  const firstDone = doneKeys[0] || null;
   return dayLabels.map((label, i) => {
     const d = new Date(monday);
     d.setUTCDate(monday.getUTCDate() + i);
@@ -2036,6 +2105,9 @@ function buildWeekStripHtml(){
       cls = 'done'; inner = '✓'; pointsHtml = `<div class="dpoints">+${entry.points}</div>`;
     } else if (entry && entry.status === 'missed'){
       cls = 'missed'; inner = '✕'; pointsHtml = `<div class="dpoints">${entry.points}</div>`;
+    } else if (!entry && key < todayKey && firstDone && key > firstDone){
+      // a day that passed with no check-in (after the very first one) is a miss too — never left empty
+      cls = 'missed'; inner = '✕'; pointsHtml = `<div class="dpoints">${checkinWouldBe(key)}</div>`;
     }
     if (isToday) cls += ' today';
     return `<div class="week-day ${cls}">
@@ -2762,11 +2834,19 @@ function renderLeaderboard(data){
 /* ============================================================
    USER PROFILE (tap a person on the Leaderboard)
    ============================================================ */
+function setProfileBg(src){
+  const el = document.getElementById('upfBg');
+  if (!el) return;
+  if (!src){ el.classList.remove('on'); el.style.backgroundImage = 'none'; return; }
+  el.style.backgroundImage = 'url("' + String(src).replace(/"/g, '%22') + '")';
+  el.classList.add('on');
+}
 async function openUserProfile(tgId){
   showPage('user-profile', document.querySelectorAll('.nav-item')[2]);
   window.scrollTo({ top:0 });
   const body = document.getElementById('userProfileBody');
   body.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:30px 0;">Loading…</div>`;
+  setProfileBg(null);
   try{
     const res = await fetch(`${API_BASE}/public-profile/${encodeURIComponent(tgId)}`);
     if (!res.ok) throw new Error('not found');
@@ -2783,6 +2863,7 @@ async function openUserProfile(tgId){
           <div class="up"><div class="l">UP</div><div class="v">${num(u.up)}</div></div>
         </div>`;
       setCover(document.getElementById('upfCover'), u.coverUrl || u.avatarUrl || (u.hasTelegramAvatar ? `${API_BASE}/avatar/${u.tgId}` : null));
+      setProfileBg(u.coverUrl || u.avatarUrl || (u.hasTelegramAvatar ? `${API_BASE}/avatar/${u.tgId}` : null));
       return;
     }
     const coverSrc = u.coverUrl || u.avatarUrl || (u.hasTelegramAvatar ? `${API_BASE}/avatar/${u.tgId}` : null);
@@ -2824,6 +2905,7 @@ async function openUserProfile(tgId){
         ${cell('Payments', num(u.payments))}
       </div>`;
     setCover(document.getElementById('upfCover'), coverSrc);
+    setProfileBg(coverSrc);
   } catch(e){
     body.innerHTML = `<div style="text-align:center; color:var(--red); font-size:12.5px; padding:30px 0;">Could not load this profile.</div>`;
   }
@@ -3528,12 +3610,51 @@ function setBadge(id, n){
 
 function updateBellBadge(){
   setBadge('bellBadge', cachedNotices.filter(isNoticeUnread).length);
+  renderNoticePops();
+}
+
+/* ---------- Small landscape pop-ups for automatic notices ----------
+   Shown on top of the app (over the bell) every time the bot is opened, and they stay until the person
+   has seen them (tap = open + mark read, ✕ = mark read). Only the last 14 days, max 3 at a time. */
+const POP_MAX_AGE_MS = 14 * 86400000;
+function renderNoticePops(){
+  const box = document.getElementById('noticePops');
+  if (!box) return;
+  const list = [];
+  cachedNotices.forEach((n, i) => {
+    if (n.type !== 'auto' || !isNoticeUnread(n)) return;
+    if (Date.now() - new Date(n.createdAt).getTime() > POP_MAX_AGE_MS) return;
+    list.push({ n, i });
+  });
+  list.sort((a, b) => new Date(b.n.createdAt) - new Date(a.n.createdAt));
+  const shown = list.slice(0, 3), extra = list.length - shown.length;
+  const sig = shown.map(x => noticeKey(x.n)).join('|') + '+' + extra;
+  if (box.dataset.sig === sig) return;               // nothing changed: do not replay the animation
+  box.dataset.sig = sig;
+  box.innerHTML = shown.map(({ n, i }) => {
+    const prev = String(n.body || '').replace(/\s+/g, ' ').trim();
+    return `<div class="npop" onclick="popOpen(${i})">
+      <div class="npop-ico">${noticeIcon(n)}</div>
+      <div class="npop-txt"><div class="npop-t">${escHtml(n.title)}</div>${prev ? `<div class="npop-b">${escHtml(prev)}</div>` : ''}</div>
+      <button class="npop-x" aria-label="Dismiss" onclick="popDismiss(${i}, event)">✕</button>
+    </div>`;
+  }).join('') + (extra > 0 ? `<div class="npop-more">+${extra} more new notice${extra > 1 ? 's' : ''}</div>` : '');
+}
+function popOpen(i){ openNotice(i); }
+function popDismiss(i, ev){
+  if (ev) ev.stopPropagation();
+  const n = cachedNotices[i];
+  if (n) markNoticeRead(n);
+  updateBellBadge();
 }
 
 async function refreshNoticeBadge(){ await fetchNotices(); updateBellBadge(); refreshSupportBadge(); }
 
-function openLfaModal(html){
-  document.getElementById('lfaModalCard').innerHTML = html + '<button class="lfa-modal-close" onclick="closeLfaModal()">Close</button>';
+function openLfaModal(html, cls){
+  const card = document.getElementById('lfaModalCard');
+  card.className = 'lfa-modal-card' + (cls ? ' ' + cls : '');
+  card.scrollTop = 0;
+  card.innerHTML = html + '<button class="lfa-modal-close" onclick="closeLfaModal()">Close</button>';
   document.getElementById('lfaModal').classList.add('active');
 }
 function closeLfaModal(){ document.getElementById('lfaModal').classList.remove('active'); }
@@ -3575,9 +3696,12 @@ function openNotice(i){
       ${m.address ? `<button class="wds-copy" onclick="copyNoticeField(${i},'address',this)">Copy address</button>` : ''}
     </div>` : '') +
     ((n.type === 'withdraw_declined' || n.type === 'withdraw_paid') ? `<button class="wds-help" style="margin-top:10px;" onclick="closeLfaModal(); showPage('support', null)">🎧 Talk to Support</button>` : '');
-  openLfaModal(`<h3>${escHtml(n.title)}</h3>
-    <div class="lfa-modal-date">${new Date(n.createdAt).toLocaleString()}</div>
-    <div class="lfa-modal-body">${escHtml(n.body) || '<span style="color:var(--text-muted)">(no extra details)</span>'}</div>${buttons}`);
+  const tone = n.type === 'withdraw_paid' ? 'pm-green' : n.type === 'withdraw_declined' ? 'pm-red' : 'pm-gold';
+  const tag = n.type === 'auto' ? 'Automatic update' : (n.personal ? 'Message for you' : 'Official notice');
+  openLfaModal(`<div class="pm-top"><span class="pm-ico">${noticeIcon(n)}</span><span class="pm-tag">${tag}</span></div>
+    <h3 class="pm-title">${escHtml(n.title)}</h3>
+    <div class="pm-date">${new Date(n.createdAt).toLocaleString()}</div>
+    <div class="pm-body">${escHtml(n.body) || '<span class="pm-none">(no extra details)</span>'}</div>${buttons}`, 'prem ' + tone);
   markNoticeRead(n);
   const item = document.querySelectorAll('#noticeList .inbox-item')[i];
   if (item){ item.classList.remove('unread', 'notice-unread'); const d = item.querySelector('.udot'); if (d) d.remove(); }
