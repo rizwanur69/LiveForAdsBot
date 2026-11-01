@@ -1097,7 +1097,7 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
       <button class="earn-toggle-btn" id="lbTabAp" onclick="setLeaderboardTab('ap')">AP</button>
       <button class="earn-toggle-btn" id="lbTabUp" onclick="setLeaderboardTab('up')">UP</button>
     </div>
-    <div class="section-label">Top 20 earners</div>
+    <div class="section-label" id="lbTitle">Top 20 earners</div>
     <div class="podium" id="podium"></div>
     <div id="lbList"></div>
     <div id="lbYou"></div>
@@ -2770,6 +2770,8 @@ async function loadLeaderboard(){
     const sortBy = leaderboardTab === 'up' ? 'up' : 'points'; // "all" and "ap" both rank by AP
     const res = await fetch(`${API_BASE}/leaderboard/${state.user.id}?sortBy=${sortBy}`);
     const data = await res.json();
+    const lt = document.getElementById('lbTitle');
+    if (lt) lt.textContent = 'Top 20 · ' + ((state.settings && state.settings.seasonName) || 'This season');
     renderLeaderboard(data);
   } catch(e){ console.error("Could not load leaderboard:", e); }
 }
@@ -2968,32 +2970,50 @@ function loadLfaFrame(){
 async function loadLfaSeasonHistory(){
   const list = document.getElementById('lfaSeasonHistory');
   try{
-    const res = await fetch(`${API_BASE}/season-boxes`);
-    const boxes = await res.json();
+    const uid = state.user && state.user.id;
+    const [boxes, mine] = await Promise.all([
+      fetch(`${API_BASE}/season-boxes`).then(r=>r.json()),
+      uid ? fetch(`${API_BASE}/user/${uid}/seasons`).then(r=>r.json()).catch(()=>({seasons:[]})) : Promise.resolve({seasons:[]})
+    ]);
     if (!boxes.length){
       list.innerHTML = `<div style="font-size:12px;color:var(--text-muted);">No season history yet.</div>`;
       return;
     }
-    const totalAP = boxes.reduce((a,b)=>a+(b.totalPointsEarned||0),0);
+    boxes.sort((x,y)=>String(y.startDate||'').localeCompare(String(x.startDate||'')));
+    const mineBy = {}; (mine.seasons||[]).forEach(x=>{ mineBy[x.boxId] = x; });
+    const myTotalAp = (mine.seasons||[]).reduce((a,x)=>a+(x.ap||0),0);
+    const n = v => Number(v||0).toLocaleString();
     const cell = (num, label) => `<div class="sstat"><div class="snum">${num}</div><div class="slabel">${label}</div></div>`;
-    list.innerHTML = `
+    const pill = (t, bg, fg) => `<span style="font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; background:${bg}; color:${fg}; margin-left:6px; vertical-align:middle;">${t}</span>`;
+
+    const summary = `
       <div class="season-box" style="margin-top:6px;">
-        <div class="sname">All Seasons · AP Collection</div>
-        <div class="sdates">${boxes.length} season${boxes.length>1?'s':''} recorded</div>
-        <div class="srow">${cell(totalAP.toLocaleString(), 'Total AP (all seasons)')}</div>
-      </div>` + boxes.map(b=>`
+        <div class="sname">Your AP · all seasons</div>
+        <div class="sdates">${boxes.length} season${boxes.length>1?'s':''} on record</div>
+        <div class="srow">${cell(n(myTotalAp), 'Total AP across seasons')}${cell(n(mine.apNow), 'AP this season')}</div>
+      </div>`;
+
+    list.innerHTML = summary + boxes.map(b=>{
+      const my = mineBy[b.id] || { ap:0, up:0 };
+      const running = b.status === 'active';
+      const tag = running ? pill('LIVE','rgba(74,222,128,.18)','#4ADE80')
+                : b.isCurrent ? pill('PAYOUT','rgba(232,185,80,.18)','#E8B950')
+                : pill('ENDED','rgba(255,255,255,.08)','var(--text-muted)');
+      return `
       <div class="season-box">
-        <div class="sname">${escHtml(b.seasonName||'')} ${b.isCurrent ? '(current)' : ''}</div>
+        <div class="sname">${escHtml(b.seasonName||'')}${tag}</div>
         <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}</div>
-        <div class="srow">
-          ${cell((b.participants||0).toLocaleString(), 'Participants')}
-          ${cell((b.totalPointsEarned||0).toLocaleString(), 'Season Total AP')}
+        <div class="srow" style="margin-bottom:8px;">
+          ${cell(n(my.ap), running ? 'Your AP so far' : 'Your Total AP')}
+          ${cell(n(my.up), 'Your UP earned')}
         </div>
-        <div class="srow" style="margin-top:8px;">
-          ${cell((b.totalUp||0).toLocaleString(), 'Total UP')}
+        <div class="srow">
+          ${cell(n(b.participants), 'Participants')}
+          ${cell(running ? 'In progress' : n(b.totalPointsEarned), 'Season Total AP')}
           ${cell('$' + (b.apAllocation||0).toFixed(2), 'AP Allocation')}
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   } catch(e){ list.innerHTML = `<div style="font-size:12px;color:var(--red);">Could not load season history.</div>`; }
 }
 
@@ -3850,6 +3870,10 @@ async function loadWithdrawPage(){
   } catch(e){ console.error("Could not load withdraw info:", e); }
 
   document.getElementById('wdApTotal').textContent = withdrawInfo.ap;
+  const apLbl = document.querySelector('.wd-balance-item.ap .wd-label');
+  if (apLbl) apLbl.textContent = withdrawInfo.apSeasonName ? 'AP · ' + withdrawInfo.apSeasonName : 'AP';
+  const apF = document.getElementById('wdAllocFormula');
+  if (apF) apF.textContent = 'Ad revenue pool ÷ Total AP × Your AP' + (withdrawInfo.apSeasonName ? ' (' + withdrawInfo.apSeasonName + ')' : '') + (withdrawInfo.seasonName && withdrawInfo.apNow != null ? ' · ' + withdrawInfo.seasonName + ' AP so far: ' + withdrawInfo.apNow : '');
   document.getElementById('wdUpTotal').textContent = withdrawInfo.up;
   const partBoxes = (items) => items.map((x, i) => (i ? '<span class="wd-plus">+</span>' : '') +
     `<div class="wd-part"><div class="wp-name">${x[0]}</div><div class="wp-val">${x[1]}</div></div>`).join('');
@@ -3863,7 +3887,7 @@ async function loadWithdrawPage(){
   const note = document.getElementById('wdWindowNote');
   const btn = document.getElementById('withdrawBtn');
   note.textContent = withdrawInfo.withdrawOpen
-    ? `Withdrawals for ${withdrawInfo.seasonName} are open now. Requests are reviewed and paid between the 3rd–5th of next month.`
+    ? `Withdrawals for ${withdrawInfo.apSeasonName || withdrawInfo.seasonName} are open now. Requests are reviewed and paid between the 3rd–5th of next month.`
     : (state.settings.withdrawClosedNote || `The withdrawal window opens on the 1st–2nd of Jan, Mar, May, Jul, Sep, and Nov (00:00–23:59 UTC). It's currently closed.`);
   if (withdrawInfo.apClaimed) note.textContent += ' Your AP allocation for this season is already requested.';
   btn.disabled = !withdrawInfo.withdrawOpen || state.banned;
@@ -3902,6 +3926,7 @@ async function loadSeasonBoxes(){
   try{
     const res = await fetch(`${API_BASE}/season-boxes`);
     const boxes = await res.json();
+    boxes.sort((x,y)=>String(y.startDate||'').localeCompare(String(x.startDate||'')));
     const list = document.getElementById('seasonBoxesList');
     if (boxes.length === 0){
       list.innerHTML = `<div style="font-size:12px;color:var(--text-muted);">No season data published yet.</div>`;
@@ -3918,7 +3943,7 @@ async function loadSeasonBoxes(){
     const cell = (icon, num, label) => `<div class="sg"><span class="sg-ic">${SI[icon]}</span><div><div class="snum">${num}</div><div class="slabel">${label}</div></div></div>`;
     list.innerHTML = boxes.map(b=>`
       <div class="season-box">
-        <div class="sname">${b.seasonName}</div>
+        <div class="sname">${b.seasonName}${b.status==='active' ? ' <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:rgba(74,222,128,.18);color:#4ADE80;vertical-align:middle;">LIVE</span>' : ''}</div>
         <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}</div>
         <div class="sgrid">
           ${cell('users', b.participants||0, 'Participants')}
