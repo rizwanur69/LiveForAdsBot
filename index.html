@@ -1435,7 +1435,7 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
     <button class="nav-item" onclick="showPage('ads', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg><span>Earn</span></button>
     <button class="nav-item" onclick="showPage('leaderboard', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9l-5.2 2.8 1-5.9L3.5 9.7l5.9-.8z"/></svg><span>Leaders</span></button>
     <button class="nav-item" onclick="showPage('referral', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.6c2.7.2 4.5 2 4.5 4.9"/></svg><span>Referral</span></button>
-    <button class="nav-item" style="display:none;" onclick="showPage('lfa', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5h4v5"/></svg><span>LFA</span></button>
+    <button class="nav-item" onclick="showPage('lfa', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9c-2.6-2.6-3.9-5.6-3.9-9S9.4 5.6 12 3z"/></svg><span>LFA</span></button>
     <button class="nav-item" onclick="showPage('profile', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c0-4 3.4-6.3 7.5-6.3s7.5 2.3 7.5 6.3"/></svg><span>Profile</span></button>
   </div>
 
@@ -2970,16 +2970,28 @@ async function loadLfaSeasonHistory(){
   try{
     const res = await fetch(`${API_BASE}/season-boxes`);
     const boxes = await res.json();
-    if (boxes.length === 0){
+    if (!boxes.length){
       list.innerHTML = `<div style="font-size:12px;color:var(--text-muted);">No season history yet.</div>`;
       return;
     }
-    list.innerHTML = boxes.map(b=>`
+    const totalAP = boxes.reduce((a,b)=>a+(b.totalPointsEarned||0),0);
+    const cell = (num, label) => `<div class="sstat"><div class="snum">${num}</div><div class="slabel">${label}</div></div>`;
+    list.innerHTML = `
+      <div class="season-box" style="margin-top:6px;">
+        <div class="sname">All Seasons · AP Collection</div>
+        <div class="sdates">${boxes.length} season${boxes.length>1?'s':''} recorded</div>
+        <div class="srow">${cell(totalAP.toLocaleString(), 'Total AP (all seasons)')}</div>
+      </div>` + boxes.map(b=>`
       <div class="season-box">
-        <div class="sname">${b.seasonName} ${b.isCurrent ? '(current)' : ''}</div>
+        <div class="sname">${escHtml(b.seasonName||'')} ${b.isCurrent ? '(current)' : ''}</div>
         <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}</div>
+        <div class="srow">
+          ${cell((b.participants||0).toLocaleString(), 'Participants')}
+          ${cell((b.totalPointsEarned||0).toLocaleString(), 'Season Total AP')}
+        </div>
         <div class="srow" style="margin-top:8px;">
-          <div class="sstat"><div class="snum">${b.totalPointsEarned||0}</div><div class="slabel">Season Total AP</div></div>
+          ${cell((b.totalUp||0).toLocaleString(), 'Total UP')}
+          ${cell('$' + (b.apAllocation||0).toFixed(2), 'AP Allocation')}
         </div>
       </div>`).join('');
   } catch(e){ list.innerHTML = `<div style="font-size:12px;color:var(--red);">Could not load season history.</div>`; }
