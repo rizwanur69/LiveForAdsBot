@@ -179,16 +179,29 @@
 
   /* Public user profile (from Leaderboard) */
   .podium-item, .lb-row{cursor:pointer; -webkit-tap-highlight-color:transparent;}
-  /* leaderboard profile: that person's cover/photo fills the whole screen, softly blurred */
-  .upf-bg{position:fixed; inset:-20px; z-index:-2; background-size:cover; background-position:center; filter:blur(5px) saturate(1.1); transform:scale(1.04); opacity:0; transition:opacity .4s;}
-  .upf-bg.on{opacity:1;}
-  .upf-veil{position:fixed; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.34));}
-  #page-user-profile .wp-title, #page-user-profile .upf-sec{color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.65);}
-  #page-user-profile .wp-back{background:rgba(0,0,0,.32); color:#fff; border-color:rgba(255,255,255,.25); backdrop-filter:blur(8px);}
-  #page-user-profile .upf-bal > div, #page-user-profile .upf-cell{background:rgba(255,255,255,.80); border-color:rgba(255,255,255,.35); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); color:#1F1A12;}
-  #page-user-profile .upf-cell .k, #page-user-profile .upf-bal .r{color:#6d6350;}
-  body.dark-theme #page-user-profile .upf-bal > div, body.dark-theme #page-user-profile .upf-cell{background:rgba(18,18,22,.62); border-color:rgba(255,255,255,.14); color:#F3EEE2;}
-  body.dark-theme #page-user-profile .upf-cell .k, body.dark-theme #page-user-profile .upf-bal .r{color:#b9b09c;}
+  .lb-pick{margin-top:10px;}
+  .lb-pick select{width:100%; -webkit-appearance:none; appearance:none; background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23B07A16' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center; border:1px solid var(--line); color:var(--text); font-family:'Inter',sans-serif; font-weight:700; font-size:13px; padding:12px 38px 12px 14px; border-radius:12px; cursor:pointer;}
+  .lb-pick select:focus{outline:none; border-color:var(--gold);}
+  /* Another person's profile: their photo/cover is the background of the details block (30% blur),
+     and the text + boxes float on top of it as soft glass. Blur strength = percent x 0.2px. */
+  .upf-details{--upf-blur:6px; position:relative; margin:16px -20px 0; padding:6px 20px 120px; border-radius:26px 26px 0 0; overflow:hidden; min-height:60vh; isolation:isolate;}
+  .upf-dbg{position:absolute; inset:-24px; z-index:-2; background-size:cover; background-position:center; filter:blur(var(--upf-blur)) saturate(1.1); transform:scale(1.06); opacity:0; transition:opacity .4s;}
+  .upf-dbg.on{opacity:1;}
+  .upf-details::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.34));}
+  #page-user-profile .upf-details:not(.has-bg) .upf-bal > div, #page-user-profile .upf-details:not(.has-bg) .upf-cell{background:var(--surface); border-color:var(--line); color:var(--text); text-shadow:none; box-shadow:none;}
+  #page-user-profile .upf-details:not(.has-bg) .upf-cell .k, #page-user-profile .upf-details:not(.has-bg) .upf-bal .r{color:var(--text-muted);}
+  .upf-details:not(.has-bg){background:linear-gradient(180deg, rgba(120,90,40,.10), rgba(120,90,40,.02));}
+  .upf-details:not(.has-bg)::before{display:none;}
+  #page-user-profile .upf-sec{color:#fff; text-shadow:0 1px 8px rgba(0,0,0,.7);}
+  #page-user-profile .upf-details:not(.has-bg) .upf-sec{color:var(--text-muted); text-shadow:none;}
+  #page-user-profile .upf-bal > div, #page-user-profile .upf-cell{background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.30); -webkit-backdrop-filter:blur(10px) saturate(1.25); backdrop-filter:blur(10px) saturate(1.25); color:#fff; text-shadow:0 1px 8px rgba(0,0,0,.55); box-shadow:0 12px 30px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.28); animation:upfFloat 6s ease-in-out infinite;}
+  #page-user-profile .upf-cell .k, #page-user-profile .upf-bal .r{color:rgba(255,255,255,.84);}
+  #page-user-profile .upf-bal .ap .l, #page-user-profile .upf-bal .ap .v, #page-user-profile .upf-cell .n.ap{color:#FFD772;}
+  #page-user-profile .upf-bal .up .l, #page-user-profile .upf-bal .up .v, #page-user-profile .upf-cell .n.green{color:#7DF0B0;}
+  #page-user-profile .upf-bal > div:nth-child(2), #page-user-profile .upf-grid > .upf-cell:nth-child(even){animation-delay:-3s;}
+  #page-user-profile .upf-grid > .upf-cell:nth-child(3n){animation-delay:-1.5s;}
+  @keyframes upfFloat{0%,100%{transform:translateY(0);} 50%{transform:translateY(-3px);}}
+  @media (prefers-reduced-motion: reduce){ #page-user-profile .upf-bal > div, #page-user-profile .upf-cell{animation:none;} }
   /* Hidden profile: details are blurred, crossed out with a red line and labelled */
   .upf-locked{position:relative; margin-top:4px; border-radius:16px; overflow:hidden;}
   .upf-locked-inner{filter:blur(7px); pointer-events:none; user-select:none; -webkit-user-select:none;}
@@ -400,6 +413,8 @@
   .npop-b{font-size:11.5px; line-height:1.3; color:#D9CFB8; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .npop-x{flex:none; width:26px; height:26px; border-radius:50%; border:1px solid rgba(232,185,80,.3); background:rgba(255,255,255,.06); color:#E8D9AE; font-size:12px; cursor:pointer; line-height:1;}
   .npop-more{pointer-events:auto; align-self:center; font-size:10.5px; font-weight:700; color:#E8D9AE; background:rgba(28,22,12,.92); border:1px solid rgba(232,185,80,.35); padding:3px 10px; border-radius:20px;}
+  .npop-bar{position:absolute; left:3px; right:0; bottom:0; height:2px; transform-origin:left; background:linear-gradient(90deg,#FFF0C2,#E8B950); opacity:.85; animation:npopBar linear forwards;}
+  @keyframes npopBar{from{transform:scaleX(1);} to{transform:scaleX(0);}}
   @keyframes npopIn{from{transform:translateY(-26px) scale(.96); opacity:0;} to{transform:none; opacity:1;}}
   @keyframes npopShine{0%{left:-80px;} 55%,100%{left:110%;}}
   .lfa-modal-close{width:100%; margin-top:16px; background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-weight:600; font-size:13.5px; padding:11px; border-radius:10px; cursor:pointer; font-family:'Inter',sans-serif;}
@@ -594,6 +609,14 @@
   .brand-wrap{display:flex; align-items:center; gap:11px; min-width:0;}
   .brand-logo{flex-shrink:0; filter:drop-shadow(0 4px 10px rgba(176,122,22,0.38));}
   .topbar .brand{font-family:'Playfair Display',serif; font-size:21px; font-weight:700; color:var(--text); letter-spacing:0.2px; line-height:1.1;}
+  .season-chip{position:relative; overflow:hidden; display:inline-flex; align-items:center; gap:6px; max-width:100%; margin-top:5px; padding:3px 12px 3px 8px; border-radius:20px; background:linear-gradient(135deg, rgba(242,179,61,.26), rgba(176,122,22,.08)); border:1px solid rgba(232,185,80,.6); box-shadow:0 3px 12px rgba(176,122,22,.25), inset 0 0 10px rgba(255,224,160,.18);}
+  .season-chip::after{content:""; position:absolute; top:0; bottom:0; width:40px; left:-60px; background:linear-gradient(100deg,transparent,rgba(255,240,194,.45),transparent); animation:scShine 4.2s ease-in-out 1.2s infinite;}
+  .sc-dot{flex:none; width:7px; height:7px; border-radius:50%; background:#4ADE80; animation:scPulse 1.8s ease-out infinite;}
+  .sc-ico{flex:none; font-size:12px; line-height:1;}
+  .sc-name{font-size:11.5px; font-weight:800; letter-spacing:.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; background:linear-gradient(90deg,#B07A16,#F2B33D,#B07A16); background-size:200% auto; -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; animation:scFlow 4s linear infinite;}
+  @keyframes scPulse{0%{box-shadow:0 0 0 0 rgba(74,222,128,.7);} 80%,100%{box-shadow:0 0 0 7px rgba(74,222,128,0);}}
+  @keyframes scFlow{to{background-position:200% center;}}
+  @keyframes scShine{0%{left:-60px;} 55%,100%{left:115%;}}
   .brand-sub{font-size:11.5px; color:var(--text-muted); margin-top:3px; letter-spacing:0.3px;}
   .top-actions{display:flex; align-items:center; gap:2px;}
   .top-btn{position:relative; width:42px; height:42px; border-radius:50%; background:transparent; border:none; color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer;}
@@ -666,7 +689,7 @@
   /* ===== Profile redesign ===== */
   /* Cover hero: the photo fills the whole box (Twitter/Facebook style); name + ID glow so they read on any picture */
   .hero{position:relative; aspect-ratio:16/9; border-radius:20px; overflow:hidden; display:flex; align-items:flex-end; gap:12px; padding:14px; border:1px solid var(--line); background:linear-gradient(135deg, var(--gold), #E9C46A 55%, var(--up-color)); box-shadow:0 10px 28px rgba(0,0,0,.28);}
-  .hero .hero-img{position:absolute; inset:0; background-size:cover; background-position:center; z-index:0;}
+  .hero .hero-img{position:absolute; inset:0; background-size:cover; background-position:center; z-index:0; filter:blur(2px); transform:scale(1.05);}
   .hero::after{content:""; position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,0) 38%, rgba(0,0,0,.62) 100%);}
   .hero > .hero-av, .hero > .hero-txt{position:relative; z-index:2;}
   .hero .hero-av{width:68px; height:68px; flex:none; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:700; color:var(--gold); background:var(--surface-raised); border:3px solid #fff; box-shadow:0 0 0 2px rgba(255,200,70,.55), 0 6px 16px rgba(0,0,0,.45);}
@@ -750,11 +773,12 @@
 .hb-val,.num,.et-val,.wp-val,.eh-title{letter-spacing:-.3px;}
 .earn-card{box-shadow:0 14px 32px rgba(0,0,0,.28), 0 0 26px rgba(var(--accRgb),.06) !important;}
 .eshp-val,.pf-bal{box-shadow:0 8px 20px rgba(var(--accRgb),.14);}
-/* leaderboard rows: give the name room (secondary UP tag hidden, tags smaller) */
+/* leaderboard rows: AP and UP tags both shown, tags smaller so the name keeps room */
 .lb-row{gap:10px !important;}
 .lb-row .name{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;}
-.lb-row > span:nth-of-type(2){display:none;}
-.lb-row .ap-tag,.lb-row .up-tag{font-size:11px !important; padding:3px 8px !important;}
+.lb-row{flex-wrap:nowrap;}
+.lb-row .ap-tag,.lb-row .up-tag{flex:none; white-space:nowrap;}
+.lb-row .ap-tag,.lb-row .up-tag{font-size:10.5px !important; padding:3px 7px !important;}
 
 body{background:radial-gradient(120% 40% at 50% -6%, rgba(var(--accRgb),.20), transparent 66%), var(--bgc) !important;}
 .profile-card,.reward-card,.lb-row,.ref-user,.season-box,.podium-item,.wd-part,.wd-balance-item,.wd-allocation-box,.ref-stat,.earn-card,.et-box{background:#FFFFFF !important; box-shadow:0 12px 30px rgba(120,90,40,.12) !important; border-color:rgba(var(--accRgb),.30) !important;}
@@ -891,7 +915,7 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
       <svg class="brand-logo" viewBox="0 0 48 48" width="42" height="42" aria-hidden="true"><defs><linearGradient id="lgLogo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE0A0"/><stop offset="0.55" stop-color="#F2B33D"/><stop offset="1" stop-color="#C98512"/></linearGradient></defs><path d="M9.500 7.500c0-2.400 2.600-3.900 4.700-2.700l27 15.600c2.100 1.200 2.100 4.200 0 5.400l-27 15.600c-2.100 1.200-4.700-.3-4.700-2.700z" fill="url(#lgLogo)"/><path d="M17 14.500 33.500 24 17 33.500z" fill="#7A4A06" fill-opacity=".38"/><path d="M11 8.500 30 19.500" stroke="#fff" stroke-opacity=".45" stroke-width="1.600" stroke-linecap="round"/></svg>
       <div>
         <div class="brand">Live For Ads</div>
-        <div class="brand-sub">Watch · Engage · Earn</div>
+        <div class="season-chip" id="homeSeasonChip" style="display:none;"><span class="sc-dot"></span><span class="sc-ico">🏆</span><span class="sc-name" id="homeSeasonName"></span></div>
       </div>
     </div>
     <div class="top-actions">
@@ -1100,10 +1124,11 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
   <!-- ================= LEADERBOARD ================= -->
   <div class="page" id="page-leaderboard">
     <div class="earn-toggle" style="margin-top:16px;">
-      <button class="earn-toggle-btn active" id="lbTabAll" onclick="setLeaderboardTab('all')">All Time</button>
-      <button class="earn-toggle-btn" id="lbTabAp" onclick="setLeaderboardTab('ap')">AP</button>
-      <button class="earn-toggle-btn" id="lbTabUp" onclick="setLeaderboardTab('up')">UP</button>
+      <button class="earn-toggle-btn active" id="lbTabAll" onclick="setLeaderboardTab('all')">All Season</button>
+      <button class="earn-toggle-btn" id="lbTabCur" onclick="setLeaderboardTab('current')">This Season</button>
+      <button class="earn-toggle-btn" id="lbTabPrev" onclick="setLeaderboardTab('prev')">Last Season</button>
     </div>
+    <div class="lb-pick"><select id="lbSeasonSelect" onchange="setLeaderboardSeason(this.value)" aria-label="Pick a season"><option value="">Pick a season · AP &amp; UP</option></select></div>
     <div class="section-label" id="lbTitle">Top 20 earners</div>
     <div class="podium" id="podium"></div>
     <div id="lbList"></div>
@@ -1427,7 +1452,6 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
 
   <!-- ================= USER PROFILE (opened from Leaderboard) ================= -->
   <div class="page" id="page-user-profile">
-    <div class="upf-bg" id="upfBg"></div><div class="upf-veil"></div>
     <div class="withdraw-page-header">
       <button class="wp-back" onclick="showPage('leaderboard', document.querySelectorAll('.nav-item')[2])">‹ Back</button>
       <div class="wp-title">Profile</div>
@@ -1773,6 +1797,9 @@ function renderHomeHeader(){
   document.getElementById('homeSub').textContent = String(state.user.id).startsWith('guest') ? 'Guest' : 'ID: ' + state.user.id;
   document.getElementById('homeAp').textContent = state.totalPoints;
   document.getElementById('homeUp').textContent = state.up;
+  const sn = (state.settings && state.settings.seasonName) || '';
+  const chip = document.getElementById('homeSeasonChip');
+  if (chip){ document.getElementById('homeSeasonName').textContent = sn; chip.style.display = sn ? 'inline-flex' : 'none'; }
 }
 
 
@@ -2762,23 +2789,58 @@ async function reportAdWatched(networkKey){
 /* ============================================================
    LEADERBOARD
    ============================================================ */
-let leaderboardTab = 'all';
+let leaderboardTab = 'all';      // all | current | prev | pick
+let lbPickBox = '';
+let lbBoxes = null;
+
+async function ensureLbBoxes(){
+  try{
+    const b = await (await fetch(`${API_BASE}/season-boxes`)).json();
+    if (Array.isArray(b)) lbBoxes = b.filter(x => x.startDate).sort((x, y) => String(y.startDate).localeCompare(String(x.startDate)));
+  } catch(e){ if (!lbBoxes) lbBoxes = []; }
+  const sel = document.getElementById('lbSeasonSelect');
+  if (sel){
+    sel.innerHTML = '<option value="">Pick a season · AP &amp; UP</option>' + (lbBoxes || []).map(b =>
+      `<option value="${escHtmlRw(b.id)}">${escHtmlRw(b.seasonName || 'Season')}${b.status === 'active' ? ' · LIVE' : ''}</option>`).join('');
+    sel.value = leaderboardTab === 'pick' ? lbPickBox : '';
+  }
+}
+function lbPrevBox(){ return (lbBoxes || []).find(b => b.status !== 'active') || null; }
 
 function setLeaderboardTab(tab){
   leaderboardTab = tab;
+  lbPickBox = '';
+  const sel = document.getElementById('lbSeasonSelect'); if (sel) sel.value = '';
   document.getElementById('lbTabAll').classList.toggle('active', tab === 'all');
-  document.getElementById('lbTabAp').classList.toggle('active', tab === 'ap');
-  document.getElementById('lbTabUp').classList.toggle('active', tab === 'up');
+  document.getElementById('lbTabCur').classList.toggle('active', tab === 'current');
+  document.getElementById('lbTabPrev').classList.toggle('active', tab === 'prev');
+  loadLeaderboard();
+}
+function setLeaderboardSeason(boxId){
+  if (!boxId){ setLeaderboardTab('all'); return; }
+  leaderboardTab = 'pick'; lbPickBox = boxId;
+  ['lbTabAll','lbTabCur','lbTabPrev'].forEach(id => document.getElementById(id).classList.remove('active'));
   loadLeaderboard();
 }
 
 async function loadLeaderboard(){
   try{
-    const sortBy = leaderboardTab === 'up' ? 'up' : 'points'; // "all" and "ap" both rank by AP
-    const res = await fetch(`${API_BASE}/leaderboard/${state.user.id}?sortBy=${sortBy}`);
+    if (!lbBoxes) await ensureLbBoxes(); else ensureLbBoxes();
+    let q = 'scope=all', title = 'Top 20 · All seasons';
+    if (leaderboardTab === 'current'){
+      q = 'scope=current'; title = 'Top 20 · ' + ((state.settings && state.settings.seasonName) || 'This season');
+    } else if (leaderboardTab === 'prev'){
+      const pb = lbPrevBox();
+      if (!pb){ renderLeaderboard({ top: [], you: null }, 'No previous season yet.'); document.getElementById('lbTitle').textContent = 'Last season'; return; }
+      q = 'scope=season&box=' + encodeURIComponent(pb.id); title = 'Top 20 · ' + (pb.seasonName || 'Last season') + ' (last season)';
+    } else if (leaderboardTab === 'pick'){
+      const pb = (lbBoxes || []).find(b => b.id === lbPickBox);
+      q = 'scope=season&box=' + encodeURIComponent(lbPickBox); title = 'Top 20 · ' + ((pb && pb.seasonName) || 'Season');
+    }
+    const res = await fetch(`${API_BASE}/leaderboard/${state.user.id}?${q}`);
     const data = await res.json();
     const lt = document.getElementById('lbTitle');
-    if (lt) lt.textContent = 'Top 20 · ' + ((state.settings && state.settings.seasonName) || 'This season');
+    if (lt) lt.textContent = title;
     renderLeaderboard(data);
   } catch(e){ console.error("Could not load leaderboard:", e); }
 }
@@ -2790,14 +2852,12 @@ function avatarHtml(user){
   return initials(user.name);
 }
 
-function renderLeaderboard(data){
+function renderLeaderboard(data, emptyMsg){
   const top = data.top || [];
   const top3 = top.slice(0,3);
   const rest = top.slice(3);
-  const showStreak = leaderboardTab === 'all';
-  const showSecondary = leaderboardTab === 'all';
-  const primaryStat = (u) => leaderboardTab === 'up' ? `${u.up||0} UP` : `${u.points} AP`;
-  const secondaryStat = (u) => leaderboardTab === 'up' ? `${u.points} AP` : `${u.up||0} UP`;
+  const nf = v => Number(v || 0).toLocaleString();
+  const tags = u => `<span class="ap-tag">${nf(u.points)} AP</span><span class="up-tag">${nf(u.up)} UP</span>`;
 
   const hats = {1:'👑',2:'🥈',3:'🥉'};
   const order = {1:'gold',2:'silver',3:'bronze'};
@@ -2805,22 +2865,20 @@ function renderLeaderboard(data){
     <div class="podium-item ${order[u.rank]}" onclick="openUserProfile('${escHtmlRw(u.tgId)}')">
       <div class="podium-hat">${hats[u.rank]}</div>
       <div class="podium-avatar">${avatarHtml(u)}</div>
-      <div class="pname">${u.name}</div>
-      <div class="ppts ${leaderboardTab==='up'?'up':'ap'}">${primaryStat(u)}</div>
-      ${(showSecondary || showStreak) ? `<div style="margin-top:2px; display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
-        ${showSecondary ? `<span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(u)}</span>` : ''}
-        ${showStreak ? `<span class="ap-tag">🔥 ${u.streak||0}</span>` : ''}
-      </div>` : ''}
+      <div class="pname">${escHtmlRw(u.name)}</div>
+      <div class="ppts ap">${nf(u.points)} AP</div>
+      <div style="margin-top:2px; display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+        <span class="up-tag">${nf(u.up)} UP</span>
+      </div>
     </div>`).join('');
 
-  document.getElementById('lbList').innerHTML = rest.map(u=>`
+  const empty = !top.length ? `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:26px 0;">${escHtmlRw(emptyMsg || 'Nobody has points here yet.')}</div>` : '';
+  document.getElementById('lbList').innerHTML = empty + rest.map(u=>`
     <div class="lb-row ${u.tgId===String(state.user.id)?'you':''}" onclick="openUserProfile('${escHtmlRw(u.tgId)}')">
       <div class="rank">${u.rank}</div>
       <div class="avatar">${avatarHtml(u)}</div>
-      <div class="name">${u.name}</div>
-      <span class="${leaderboardTab==='up'?'up-tag':'ap-tag'}">${primaryStat(u)}</span>
-      ${showSecondary ? `&nbsp;<span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(u)}</span>` : ''}
-      ${showStreak ? `&nbsp;<span class="ap-tag">🔥${u.streak||0}</span>` : ''}
+      <div class="name">${escHtmlRw(u.name)}</div>
+      ${tags(u)}
     </div>`).join('');
 
   const you = data.you;
@@ -2830,10 +2888,8 @@ function renderLeaderboard(data){
       <div class="lb-row you" onclick="openUserProfile('${escHtmlRw(you.tgId)}')">
         <div class="rank">${you.rank}</div>
         <div class="avatar">${avatarHtml(you)}</div>
-        <div class="name">${you.name} (You)</div>
-        <span class="${leaderboardTab==='up'?'up-tag':'ap-tag'}">${primaryStat(you)}</span>
-        ${showSecondary ? `&nbsp;<span class="${leaderboardTab==='up'?'ap-tag':'up-tag'}">${secondaryStat(you)}</span>` : ''}
-        ${showStreak ? `&nbsp;<span class="ap-tag">🔥${you.streak||0}</span>` : ''}
+        <div class="name">${escHtmlRw(you.name)} (You)</div>
+        ${tags(you)}
       </div>`;
   } else {
     youBox.innerHTML = '';
@@ -2843,19 +2899,30 @@ function renderLeaderboard(data){
 /* ============================================================
    USER PROFILE (tap a person on the Leaderboard)
    ============================================================ */
+function wrapUpfDetails(){
+  const body = document.getElementById('userProfileBody');
+  const hero = document.getElementById('upfCover');
+  if (!body || !hero) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'upf-details'; wrap.id = 'upfDetails';
+  wrap.innerHTML = '<div class="upf-dbg" id="upfDbg"></div><div class="upf-in"></div>';
+  const inner = wrap.lastChild;
+  while (hero.nextSibling) inner.appendChild(hero.nextSibling);   // everything under the cover goes inside
+  body.appendChild(wrap);
+}
 function setProfileBg(src){
-  const el = document.getElementById('upfBg');
-  if (!el) return;
-  if (!src){ el.classList.remove('on'); el.style.backgroundImage = 'none'; return; }
+  const wrap = document.getElementById('upfDetails');
+  const el = document.getElementById('upfDbg');
+  if (!el || !wrap) return;
+  if (!src){ el.classList.remove('on'); el.style.backgroundImage = 'none'; wrap.classList.remove('has-bg'); return; }
   el.style.backgroundImage = 'url("' + String(src).replace(/"/g, '%22') + '")';
-  el.classList.add('on');
+  el.classList.add('on'); wrap.classList.add('has-bg');
 }
 async function openUserProfile(tgId){
   showPage('user-profile', document.querySelectorAll('.nav-item')[2]);
   window.scrollTo({ top:0 });
   const body = document.getElementById('userProfileBody');
   body.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:30px 0;">Loading…</div>`;
-  setProfileBg(null);
   try{
     const res = await fetch(`${API_BASE}/public-profile/${encodeURIComponent(tgId)}`);
     if (!res.ok) throw new Error('not found');
@@ -2886,6 +2953,7 @@ async function openUserProfile(tgId){
             <div class="upf-locked-msg">🔒 Hidden profile<small>This user keeps their details private</small></div>
           </div>
         </div>`;
+      wrapUpfDetails();
       setCover(document.getElementById('upfCover'), u.coverUrl || u.avatarUrl || (u.hasTelegramAvatar ? `${API_BASE}/avatar/${u.tgId}` : null));
       setProfileBg(u.coverUrl || u.avatarUrl || (u.hasTelegramAvatar ? `${API_BASE}/avatar/${u.tgId}` : null));
       return;
@@ -2928,6 +2996,7 @@ async function openUserProfile(tgId){
         ${cell('Total paid out', '$' + (u.paidUsdt || 0).toFixed(2), 'green')}
         ${cell('Payments', num(u.payments))}
       </div>`;
+    wrapUpfDetails();
     setCover(document.getElementById('upfCover'), coverSrc);
     setProfileBg(coverSrc);
   } catch(e){
@@ -3012,7 +3081,7 @@ async function loadLfaSeasonHistory(){
       <div class="season-box" style="margin-top:6px;">
         <div class="sname">Your AP · all seasons</div>
         <div class="sdates">${boxes.length} season${boxes.length>1?'s':''} on record</div>
-        <div class="srow">${cell(n(myTotalAp), 'Total AP across seasons')}${cell(n(mine.apNow), 'AP this season')}</div>
+        <div class="srow">${cell(n(mine.apNow), 'AP this season')}${cell(n(myTotalAp), 'Total AP · all seasons')}</div>
       </div>`;
 
     list.innerHTML = summary + boxes.map(b=>{
@@ -3026,12 +3095,12 @@ async function loadLfaSeasonHistory(){
         <div class="sname">${escHtml(b.seasonName||'')}${tag}</div>
         <div class="sdates">${b.startDate || '—'} to ${b.endDate || '—'}</div>
         <div class="srow" style="margin-bottom:8px;">
-          ${cell(n(my.ap), running ? 'Your AP so far' : 'Your Total AP')}
-          ${cell(n(my.up), 'Your UP earned')}
+          ${cell(n(my.ap), running ? 'My AP so far' : 'My AP')}
+          ${cell(running ? 'In progress' : n(b.totalPointsEarned), 'Season Total AP')}
         </div>
         <div class="srow">
+          ${cell(n(my.up), 'My UP earned')}
           ${cell(n(b.participants), 'Participants')}
-          ${cell(running ? 'In progress' : n(b.totalPointsEarned), 'Season Total AP')}
           ${cell('$' + (b.apAllocation||0).toFixed(2), 'AP Allocation')}
         </div>
       </div>`;
@@ -3614,6 +3683,7 @@ function startWithdrawCooldown(){
 /* ---------- Inbox (headlines) + popup ---------- */
 function escHtml(t){ return String(t||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 let cachedNotices = [];
+let noticesFetchedOnce = false;
 
 async function fetchNotices(){
   let data = null;
@@ -3624,7 +3694,7 @@ async function fetchNotices(){
   if (!Array.isArray(data)){
     try{ data = await (await fetch(`${API_BASE}/notices`)).json(); } catch(e){ console.error("Could not load notices:", e); }
   }
-  if (Array.isArray(data)) cachedNotices = data;
+  if (Array.isArray(data)){ cachedNotices = data; noticesFetchedOnce = true; }
   return cachedNotices;
 }
 
@@ -3668,31 +3738,54 @@ function updateBellBadge(){
 }
 
 /* ---------- Small landscape pop-ups for automatic notices ----------
-   Shown on top of the app (over the bell) every time the bot is opened, and they stay until the person
-   has seen them (tap = open + mark read, ✕ = mark read). Only the last 14 days, max 3 at a time. */
+   Every time the person opens the bot, the notices they have NOT seen yet pop up on top of the app,
+   one after another, and then disappear by themselves (they are not marked as seen, so they come
+   back the next time the bot is opened). Tap = open + mark as seen, ✕ = mark as seen.
+     1 notice  -> 10 seconds
+     2 notices ->  5 seconds each
+     3 or more ->  4 seconds each (the queue keeps going until all have been shown)       */
 const POP_MAX_AGE_MS = 14 * 86400000;
+let popQueue = null, popPer = 4000, popTimer = null, popCurKey = null;
+function popDuration(total){ return total <= 1 ? 10000 : (total === 2 ? 5000 : 4000); }
+function popFind(key){
+  const i = cachedNotices.findIndex(n => noticeKey(n) === key);
+  return i < 0 ? null : { n: cachedNotices[i], i };
+}
 function renderNoticePops(){
+  if (popQueue === null){                       // first time in this visit: build the queue once
+    if (!noticesFetchedOnce) return;
+    const list = cachedNotices.filter(n => n.type === 'auto' && isNoticeUnread(n) &&
+        Date.now() - new Date(n.createdAt).getTime() <= POP_MAX_AGE_MS)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    popQueue = list.map(noticeKey);
+    popPer = popDuration(popQueue.length);
+    popNext();
+  } else if (popCurKey){                        // the one on screen was read somewhere else -> move on
+    const f = popFind(popCurKey);
+    if (!f || !isNoticeUnread(f.n)) popNext();
+  }
+}
+function popNext(){
+  clearTimeout(popTimer); popTimer = null; popCurKey = null;
   const box = document.getElementById('noticePops');
   if (!box) return;
-  const list = [];
-  cachedNotices.forEach((n, i) => {
-    if (n.type !== 'auto' || !isNoticeUnread(n)) return;
-    if (Date.now() - new Date(n.createdAt).getTime() > POP_MAX_AGE_MS) return;
-    list.push({ n, i });
-  });
-  list.sort((a, b) => new Date(b.n.createdAt) - new Date(a.n.createdAt));
-  const shown = list.slice(0, 3), extra = list.length - shown.length;
-  const sig = shown.map(x => noticeKey(x.n)).join('|') + '+' + extra;
-  if (box.dataset.sig === sig) return;               // nothing changed: do not replay the animation
-  box.dataset.sig = sig;
-  box.innerHTML = shown.map(({ n, i }) => {
+  while (popQueue.length){
+    const key = popQueue.shift();
+    const f = popFind(key);
+    if (!f || !isNoticeUnread(f.n)) continue;
+    const { n, i } = f;
+    popCurKey = key;
     const prev = String(n.body || '').replace(/\s+/g, ' ').trim();
-    return `<div class="npop" onclick="popOpen(${i})">
+    box.innerHTML = `<div class="npop" onclick="popOpen(${i})">
       <div class="npop-ico">${noticeIcon(n)}</div>
       <div class="npop-txt"><div class="npop-t">${escHtml(n.title)}</div>${prev ? `<div class="npop-b">${escHtml(prev)}</div>` : ''}</div>
       <button class="npop-x" aria-label="Dismiss" onclick="popDismiss(${i}, event)">✕</button>
+      <div class="npop-bar" style="animation-duration:${popPer}ms"></div>
     </div>`;
-  }).join('') + (extra > 0 ? `<div class="npop-more">+${extra} more new notice${extra > 1 ? 's' : ''}</div>` : '');
+    popTimer = setTimeout(popNext, popPer);
+    return;
+  }
+  box.innerHTML = '';
 }
 function popOpen(i){ openNotice(i); }
 function popDismiss(i, ev){
