@@ -957,9 +957,88 @@ body.dark-theme .payflow{box-shadow:0 10px 24px rgba(0,0,0,.35);}
 body.dark-theme .week-day.done .dcircle,body.dark-theme .checkin-btn,body.dark-theme .earn-toggle-btn.active,body.dark-theme .theme-switch button.active,
 body.dark-theme .edit-toggle-btn,body.dark-theme .edit-toggle-btn.done,body.dark-theme .range-toggle button.active,body.dark-theme .withdraw-submit,
 body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-theme .watch-btn:not(:disabled),body.dark-theme .copy-btn{color:var(--onAcc) !important;}
+
+/* ================= WEB DESKTOP MODE (browser only, not Telegram) =================
+   Telegram mini-app layout stays exactly as before. This block only applies when
+   body has .web-mode (set when NOT inside Telegram) AND the screen is >= 1024px. */
+@media (min-width:1024px){
+  body.web-mode{max-width:none !important; margin:0 !important; padding:84px 0 40px !important; min-height:100vh;}
+
+  /* --- Top header: brand (left) | 6 page buttons (center) | actions (right) --- */
+  body.web-mode .topbar{position:fixed; top:0; left:0; right:0; height:76px; z-index:150; padding:0 36px !important;
+    background:color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line); box-shadow:0 6px 24px rgba(0,0,0,.08);}
+  body.web-mode .bottom-nav{position:fixed !important; top:0 !important; bottom:auto !important; left:50% !important; right:auto !important;
+    transform:translateX(-50%) !important; width:auto !important; max-width:none !important; height:76px; z-index:160 !important;
+    display:flex !important; align-items:stretch; gap:4px; padding:0 !important; border:none !important; border-radius:0 !important;
+    background:transparent !important; backdrop-filter:none !important; box-shadow:none !important;}
+  body.web-mode.on-edit-page .bottom-nav{display:flex !important;}
+  body.web-mode .nav-item{flex:none; flex-direction:row; align-items:center; justify-content:center; gap:9px; padding:0 20px;
+    font-size:14px !important; font-weight:600; border-radius:0; transition:background .2s,color .2s;}
+  body.web-mode .nav-item .ni{width:20px; height:20px;}
+  body.web-mode .nav-item:hover{background:rgba(var(--accRgb,176,122,22),.08);}
+  body.web-mode .nav-item.active{background:rgba(var(--accRgb,176,122,22),.10);}
+  body.web-mode .nav-item.active::before{top:auto !important; bottom:0; width:100% !important; height:3px !important; border-radius:3px 3px 0 0 !important;}
+
+  /* --- Full-width pages --- */
+  body.web-mode .page{padding:0 40px; margin:0 auto; max-width:1000px; width:100%;}
+  body.web-mode #page-home,
+  body.web-mode #page-ads{max-width:1500px;}
+  body.web-mode #page-leaderboard,
+  body.web-mode #page-referral,
+  body.web-mode #page-profile{max-width:1100px;}
+  body.web-mode #page-lfa{max-width:1500px;}
+  body.web-mode .lfa-frame{height:78vh;}
+
+  /* Home: 2 columns (left = profile / reward / chest / spin, right = tasks / seasons) */
+  body.web-mode #page-home.active{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:0 32px; align-items:start;}
+  body.web-mode #page-home .web-col{min-width:0;}
+  body.web-mode #page-home .web-col-l{position:sticky; top:96px;}
+
+  /* Earn: 3 cards per row */
+  body.web-mode .earn-grid{grid-template-columns:repeat(3,1fr); gap:16px;}
+  body.web-mode .earn-grid > .earn-card:last-child:nth-child(odd){grid-column:auto;}
+
+  /* Profile menu: 2 per row */
+  body.web-mode .pf-menu{display:grid; grid-template-columns:1fr 1fr; gap:0 16px;}
+
+  /* Profile cover: shorter banner on wide screens */
+  body.web-mode .hero{aspect-ratio:auto; height:220px;}
+  body.web-mode #chartSvg{max-height:300px; width:100%;}
+  /* Popups: centered dialog instead of bottom sheet */
+  body.web-mode .settings-overlay{align-items:center;}
+  body.web-mode .settings-sheet{border-radius:20px; max-width:460px; padding-bottom:20px;}
+}
+@media (min-width:1024px) and (max-width:1220px){
+  body.web-mode .nav-item{padding:0 12px; gap:6px; font-size:13px !important;}
+  body.web-mode .topbar{padding:0 20px !important;}
+}
 </style>
 </head>
 <body class="light-theme">
+<script>
+/* web-mode = normal browser (NOT inside Telegram). Telegram layout is untouched. */
+(function(){
+  try{
+    var tg = window.Telegram && window.Telegram.WebApp;
+    if (!(tg && tg.initData)) document.body.classList.add('web-mode');
+  }catch(e){}
+  document.addEventListener('DOMContentLoaded', function(){
+    try{
+      var home = document.getElementById('page-home');
+      if (!home || home.querySelector('.web-col')) return;
+      var L = document.createElement('div'); L.className = 'web-col web-col-l';
+      var R = document.createElement('div'); R.className = 'web-col web-col-r';
+      var leftIds = {payFlow:1, chestCard:1, spinCard:1};
+      Array.prototype.slice.call(home.children).forEach(function(el){
+        var left = el.classList.contains('profile-card') || el.classList.contains('reward-card') || leftIds[el.id];
+        (left ? L : R).appendChild(el);
+      });
+      home.appendChild(L); home.appendChild(R);
+    }catch(e){}
+  });
+})();
+</script>
 <script>try{ if (localStorage.getItem('lfaTheme') === 'dark'){ document.body.classList.remove('light-theme'); document.body.classList.add('dark-theme'); } }catch(e){}</script>
 
   <div class="topbar">
