@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Live For Ads</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <script src="//libtl.com/sdk.js" data-zone="11739436" data-sdk="show_11739436"></script>
 <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
@@ -642,6 +644,20 @@
   .brand-wrap{display:flex; align-items:center; gap:11px; min-width:0;}
   .brand-logo{flex-shrink:0; filter:drop-shadow(0 4px 10px rgba(176,122,22,0.38));}
   .topbar .brand{font-family:'Playfair Display',serif; font-size:21px; font-weight:700; color:var(--text); letter-spacing:0.2px; line-height:1.1;}
+  /* Web login (Google) */
+  .web-gate{position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center; padding:28px; background:radial-gradient(120% 90% at 50% 0%, rgba(242,179,61,.18), transparent 60%), var(--bg, #0B0B0E);}
+  .web-gate.show{display:flex;}
+  .web-gate-card{width:100%; max-width:360px; text-align:center;}
+  .web-gate-logo{width:76px; height:76px; margin:0 auto 18px; border-radius:22px; display:flex; align-items:center; justify-content:center; font-size:34px; background:linear-gradient(135deg, rgba(242,179,61,.28), rgba(176,122,22,.10)); border:1px solid rgba(232,185,80,.6); box-shadow:0 10px 30px rgba(176,122,22,.3);}
+  .web-gate h1{font-family:'Fraunces',serif; font-size:26px; margin:0 0 6px; color:var(--text);}
+  .web-gate p{margin:0 0 24px; font-size:13px; line-height:1.5; color:var(--text-muted);}
+  .web-g-btn{width:100%; display:flex; align-items:center; justify-content:center; gap:10px; padding:14px 16px; border-radius:14px; border:1px solid rgba(0,0,0,.12); background:#fff; color:#1f1f1f; font-family:'Inter',sans-serif; font-weight:700; font-size:14.5px; cursor:pointer; box-shadow:0 8px 24px rgba(0,0,0,.25);}
+  .web-g-btn:disabled{opacity:.6;}
+  .web-gate-guest{margin-top:16px; background:none; border:none; color:var(--text-muted); font-size:12.5px; text-decoration:underline; cursor:pointer; font-family:'Inter',sans-serif;}
+  .web-gate-err{margin-top:14px; min-height:18px; font-size:12px; color:var(--red, #ff6b6b);}
+  .web-acct{display:none; align-items:center; justify-content:space-between; gap:10px; margin:12px 0 0; padding:10px 14px; border-radius:14px; background:var(--surface); border:1px solid var(--line); font-size:12.5px;}
+  .web-acct small{display:block; font-size:10.5px; color:var(--text-muted);}
+  .web-acct button{flex:none; padding:7px 14px; border-radius:10px; border:1px solid var(--line); background:var(--surface-raised); color:var(--text); font-weight:700; font-size:12px; cursor:pointer; font-family:'Inter',sans-serif;}
   .season-chip{position:relative; overflow:hidden; display:inline-flex; align-items:center; gap:6px; max-width:100%; margin-top:5px; padding:3px 12px 3px 8px; border-radius:20px; background:linear-gradient(135deg, rgba(242,179,61,.26), rgba(176,122,22,.08)); border:1px solid rgba(232,185,80,.6); box-shadow:0 3px 12px rgba(176,122,22,.25), inset 0 0 10px rgba(255,224,160,.18);}
   .season-chip::after{content:""; position:absolute; top:0; bottom:0; width:40px; left:-60px; background:linear-gradient(100deg,transparent,rgba(255,240,194,.45),transparent); animation:scShine 4.2s ease-in-out 1.2s infinite;}
   .sc-dot{flex:none; width:7px; height:7px; border-radius:50%; background:#4ADE80; animation:scPulse 1.8s ease-out infinite;}
@@ -1230,6 +1246,8 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
       </div>
     </div>
 
+    <div class="web-acct" id="webAcct"><div>Signed in with Google<small id="webAcctMail"></small></div><button onclick="webSignOut()">Sign out</button></div>
+
     <div class="range-toggle">
       <button class="active" onclick="setStatsRange('7', this)">7 Days</button>
       <button onclick="setStatsRange('30', this)">30 Days</button>
@@ -1535,6 +1553,19 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
     </div>
   </div>
 
+<div class="web-gate" id="webGate">
+  <div class="web-gate-card">
+    <div class="web-gate-logo">▶</div>
+    <h1>Live For Ads</h1>
+    <p>Sign in with your Google account to watch ads, finish tasks, check in daily and withdraw — right here in your browser.</p>
+    <button class="web-g-btn" id="webGoogleBtn" onclick="webSignIn()">
+      <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.1 5.5c4.2-3.9 7.2-9.6 7.2-16.9z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.1-5.5c-2 1.4-4.6 2.3-8.8 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+    <div class="web-gate-err" id="webGateErr"></div>
+    <button class="web-gate-guest" onclick="webContinueGuest()">Just look around (no earning)</button>
+  </div>
+</div>
 <script>
 /* ============================================================
    CONFIG
@@ -1625,9 +1656,9 @@ function setEarnSubTab(tab){
 }
 
 const AD_NETWORKS = [
-  { key:"adsgram", name:"Adsgram", icon:"▲" },
-  { key:"monetag", name:"Monetag", icon:"●" },
-  { key:"richads", name:"RichAds", icon:"★" },
+  { key:"adsgram", name:"Adsgram", icon:"▲", tgOnly:true },     // these three only run inside Telegram
+  { key:"monetag", name:"Monetag", icon:"●", tgOnly:true },
+  { key:"richads", name:"RichAds", icon:"★", tgOnly:true },
   // Adsterra Smartlinks: "link" rows are opened, then claimed after a short wait (see openAdsterra / claimAdsterra).
   // They stay hidden until the admin has pasted a Smartlink URL in Admin > Ad Controls.
   { key:"adsterra1", name:"Adsterra 1", icon:"◆", link:true },
@@ -1683,7 +1714,24 @@ let REFERRAL_ELIGIBILITY_ADS = 100;       // updated from the server (Admin > Ru
 let REFERRAL_ELIGIBILITY_CHECKINS = 7;
 let CHECKIN_RULES = { base: 10, step: 5, max: 0 };
 
+/* ============================================================
+   WEB LOGIN (Google) - for people who open the page in a normal browser instead of Telegram
+   ============================================================ */
+// Paste your Firebase WEB app config here (Firebase console > Project settings > General > Your apps > Web app).
+// Also turn on Authentication > Sign-in method > Google, and add this site's domain under Authentication > Settings > Authorized domains.
+// While apiKey is empty the old behaviour stays (browser visitors are read-only guests).
+const FIREBASE_WEB_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  appId: ""
+};
+const IS_TG = !!(tg && tg.initData);
+const WEB_LOGIN_ON = !IS_TG && !!FIREBASE_WEB_CONFIG.apiKey && typeof firebase !== 'undefined';
+let webIdToken = null;          // refreshed automatically by Firebase (about every hour)
+let appBooted = false;
 function getInitData(){
+  if (webIdToken) return 'web:' + webIdToken;
   return tg && tg.initData ? tg.initData : null;
 }
 
@@ -2587,6 +2635,8 @@ function renderAds(){
     let buttonHtml;
     if (state.banned){
       buttonHtml = `<button class="watch-btn" disabled>Suspended</button>`;
+    } else if (net.tgOnly && !IS_TG){
+      buttonHtml = `<button class="watch-btn" disabled style="min-width:78px; font-size:10.5px;">Telegram only</button>`;
     } else if (!cfg.enabled){
       buttonHtml = `<button class="watch-btn" disabled>Paused</button>`;
     } else if (stillLocked){
@@ -3115,7 +3165,9 @@ function refColor(pct){
 }
 
 function renderReferral(){
-  document.getElementById('refLinkInput').value = `https://t.me/LiveForAds_Bot?start=ref_${state.user.id}`;
+  document.getElementById('refLinkInput').value = (IS_TG || !webIdToken)
+    ? `https://t.me/LiveForAds_Bot?start=ref_${state.user.id}`
+    : `${location.origin}${location.pathname}?ref=${state.user.id}`;
   document.getElementById('refCount').textContent = state.referrals.length;
   document.getElementById('refEligible').textContent = state.referrals.filter(r=>r.eligible).length;
   document.getElementById('refEarned').textContent = state.refEarnedPoints;
@@ -4376,8 +4428,91 @@ async function submitWithdraw(){
 /* ============================================================
    INIT
    ============================================================ */
-loadAppConfig().then(() => { try { if (state.checkin) renderCheckin(); } catch(e){} });
-loadHome();
+function bootApp(){
+  if (appBooted) return;
+  appBooted = true;
+  loadAppConfig().then(() => { try { if (state.checkin) renderCheckin(); } catch(e){} });
+  loadHome();
+}
+
+/* ---------- Web login flow ---------- */
+function showWebGate(msg){
+  document.getElementById('webGate').classList.add('show');
+  const btn = document.getElementById('webGoogleBtn'); if (btn) btn.disabled = false;
+  document.getElementById('webGateErr').textContent = msg || '';
+}
+function hideWebGate(){ document.getElementById('webGate').classList.remove('show'); }
+function webContinueGuest(){ hideWebGate(); bootApp(); }
+
+// the id a friend's link carries: ?ref=<id> (kept until this browser has signed up)
+(function(){
+  try{
+    const r = new URLSearchParams(location.search).get('ref');
+    if (r && /^\d{5,16}$/.test(r)) localStorage.setItem('lfa_web_ref', r);
+  } catch(e){}
+})();
+
+async function webSignIn(){
+  const btn = document.getElementById('webGoogleBtn');
+  btn.disabled = true;
+  document.getElementById('webGateErr').textContent = '';
+  try{
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    await firebase.auth().signInWithPopup(provider);        // onIdTokenChanged below does the rest
+  } catch(e){
+    if (e && (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment')){
+      try { await firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider()); return; } catch(e2){ e = e2; }
+    }
+    if (e && (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request')) showWebGate('');
+    else showWebGate('Sign-in failed. Please try again.' + (e && e.code ? ' (' + e.code + ')' : ''));
+  }
+}
+
+async function webFinishLogin(fbUser){
+  try{
+    const idToken = await fbUser.getIdToken();
+    const res = await fetch(`${API_BASE}/web-login`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ idToken, ref: localStorage.getItem('lfa_web_ref') || undefined })
+    });
+    const r = await res.json();
+    if (!r.success){
+      await firebase.auth().signOut();
+      const msgs = { too_many_attempts:'Too many sign-ups from this network. Please try later.', email_not_verified:'Your Google e-mail is not verified.', google_only:'Please sign in with Google.' };
+      showWebGate(msgs[r.reason] || 'Could not sign you in. Please try again.');
+      return;
+    }
+    if (r.created) localStorage.removeItem('lfa_web_ref');
+    webIdToken = idToken;
+    state.user = { id: r.userId, name: r.name || 'User' };
+    hideWebGate();
+    const bar = document.getElementById('webAcct');
+    if (bar){ bar.style.display = 'flex'; document.getElementById('webAcctMail').textContent = fbUser.email || ''; }
+    bootApp();
+  } catch(e){
+    showWebGate('Could not reach the server. Please try again.');
+  }
+}
+async function webSignOut(){
+  if (!confirm('Sign out of this browser?')) return;
+  try { await firebase.auth().signOut(); } catch(e){}
+  location.reload();
+}
+
+if (WEB_LOGIN_ON){
+  firebase.initializeApp(FIREBASE_WEB_CONFIG);
+  let first = true;
+  firebase.auth().onIdTokenChanged(async u => {
+    if (!u){ webIdToken = null; if (first){ first = false; showWebGate(''); } return; }
+    if (first){ first = false; await webFinishLogin(u); }                 // page just opened with a saved session / just signed in
+    else if (!appBooted){ await webFinishLogin(u); }
+    else { try { webIdToken = await u.getIdToken(); } catch(e){} }          // silent hourly refresh
+  });
+  setInterval(async () => { try { const u = firebase.auth().currentUser; if (u) webIdToken = await u.getIdToken(true); } catch(e){} }, 50 * 60 * 1000);
+} else {
+  bootApp();
+}
 </script>
 </body>
 </html>
