@@ -645,19 +645,22 @@
   .brand-logo{flex-shrink:0; filter:drop-shadow(0 4px 10px rgba(176,122,22,0.38));}
   .topbar .brand{font-family:'Playfair Display',serif; font-size:21px; font-weight:700; color:var(--text); letter-spacing:0.2px; line-height:1.1;}
   /* Web login (Google) */
-  .web-gate{position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center; padding:28px; background:radial-gradient(120% 90% at 50% 0%, rgba(242,179,61,.18), transparent 60%), var(--bg, #0B0B0E);}
+  .web-gate{position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center; padding:26px; background:radial-gradient(120% 80% at 50% 0%, rgba(242,179,61,.16), transparent 60%), #050506; color:#fff;}
   .web-gate.show{display:flex;}
-  .web-gate-card{width:100%; max-width:360px; text-align:center;}
-  .web-gate-logo{width:76px; height:76px; margin:0 auto 18px; border-radius:22px; display:flex; align-items:center; justify-content:center; font-size:34px; background:linear-gradient(135deg, rgba(242,179,61,.28), rgba(176,122,22,.10)); border:1px solid rgba(232,185,80,.6); box-shadow:0 10px 30px rgba(176,122,22,.3);}
-  .web-gate h1{font-family:'Fraunces',serif; font-size:26px; margin:0 0 6px; color:var(--text);}
-  .web-gate p{margin:0 0 24px; font-size:13px; line-height:1.5; color:var(--text-muted);}
-  .web-g-btn{width:100%; display:flex; align-items:center; justify-content:center; gap:10px; padding:14px 16px; border-radius:14px; border:1px solid rgba(0,0,0,.12); background:#fff; color:#1f1f1f; font-family:'Inter',sans-serif; font-weight:700; font-size:14.5px; cursor:pointer; box-shadow:0 8px 24px rgba(0,0,0,.25);}
-  .web-g-btn:disabled{opacity:.6;}
-  .web-gate-guest{margin-top:16px; background:none; border:none; color:var(--text-muted); font-size:12.5px; text-decoration:underline; cursor:pointer; font-family:'Inter',sans-serif;}
-  .web-gate-err{margin-top:14px; min-height:18px; font-size:12px; color:var(--red, #ff6b6b);}
-  .web-acct{display:none; align-items:center; justify-content:space-between; gap:10px; margin:12px 0 0; padding:10px 14px; border-radius:14px; background:var(--surface); border:1px solid var(--line); font-size:12.5px;}
-  .web-acct small{display:block; font-size:10.5px; color:var(--text-muted);}
-  .web-acct button{flex:none; padding:7px 14px; border-radius:10px; border:1px solid var(--line); background:var(--surface-raised); color:var(--text); font-weight:700; font-size:12px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .web-gate-card{width:100%; max-width:380px; text-align:center;}
+  .web-gate-logo{width:70px; height:70px; margin:0 auto 16px; border-radius:21px; display:flex; align-items:center; justify-content:center; font-size:30px; background:linear-gradient(135deg, rgba(242,179,61,.30), rgba(176,122,22,.10)); border:1px solid rgba(232,185,80,.6); box-shadow:0 10px 30px rgba(176,122,22,.3);}
+  .web-gate h1{font-family:'Fraunces',serif; font-size:27px; line-height:1.15; margin:0 0 8px; color:#fff;}
+  .web-gate p{margin:0 0 24px; font-size:13px; line-height:1.55; color:rgba(255,255,255,.62);}
+  .wg-pill{width:100%; display:flex; align-items:center; justify-content:center; gap:11px; margin:0 0 12px; padding:0 18px; height:54px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background:#F8F9FB; color:#101114; font-family:'Inter',sans-serif; font-weight:700; font-size:15px; cursor:pointer; text-decoration:none; -webkit-tap-highlight-color:transparent; transition:transform .12s, opacity .2s;}
+  .wg-pill:active{transform:scale(.985);}
+  .wg-pill:disabled{opacity:.55;}
+  .wg-pill svg{flex:none;}
+  .wg-hint{margin:14px 4px 4px; font-size:11.5px; line-height:1.55; color:rgba(255,255,255,.5);}
+  .web-gate-guest{margin-top:14px; background:none; border:none; color:rgba(255,255,255,.55); font-size:12.5px; text-decoration:underline; cursor:pointer; font-family:'Inter',sans-serif;}
+  .web-gate-err{margin-top:14px; min-height:18px; font-size:12.5px; line-height:1.45; color:#FF8A80;}
+  .web-gate-ok{margin-top:14px; font-size:13px; color:#7DF0B0;}
+  .wg-spin{width:34px; height:34px; margin:2px auto 18px; border-radius:50%; border:3px solid rgba(255,255,255,.15); border-top-color:#E8B950; animation:wgSpin .9s linear infinite;}
+  @keyframes wgSpin{to{transform:rotate(360deg);}}
   .season-chip{position:relative; overflow:hidden; display:inline-flex; align-items:center; gap:6px; max-width:100%; margin-top:5px; padding:3px 12px 3px 8px; border-radius:20px; background:linear-gradient(135deg, rgba(242,179,61,.26), rgba(176,122,22,.08)); border:1px solid rgba(232,185,80,.6); box-shadow:0 3px 12px rgba(176,122,22,.25), inset 0 0 10px rgba(255,224,160,.18);}
   .season-chip::after{content:""; position:absolute; top:0; bottom:0; width:40px; left:-60px; background:linear-gradient(100deg,transparent,rgba(255,240,194,.45),transparent); animation:scShine 4.2s ease-in-out 1.2s infinite;}
   .sc-dot{flex:none; width:7px; height:7px; border-radius:50%; background:#4ADE80; animation:scPulse 1.8s ease-out infinite;}
@@ -1246,8 +1249,6 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
       </div>
     </div>
 
-    <div class="web-acct" id="webAcct"><div>Signed in with Google<small id="webAcctMail"></small></div><button onclick="webSignOut()">Sign out</button></div>
-
     <div class="range-toggle">
       <button class="active" onclick="setStatsRange('7', this)">7 Days</button>
       <button onclick="setStatsRange('30', this)">30 Days</button>
@@ -1544,10 +1545,23 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
       </div>
       <div class="settings-row">
         <div>
-          <div class="slabel">Connect account</div>
-          <div class="shint">Needed later for offerwall verification</div>
+          <div class="slabel">Account</div>
+          <div class="shint" id="setAccHint">…</div>
         </div>
-        <button class="settings-btn" disabled style="opacity:0.5;">Coming soon</button>
+      </div>
+      <div class="settings-row" id="setGoogleRow">
+        <div>
+          <div class="slabel">Google</div>
+          <div class="shint" id="setGoogleHint"></div>
+        </div>
+        <button class="settings-btn" id="setGoogleBtn" onclick="startGoogleLink()">Connect</button>
+      </div>
+      <div class="settings-row" id="setLogoutRow" style="display:none;">
+        <div>
+          <div class="slabel">Log out</div>
+          <div class="shint" id="setLogoutHint">Sign out of this browser</div>
+        </div>
+        <button class="settings-btn" onclick="webSignOut()">Log out</button>
       </div>
       <button class="settings-close" onclick="closeSettings()">Close</button>
     </div>
@@ -1556,14 +1570,28 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
 <div class="web-gate" id="webGate">
   <div class="web-gate-card">
     <div class="web-gate-logo">▶</div>
-    <h1>Live For Ads</h1>
-    <p>Sign in with your Google account to watch ads, finish tasks, check in daily and withdraw — right here in your browser.</p>
-    <button class="web-g-btn" id="webGoogleBtn" onclick="webSignIn()">
-      <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.1 5.5c4.2-3.9 7.2-9.6 7.2-16.9z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.1-5.5c-2 1.4-4.6 2.3-8.8 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
-      Continue with Google
-    </button>
+    <h1 id="wgTitle">Live For Ads</h1>
+    <p id="wgSub">Watch ads, finish tasks, check in daily and withdraw, right here in your browser.</p>
+
+    <div id="wgChoose">
+      <button class="wg-pill" id="webGoogleBtn" onclick="webSignIn()"><svg width="22" height="22" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.1 5.5c4.2-3.9 7.2-9.6 7.2-16.9z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.1-5.5c-2 1.4-4.6 2.3-8.8 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Continue with Google</button>
+      <button class="wg-pill" id="webTgBtn" onclick="webTgLogin()"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#229ED9"/><path fill="#fff" d="M5.4 11.9l11.3-4.4c.5-.2 1 .1.8.9l-1.9 9c-.1.6-.5.8-1 .5l-2.9-2.2-1.4 1.4c-.2.2-.3.3-.6.3l.2-3 5.4-4.9c.2-.2 0-.3-.4-.1l-6.7 4.2-2.9-.9c-.6-.2-.6-.6.1-.9z"/></svg>Continue with Telegram</button>
+      <div class="wg-hint">Already use the Telegram bot? Choose <b>Telegram</b>, or connect your Google from the bot’s Settings. Choosing Google with a new account creates a separate <b>web-only</b> account that can never be used in Telegram.</div>
+      <button class="web-gate-guest" onclick="webContinueGuest()">Just look around (no earning)</button>
+    </div>
+
+    <div id="wgWait" style="display:none;">
+      <div class="wg-spin"></div>
+      <p style="margin-bottom:18px;">Open Telegram and tap <b style="color:#fff;">Start</b> in the bot. This page signs you in by itself.</p>
+      <a class="wg-pill" id="wgOpenTg" href="#" target="_blank" rel="noopener"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#229ED9"/><path fill="#fff" d="M5.4 11.9l11.3-4.4c.5-.2 1 .1.8.9l-1.9 9c-.1.6-.5.8-1 .5l-2.9-2.2-1.4 1.4c-.2.2-.3.3-.6.3l.2-3 5.4-4.9c.2-.2 0-.3-.4-.1l-6.7 4.2-2.9-.9c-.6-.2-.6-.6.1-.9z"/></svg>Open Telegram</a>
+      <button class="web-gate-guest" onclick="webTgCancel('')">Cancel</button>
+    </div>
+
+    <div id="wgLink" style="display:none;">
+      <button class="wg-pill" id="wgLinkBtn" onclick="webLinkGoogle()"><svg width="22" height="22" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.1 5.5c4.2-3.9 7.2-9.6 7.2-16.9z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.1-5.5c-2 1.4-4.6 2.3-8.8 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Connect this Google account</button>
+      <a class="wg-pill" id="wgLinkGo" href="#" onclick="location.href=location.pathname; return false;" style="display:none;">Open the web app</a>
+    </div>
     <div class="web-gate-err" id="webGateErr"></div>
-    <button class="web-gate-guest" onclick="webContinueGuest()">Just look around (no earning)</button>
   </div>
 </div>
 <script>
@@ -3165,9 +3193,10 @@ function refColor(pct){
 }
 
 function renderReferral(){
-  document.getElementById('refLinkInput').value = (IS_TG || !webIdToken)
-    ? `https://t.me/LiveForAds_Bot?start=ref_${state.user.id}`
-    : `${location.origin}${location.pathname}?ref=${state.user.id}`;
+  // web-only (Google) accounts share a web link; everyone with a Telegram account shares the bot link
+  document.getElementById('refLinkInput').value = /^9\d{13}$/.test(String(state.user.id))
+    ? `${location.origin}${location.pathname}?ref=${state.user.id}`
+    : `https://t.me/LiveForAds_Bot?start=ref_${state.user.id}`;
   document.getElementById('refCount').textContent = state.referrals.length;
   document.getElementById('refEligible').textContent = state.referrals.filter(r=>r.eligible).length;
   document.getElementById('refEarned').textContent = state.refEarnedPoints;
@@ -3495,6 +3524,7 @@ function openSettings(){
   document.getElementById('settingsOverlay').classList.add('active');
   document.getElementById('themeDarkBtn').classList.toggle('active', state.theme === 'dark');
   document.getElementById('themeLightBtn').classList.toggle('active', state.theme !== 'dark');
+  refreshAccountSettings();
 }
 function closeSettings(){
   document.getElementById('settingsOverlay').classList.remove('active');
@@ -4436,10 +4466,26 @@ function bootApp(){
 }
 
 /* ---------- Web login flow ---------- */
+let webKind = null;                 // 'google' | 'telegram' (how this browser session signed in)
+let webUsername = null;
+const LINK_CODE = (function(){ try{ return new URLSearchParams(location.search).get('connect') || ''; }catch(e){ return ''; } })();
+let tgPollTimer = null;
+
+function setGateMode(mode){      // choose | wait | link
+  document.getElementById('wgChoose').style.display = mode === 'choose' ? '' : 'none';
+  document.getElementById('wgWait').style.display   = mode === 'wait'   ? '' : 'none';
+  document.getElementById('wgLink').style.display   = mode === 'link'   ? '' : 'none';
+  const linkMode = mode === 'link';
+  document.getElementById('wgTitle').textContent = linkMode ? 'Connect Google' : 'Live For Ads';
+  document.getElementById('wgSub').textContent = linkMode
+    ? 'Sign in with the Google account you want to connect to your Telegram account. It must not already have an account on the web.'
+    : 'Watch ads, finish tasks, check in daily and withdraw, right here in your browser.';
+}
 function showWebGate(msg){
   document.getElementById('webGate').classList.add('show');
-  const btn = document.getElementById('webGoogleBtn'); if (btn) btn.disabled = false;
+  ['webGoogleBtn','webTgBtn','wgLinkBtn'].forEach(id => { const b = document.getElementById(id); if (b) b.disabled = false; });
   document.getElementById('webGateErr').textContent = msg || '';
+  document.getElementById('webGateErr').className = 'web-gate-err';
 }
 function hideWebGate(){ document.getElementById('webGate').classList.remove('show'); }
 function webContinueGuest(){ hideWebGate(); bootApp(); }
@@ -4453,8 +4499,7 @@ function webContinueGuest(){ hideWebGate(); bootApp(); }
 })();
 
 async function webSignIn(){
-  const btn = document.getElementById('webGoogleBtn');
-  btn.disabled = true;
+  document.getElementById('webGoogleBtn').disabled = true;
   document.getElementById('webGateErr').textContent = '';
   try{
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -4464,6 +4509,86 @@ async function webSignIn(){
     if (e && (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment')){
       try { await firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider()); return; } catch(e2){ e = e2; }
     }
+    if (e && (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request')) showWebGate('');
+    else showWebGate('Sign-in failed. Please try again.' + (e && e.code ? ' (' + e.code + ')' : ''));
+  }
+}
+
+/* ----- Continue with Telegram: the bot confirms the sign-in, this page waits for it ----- */
+async function webTgLogin(){
+  document.getElementById('webTgBtn').disabled = true;
+  document.getElementById('webGateErr').textContent = '';
+  try{
+    const r = await (await fetch(`${API_BASE}/tg-login/start`, { method:'POST', headers:{'Content-Type':'application/json'}, body:'{}' })).json();
+    if (!r.success) throw new Error(r.reason || 'failed');
+    try { sessionStorage.setItem('lfa_tg_login', JSON.stringify({ code:r.code, url:r.url, t:Date.now() })); } catch(e){}
+    startTgPolling(r.code, r.url, true);
+  } catch(e){
+    showWebGate('Could not start the Telegram sign-in. Please try again.');
+  }
+}
+function startTgPolling(code, url, openNow){
+  setGateMode('wait');
+  document.getElementById('wgOpenTg').href = url;
+  if (openNow){ try { window.open(url, '_blank'); } catch(e){} }      // may be blocked: the Open Telegram button is the fallback
+  clearInterval(tgPollTimer);
+  let tries = 0;
+  tgPollTimer = setInterval(async () => {
+    if (++tries > 150){ webTgCancel('This sign-in link expired. Please try again.'); return; }
+    try{
+      const r = await (await fetch(`${API_BASE}/tg-login/check`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code }) })).json();
+      if (r.status === 'ok' && r.customToken){
+        clearInterval(tgPollTimer);
+        try { sessionStorage.removeItem('lfa_tg_login'); } catch(e){}
+        await firebase.auth().signInWithCustomToken(r.customToken);      // onIdTokenChanged finishes the login
+      } else if (r.status === 'expired'){
+        webTgCancel('This sign-in link expired. Please try again.');
+      }
+    } catch(e){}
+  }, 2000);
+}
+function webTgCancel(msg){
+  clearInterval(tgPollTimer);
+  try { sessionStorage.removeItem('lfa_tg_login'); } catch(e){}
+  setGateMode('choose');
+  showWebGate(msg || '');
+}
+function resumeTgLogin(){
+  try{
+    const x = JSON.parse(sessionStorage.getItem('lfa_tg_login') || 'null');
+    if (x && x.code && Date.now() - x.t < 5 * 60 * 1000) startTgPolling(x.code, x.url, false);
+  } catch(e){}
+}
+
+/* ----- Connect Google (page opened from the bot's Settings with ?connect=<code>) ----- */
+async function webLinkGoogle(){
+  const btn = document.getElementById('wgLinkBtn');
+  btn.disabled = true;
+  document.getElementById('webGateErr').textContent = '';
+  try{
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    const cred = await firebase.auth().signInWithPopup(provider);
+    const idToken = await cred.user.getIdToken();
+    const r = await (await fetch(`${API_BASE}/google-link/complete`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: LINK_CODE, idToken }) })).json();
+    if (r.success){
+      btn.style.display = 'none';
+      document.getElementById('wgLinkGo').style.display = '';
+      const e = document.getElementById('webGateErr');
+      e.className = 'web-gate-ok'; e.textContent = '✅ Google connected to your Telegram account. You can now also sign in here with this Google.';
+      return;
+    }
+    try { await firebase.auth().signOut(); } catch(e){}
+    const msgs = {
+      code_invalid:'This connect link has expired. Open Settings in the bot and tap Connect again.',
+      google_has_account:'This Google account already has an account on the web, so it cannot be connected to Telegram. Use a different Google account.',
+      already_linked:'Your Telegram account already has a Google account connected.',
+      already_connected:'This Google account is already connected to your Telegram account.',
+      email_not_verified:'Your Google e-mail is not verified.',
+      too_many_attempts:'Too many attempts. Please try later.'
+    };
+    showWebGate(msgs[r.reason] || 'Could not connect. Please try again.');
+  } catch(e){
     if (e && (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request')) showWebGate('');
     else showWebGate('Sign-in failed. Please try again.' + (e && e.code ? ' (' + e.code + ')' : ''));
   }
@@ -4479,37 +4604,89 @@ async function webFinishLogin(fbUser){
     const r = await res.json();
     if (!r.success){
       await firebase.auth().signOut();
-      const msgs = { too_many_attempts:'Too many sign-ups from this network. Please try later.', email_not_verified:'Your Google e-mail is not verified.', google_only:'Please sign in with Google.' };
+      const msgs = { too_many_attempts:'Too many sign-ups from this network. Please try later.', email_not_verified:'Your Google e-mail is not verified.', google_only:'Please sign in with Google or Telegram.' };
+      setGateMode('choose');
       showWebGate(msgs[r.reason] || 'Could not sign you in. Please try again.');
       return;
     }
     if (r.created) localStorage.removeItem('lfa_web_ref');
     webIdToken = idToken;
+    webKind = r.kind === 'telegram' ? 'telegram' : 'google';
+    webUsername = r.username || null;
     state.user = { id: r.userId, name: r.name || 'User' };
     hideWebGate();
-    const bar = document.getElementById('webAcct');
-    if (bar){ bar.style.display = 'flex'; document.getElementById('webAcctMail').textContent = fbUser.email || ''; }
     bootApp();
   } catch(e){
+    setGateMode('choose');
     showWebGate('Could not reach the server. Please try again.');
   }
 }
 async function webSignOut(){
-  if (!confirm('Sign out of this browser?')) return;
+  if (!confirm('Log out of this browser?')) return;
   try { await firebase.auth().signOut(); } catch(e){}
-  location.reload();
+  location.href = location.pathname;
+}
+
+/* ----- Settings > Account ----- */
+async function refreshAccountSettings(){
+  const $ = id => document.getElementById(id);
+  const guest = !state.user || String(state.user.id).startsWith('guest_');
+  $('setLogoutRow').style.display = webIdToken ? '' : 'none';
+  $('setLogoutHint').textContent = webKind === 'telegram' ? 'Sign out of Telegram on this browser' : 'Sign out of Google on this browser';
+  if (guest){ $('setAccHint').textContent = 'Not signed in'; $('setGoogleRow').style.display = 'none'; return; }
+  let info = {};
+  try{
+    const r = await fetch(`${API_BASE}/account-info`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId: state.user.id, initData: getInitData() }) });
+    info = await r.json();
+  } catch(e){}
+  const uname = info.username ? ' · @' + info.username : '';
+  const gRow = $('setGoogleRow'), gHint = $('setGoogleHint'), gBtn = $('setGoogleBtn');
+  if (info.solo){
+    $('setAccHint').textContent = 'Google (web-only account)' + uname;
+    gRow.style.display = '';
+    gHint.textContent = 'Web-only accounts cannot be connected to Telegram.';
+    gBtn.style.display = 'none';
+    return;
+  }
+  $('setAccHint').textContent = (webIdToken ? 'Telegram (on the web)' : 'Telegram') + uname;
+  gRow.style.display = ''; gBtn.style.display = '';
+  if (info.googleLinked){
+    gHint.textContent = 'Connected' + (info.googleEmail ? ' · ' + info.googleEmail : '') + '. You can also sign in on the web with it.';
+    gBtn.textContent = 'Connected'; gBtn.disabled = true; gBtn.style.opacity = '.5';
+  } else {
+    gHint.textContent = 'Connect a Google account to also use the app on the web, without Telegram. It must be a Google that has no web account yet.';
+    gBtn.textContent = 'Connect'; gBtn.disabled = false; gBtn.style.opacity = '';
+  }
+}
+async function startGoogleLink(){
+  const gBtn = document.getElementById('setGoogleBtn'), gHint = document.getElementById('setGoogleHint');
+  gBtn.disabled = true;
+  try{
+    const r = await (await fetch(`${API_BASE}/google-link/start`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId: state.user.id, initData: getInitData() }) })).json();
+    if (r.alreadyLinked){ refreshAccountSettings(); return; }
+    if (!r.success || !r.url){ gHint.textContent = r.reason === 'solo_account' ? 'Web-only accounts cannot be connected to Telegram.' : 'Could not start. Please try again.'; gBtn.disabled = false; return; }
+    if (IS_TG && tg && tg.openLink) tg.openLink(r.url); else window.open(r.url, '_blank');
+    gHint.textContent = 'Finish on the page that just opened, then come back and open Settings again.';
+    gBtn.disabled = false;
+  } catch(e){ gHint.textContent = 'Could not start. Please try again.'; gBtn.disabled = false; }
 }
 
 if (WEB_LOGIN_ON){
   firebase.initializeApp(FIREBASE_WEB_CONFIG);
-  let first = true;
-  firebase.auth().onIdTokenChanged(async u => {
-    if (!u){ webIdToken = null; if (first){ first = false; showWebGate(''); } return; }
-    if (first){ first = false; await webFinishLogin(u); }                 // page just opened with a saved session / just signed in
-    else if (!appBooted){ await webFinishLogin(u); }
-    else { try { webIdToken = await u.getIdToken(); } catch(e){} }          // silent hourly refresh
-  });
-  setInterval(async () => { try { const u = firebase.auth().currentUser; if (u) webIdToken = await u.getIdToken(true); } catch(e){} }, 50 * 60 * 1000);
+  if (LINK_CODE){
+    setGateMode('link');                         // opened from the bot's Settings: only the connect step
+    showWebGate('');
+  } else {
+    setGateMode('choose');
+    let first = true;
+    firebase.auth().onIdTokenChanged(async u => {
+      if (!u){ webIdToken = null; if (first){ first = false; showWebGate(''); resumeTgLogin(); } return; }
+      if (first){ first = false; await webFinishLogin(u); }              // page just opened with a saved session / just signed in
+      else if (!appBooted){ await webFinishLogin(u); }
+      else { try { webIdToken = await u.getIdToken(); } catch(e){} }      // silent hourly refresh
+    });
+    setInterval(async () => { try { const u = firebase.auth().currentUser; if (u) webIdToken = await u.getIdToken(true); } catch(e){} }, 50 * 60 * 1000);
+  }
 } else {
   bootApp();
 }
