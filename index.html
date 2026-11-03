@@ -3718,26 +3718,34 @@ function monthAfter(dateStr){                      // "2026-12-31" -> { y: 2027,
   return { y: d.getUTCFullYear(), m: d.getUTCMonth() };
 }
 function autoNoticeMessages(){
+  // All times are UTC. 00:00 UTC = 6:00 AM in Bangladesh, so "6 AM" below is the same moment.
   const msgs = [], boxes = (seasonBoxesCache || []).filter(b => b.startDate && b.endDate);
   const s = state.settings || {};
   const now = Date.now() + (s.serverNow ? (new Date(s.serverNow).getTime() - Date.now()) : 0);
   const run = boxes.find(b => b.status === 'active');
   if (!run) return msgs;
-  // 1) season started
-  msgs.push(`🏆 ${run.seasonName} has started (${run.startDate} to ${run.endDate})`);
-  // 2) payouts of the previous season (month after it ended, 3rd to 5th)
+  const rs = String(run.startDate).split('-').map(Number);          // [y, m, d] of the running season start
+  const startMs = Date.UTC(rs[0], rs[1] - 1, 1);                    // 1st, 6:00 AM
+  // 1) "<Season> has started": from the 1st to the 6th (6:00 AM) of the season's first month
+  if (now >= startMs && now < Date.UTC(rs[0], rs[1] - 1, 6)){
+    msgs.push(`🏆 ${run.seasonName} has started (${run.startDate} to ${run.endDate})`);
+  }
+  // 2) payouts of the previous season: from the 3rd to the 6th (6:00 AM) of the month after it ended
   const prev = boxes.filter(b => b.status !== 'active' && b.endDate < run.startDate)
     .sort((a, b) => String(b.endDate).localeCompare(String(a.endDate)))[0];
   if (prev){
-    const pm = monthAfter(prev.endDate), lastDay = Date.UTC(pm.y, pm.m, 5, 23, 59, 59);
-    if (now <= lastDay) msgs.push(`💸 Payouts of ${prev.seasonName} will be processed from ${MONTH_SHORT[pm.m]} 3 to ${MONTH_SHORT[pm.m]} 5`);
+    const pm = monthAfter(prev.endDate);
+    if (now >= Date.UTC(pm.y, pm.m, 3) && now < Date.UTC(pm.y, pm.m, 6)){
+      msgs.push(`💸 Payouts of ${prev.seasonName} will be processed from ${MONTH_SHORT[pm.m]} 3 to ${MONTH_SHORT[pm.m]} 5`);
+    }
   }
-  // 3) withdrawals
+  // 3) withdrawals: "will open" from the season start until the 1st (6:00 AM) of the month after it ends,
+  //    then the "Withdrawals are OPEN now" message takes over while the window is open
+  const wm = monthAfter(run.endDate);
   if (s.withdrawOpen){
     const payBox = boxes.find(b => b.isCurrent) || prev || run;
     msgs.push(`🟢 Withdrawals are OPEN now for ${payBox.seasonName}! Tap Withdraw below to submit your request.`);
-  } else {
-    const wm = monthAfter(run.endDate);
+  } else if (now >= startMs && now < Date.UTC(wm.y, wm.m, 1)){
     msgs.push(`🟢 ${run.seasonName} withdrawals will open on ${MONTH_SHORT[wm.m]} 1 and ${MONTH_SHORT[wm.m]} 2, ${wm.y}`);
   }
   return msgs;
