@@ -437,18 +437,22 @@
   .prem .lfa-modal-close{background:linear-gradient(135deg,var(--pa2),var(--pa)); color:#1B1404; border:none; font-weight:800; letter-spacing:.3px; box-shadow:0 6px 18px rgba(0,0,0,.35);}
   /* ---- landscape pop-ups on top of the app ---- */
   .notice-pops{position:fixed; top:calc(env(safe-area-inset-top, 0px) + 8px); left:50%; transform:translateX(-50%); width:min(456px, calc(100% - 20px)); z-index:150; display:flex; flex-direction:column; gap:7px; pointer-events:none;}
-  .npop{pointer-events:auto; position:relative; display:flex; align-items:center; gap:11px; min-height:58px; padding:9px 10px 9px 11px; border-radius:15px; cursor:pointer; overflow:hidden;
-    background:linear-gradient(135deg,#1D170C,#2A1F0E 60%,#1A140B); border:1px solid rgba(232,185,80,.5);
-    box-shadow:0 10px 28px rgba(0,0,0,.55), 0 0 22px rgba(232,185,80,.16); animation:npopIn .45s cubic-bezier(.2,.9,.3,1.2) both;}
-  .npop::before{content:""; position:absolute; inset:0 auto 0 0; width:3px; background:linear-gradient(180deg,#FFF0C2,#E8B950);}
-  .npop::after{content:""; position:absolute; top:0; bottom:0; width:60px; left:-80px; background:linear-gradient(100deg,transparent,rgba(255,240,194,.22),transparent); animation:npopShine 3.8s ease-in-out 1s infinite;}
-  .npop-ico{flex:none; width:36px; height:36px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:17px; background:rgba(232,185,80,.12); border:1px solid rgba(232,185,80,.4);}
+  /* premium pop-up: yellow (info / request), green (paid), red (declined). 3 seconds each. */
+  .npop{--c1:#FFF0C2; --c2:#E8B950; --bg1:#1D1609; --bg2:#33250C; --bd:rgba(232,185,80,.62); --glow:rgba(232,185,80,.30); --ib:rgba(232,185,80,.16); --tx:#E9DDBF;
+    pointer-events:auto; position:relative; display:flex; align-items:center; gap:12px; min-height:62px; padding:10px 11px 11px 14px; border-radius:16px; cursor:pointer; overflow:hidden;
+    background:radial-gradient(120% 140% at 0% 0%, rgba(255,255,255,.07), transparent 55%), linear-gradient(135deg,var(--bg1),var(--bg2) 62%,var(--bg1)); border:1px solid var(--bd);
+    box-shadow:0 12px 30px rgba(0,0,0,.55), 0 0 26px var(--glow), inset 0 1px 0 rgba(255,255,255,.14); animation:npopIn .45s cubic-bezier(.2,.9,.3,1.2) both;}
+  .npop.t-green{--c1:#D9FCE6; --c2:#4ADE80; --bg1:#06190E; --bg2:#0E3B1D; --bd:rgba(74,222,128,.65); --glow:rgba(74,222,128,.30); --ib:rgba(74,222,128,.16); --tx:#CDEBD8;}
+  .npop.t-red{--c1:#FFE3DD; --c2:#F2705F; --bg1:#220907; --bg2:#451510; --bd:rgba(242,112,95,.68); --glow:rgba(242,112,95,.32); --ib:rgba(242,112,95,.16); --tx:#F2D2CC;}
+  .npop::before{content:""; position:absolute; inset:0 auto 0 0; width:4px; background:linear-gradient(180deg,var(--c1),var(--c2));}
+  .npop::after{content:""; position:absolute; top:0; bottom:0; width:60px; left:-80px; background:linear-gradient(100deg,transparent,rgba(255,255,255,.22),transparent); animation:npopShine 2.2s ease-in-out .5s infinite;}
+  .npop-ico{flex:none; width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; background:linear-gradient(145deg,rgba(255,255,255,.14),var(--ib)); border:1px solid var(--bd); box-shadow:0 0 14px var(--glow);}
   .npop-txt{min-width:0; flex:1;}
-  .npop-t{font-size:13px; font-weight:800; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; background:linear-gradient(90deg,#FFF0C2,#E8B950); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent;}
-  .npop-b{font-size:11.5px; line-height:1.3; color:#D9CFB8; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .npop-x{flex:none; width:26px; height:26px; border-radius:50%; border:1px solid rgba(232,185,80,.3); background:rgba(255,255,255,.06); color:#E8D9AE; font-size:12px; cursor:pointer; line-height:1;}
+  .npop-t{font-size:13.5px; font-weight:800; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; background:linear-gradient(90deg,var(--c1),var(--c2)); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent;}
+  .npop-b{font-size:11.5px; line-height:1.3; color:var(--tx); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .npop-x{flex:none; width:26px; height:26px; border-radius:50%; border:1px solid var(--bd); background:rgba(255,255,255,.07); color:var(--c1); font-size:12px; cursor:pointer; line-height:1;}
   .npop-more{pointer-events:auto; align-self:center; font-size:10.5px; font-weight:700; color:#E8D9AE; background:rgba(28,22,12,.92); border:1px solid rgba(232,185,80,.35); padding:3px 10px; border-radius:20px;}
-  .npop-bar{position:absolute; left:3px; right:0; bottom:0; height:2px; transform-origin:left; background:linear-gradient(90deg,#FFF0C2,#E8B950); opacity:.85; animation:npopBar linear forwards;}
+  .npop-bar{position:absolute; left:4px; right:0; bottom:0; height:3px; transform-origin:left; background:linear-gradient(90deg,var(--c1),var(--c2)); opacity:.9; animation:npopBar linear forwards;}
   @keyframes npopBar{from{transform:scaleX(1);} to{transform:scaleX(0);}}
   @keyframes npopIn{from{transform:translateY(-26px) scale(.96); opacity:0;} to{transform:none; opacity:1;}}
   @keyframes npopShine{0%{left:-80px;} 55%,100%{left:110%;}}
@@ -1139,22 +1143,6 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
           <span class="ec-rail"></span>
           <span class="ec-foot"><span class="ec-unit up">UP</span><span class="ec-stat" id="ecGaintwallStat">0</span></span>
         </button>
-        <button class="earn-card ec-blue" id="earnCardClickwall" onclick="setEarnSubTab('clickwall')">
-          <span class="ec-badge">NEW</span>
-          <span class="ec-icon"><svg viewBox="0 0 24 24"><path d="M9 3 5 14h5l-1 7 10-12h-6l2-6z"/></svg><span class="ec-num">3</span></span>
-          <span class="ec-title">REWARD WALL 3</span>
-          <span class="ec-desc">Offers, games and surveys</span>
-          <span class="ec-rail"></span>
-          <span class="ec-foot"><span class="ec-unit up">UP</span><span class="ec-stat" id="ecClickwallStat">0</span></span>
-        </button>
-        <button class="earn-card ec-violet" id="earnCardTimewall" onclick="setEarnSubTab('timewall')">
-          <span class="ec-badge">NEW</span>
-          <span class="ec-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="ec-num">4</span></span>
-          <span class="ec-title">REWARD WALL 4</span>
-          <span class="ec-desc">Tasks, surveys and offers</span>
-          <span class="ec-rail"></span>
-          <span class="ec-foot"><span class="ec-unit up">UP</span><span class="ec-stat" id="ecTimewallStat">0</span></span>
-        </button>
         <button class="earn-card ec-teal" id="earnCardAds" onclick="setEarnSubTab('ads')">
           <span class="ec-badge">DAILY</span>
           <span class="ec-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></svg></span>
@@ -1162,14 +1150,6 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
           <span class="ec-desc">Quick ads, instant AP</span>
           <span class="ec-rail"></span>
           <span class="ec-foot"><span class="ec-unit ap">AP</span><span class="ec-stat" id="ecAdsStat">0</span></span>
-        </button>
-        <button class="earn-card ec-indigo" id="earnCardLinks" onclick="setEarnSubTab('links')">
-          <span class="ec-badge">DAILY</span>
-          <span class="ec-icon"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3A4 4 0 0 0 11 18.7l1-1"/></svg></span>
-          <span class="ec-title">SHORTLINKS</span>
-          <span class="ec-desc">Finish links, earn AP</span>
-          <span class="ec-rail"></span>
-          <span class="ec-foot"><span class="ec-unit ap">AP</span><span class="ec-stat" id="ecLinksStat">0</span></span>
         </button>
       </div>
     </div>
@@ -1204,34 +1184,6 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
       </div>
     </div>
 
-    <div class="earn-subpage" id="earnSubpage-clickwall" style="display:none;">
-      <div class="earn-section-head-premium up">
-        <div class="eshp-title">REWARD WALL 3</div>
-        <div class="eshp-val" id="clickwallSubtotal">0 UP</div>
-      </div>
-      <div class="ads-note">Complete offers for real USD value. 100 UP = 1 USDT.</div>
-      <iframe id="clickwallFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
-      <div id="clickwallFallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
-        <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Reward Wall 3 didn't load. Try again below.</div>
-        <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('clickwall')">Reload</button>
-        <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('clickwall')">Open directly</button>
-      </div>
-    </div>
-
-    <div class="earn-subpage" id="earnSubpage-timewall" style="display:none;">
-      <div class="earn-section-head-premium up">
-        <div class="eshp-title">REWARD WALL 4</div>
-        <div class="eshp-val" id="timewallSubtotal">0 UP</div>
-      </div>
-      <div class="ads-note">Complete tasks and surveys for real USD value. 100 UP = 1 USDT.</div>
-      <iframe id="timewallFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
-      <div id="timewallFallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
-        <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Reward Wall 4 didn't load. Try again below.</div>
-        <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('timewall')">Reload</button>
-        <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('timewall')">Open directly</button>
-      </div>
-    </div>
-
     <div class="earn-subpage" id="earnSubpage-ads" style="display:none;">
       <div class="earn-section-head-premium ap">
         <div class="eshp-title">WATCH ADS</div>
@@ -1242,14 +1194,6 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
       <div id="adList"></div>
     </div>
 
-    <div class="earn-subpage" id="earnSubpage-links" style="display:none;">
-      <div class="earn-section-head-premium ap">
-        <div class="eshp-title">SHORTLINKS</div>
-        <div class="eshp-val" id="linksSubtotal">0 AP</div>
-      </div>
-      <div class="ads-note">Tap Start, complete the shortlink steps in your browser, and reach the final page to receive your AP. Limits reset daily at 6:00 AM.</div>
-      <div id="linkList"></div>
-    </div>
   </div>
 
   <!-- ================= LEADERBOARD ================= -->
@@ -1682,8 +1626,6 @@ const LFA_WEBPAGE_URL = "https://rizwanur69.github.io/LiveForAdsWeb/";
 const LFA_WHITEPAPER_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/whitepaper.pdf";
 const CPALEAD_OFFERWALL_URL = "https://www.akamaicdn.org/wall/bPjTh";
 const GAINTWALL_API_KEY = "j5HQjUCvHDb4qLorEjjajfg1g8hTSpXF"; // Gaintwall > Placements > your placement > API key (the code next to "Edit Placement")
-const TIMEWALL_PLACEMENT_ID = "7bb6852112cbec56"; // TimeWall > Placements > your placement > Integration (the oid / placement id)
-const CLICKWALL_APP_ID = "10812"; // ClickWall dashboard > your placement > App ID (the number in the iframe link)
 const LFA_TERMS_PDF_URL = "https://rizwanur69.github.io/LiveForAdsBot/terms-and-privacy.pdf";
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) { tg.ready(); tg.expand(); }
@@ -1700,14 +1642,12 @@ function getAdsgram(){
   }
   return AdsgramController;
 }
-/* Earn hub: 5 cards. The admin can switch each reward wall on/off */
+/* Earn hub: 3 cards. The admin can switch each reward wall on/off */
 const WALL_TABS = [
   { tab:'offerwall', wall:'cpalead',   label:'REWARD WALL 1', card:'earnCardOfferwall', sub:'offerwallSubtotal', stat:'ecOfferwallStat' },
   { tab:'gaintwall', wall:'gaintwall', label:'REWARD WALL 2', card:'earnCardGaintwall', sub:'gaintwallSubtotal', stat:'ecGaintwallStat' },
-  { tab:'clickwall', wall:'clickwall', label:'REWARD WALL 3', card:'earnCardClickwall', sub:'clickwallSubtotal', stat:'ecClickwallStat' },
-  { tab:'timewall', wall:'timewall', label:'REWARD WALL 4', card:'earnCardTimewall', sub:'timewallSubtotal', stat:'ecTimewallStat' },
 ];
-const EARN_TITLES = { offerwall:'REWARD WALL 1', gaintwall:'REWARD WALL 2', clickwall:'REWARD WALL 3', timewall:'REWARD WALL 4', ads:'WATCH ADS', links:'SHORTLINKS' };
+const EARN_TITLES = { offerwall:'REWARD WALL 1', gaintwall:'REWARD WALL 2', ads:'WATCH ADS' };
 let currentEarnTab = 'hub';
 function wallEnabled(wall){
   const c = ((state.settings || {}).offerwalls || {})[wall];
@@ -1720,9 +1660,7 @@ function updateEarnTotals(){
   set('etUp', state.up || 0);
   WALL_TABS.forEach(w => { set(w.sub, `${wallUp(w.wall)} UP`); set(w.stat, wallUp(w.wall)); });
   set('adsSubtotal', `${state.apFromAds || 0} AP`);
-  set('linksSubtotal', `${state.apFromShortlinks || 0} AP`);
   set('ecAdsStat', state.apFromAds || 0);
-  set('ecLinksStat', state.apFromShortlinks || 0);
 }
 function applyOfferwallVisibility(){
   WALL_TABS.forEach(w => {
@@ -1738,7 +1676,6 @@ async function refreshBalances(){
     state.upByWall = d.upByWall || {};
     state.totalPoints = d.points || 0;
     state.apFromAds = d.apFromAds || 0;
-    state.apFromShortlinks = d.apFromShortlinks || 0;
   } catch(e){ console.error("Could not refresh balances:", e); }
 }
 function setEarnSubTab(tab){
@@ -1746,17 +1683,16 @@ function setEarnSubTab(tab){
   if (wt && !wallEnabled(wt.wall)) tab = 'hub';   // admin switched this wall off
   if (!EARN_TITLES[tab]) tab = 'hub';
   currentEarnTab = tab;
-  ['offerwall','gaintwall','clickwall','timewall','ads','links'].forEach(t=>{
+  ['offerwall','gaintwall','ads'].forEach(t=>{
     document.getElementById('earnSubpage-'+t).style.display = tab === t ? 'block' : 'none';
   });
   document.getElementById('earnHub').style.display = tab === 'hub' ? 'block' : 'none';
   const back = document.getElementById('earnBack');
   back.classList.toggle('show', tab !== 'hub');
   document.getElementById('earnBackTitle').textContent = EARN_TITLES[tab] || '';
-  if (tab === 'links') loadShortlinks();
   if (wt){
     updateEarnTotals();
-    loadOfferwallFrame(tab);       // key 'offerwall', 'gaintwall' or 'clickwall'
+    loadOfferwallFrame(tab);       // key 'offerwall' or 'gaintwall'
     refreshBalances().then(updateEarnTotals);
   }
   if (tab === 'hub') window.scrollTo({ top:0 });
@@ -1894,11 +1830,35 @@ function scrollToTopNow(){
   requestAnimationFrame(go);       // once more after the new page has been laid out
   setTimeout(go, 120);             // and after quick async renders
 }
+/* Scroll rules:
+   - Main pages (Home, Earn, Leaderboard, Referral, LFA, Profile): moving between them starts at the TOP.
+   - Inside pages (Withdraw, Settings-type pages, Notices, Support, History, Edit profile, public profile):
+     opening one starts at its own top, and coming BACK returns to the exact spot you left on the main page. */
+const MAIN_PAGES = ['home','ads','leaderboard','referral','lfa','profile'];
+const savedScroll = {};
+let currentPageName = 'home';
+function restoreScrollNow(y){
+  const go = () => { try{ window.scrollTo(0, y); }catch(e){} };
+  go();
+  requestAnimationFrame(go);
+  [120, 350, 800].forEach(t => setTimeout(go, t));   // again after async renders make the page tall enough
+}
 function showPage(name, el){
   setTimeout(maybeShowDisplayAd, 600);
+  const prevName = currentPageName;
+  const prevMain = MAIN_PAGES.includes(prevName), nextMain = MAIN_PAGES.includes(name);
+  if (prevMain && !nextMain) savedScroll[prevName] = window.scrollY || document.documentElement.scrollTop || 0;   // remember where we were
+  closeSpinNow();
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
-  scrollToTopNow();
+  if (!prevMain && nextMain && savedScroll[name] != null){      // coming back from an inside page
+    const y = savedScroll[name]; delete savedScroll[name];
+    restoreScrollNow(y);
+  } else {
+    if (nextMain) delete savedScroll[name];                      // a fresh visit through the menu always starts at the top
+    scrollToTopNow();
+  }
+  currentPageName = name;
   if (el){
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
     el.classList.add('active');
@@ -2142,9 +2102,17 @@ function openSpin(){
   document.getElementById('wheelSvg').innerHTML = buildWheelSvg(cfg.prizes);
   document.getElementById('spinResult').textContent = '';
   updateSpinOverlay();
+  clearTimeout(spinAutoCloseTimer);
   document.getElementById('spinOverlay').classList.add('active');
 }
-function closeSpin(){ if (state.spinning) return; document.getElementById('spinOverlay').classList.remove('active'); }
+let spinAutoCloseTimer = null;
+function closeSpinNow(){
+  clearTimeout(spinAutoCloseTimer); spinAutoCloseTimer = null;
+  const o = document.getElementById('spinOverlay');
+  if (o) o.classList.remove('active');
+}
+// tapping outside the spin box closes it (even while the wheel is turning; the prize is still credited)
+function closeSpin(){ closeSpinNow(); }
 function updateSpinOverlay(){
   const cfg = state.rewards && state.rewards.spin; if (!cfg) return;
   const used = state.lastSpinDay === utcToday();
@@ -2183,7 +2151,10 @@ async function doSpin(){
     state.lastSpinDay = utcToday(); state.spinning = false;
     resultEl.style.fontSize = ''; resultEl.textContent = `You won +${r.points} AP!`;
     if (tg) tg.HapticFeedback?.notificationOccurred('success');
-    await loadUserFromServer(); renderHomeHeader(); renderCheckin(); updateSpinOverlay();
+    await loadUserFromServer(); renderHomeHeader(); renderCheckin(); updateSpinOverlay(); renderSpinCard();
+    // the result stays for 3 seconds, then the pop-up closes by itself
+    clearTimeout(spinAutoCloseTimer);
+    spinAutoCloseTimer = setTimeout(closeSpinNow, 3000);
   }, 4400);
 }
 
@@ -2564,85 +2535,7 @@ async function claimTask(taskId){
   } catch(e){ console.error("Task claim failed:", e); }
 }
 
-/* ============================================================
-   SHORTLINKS (exe.io / ShrinkMe)
-   ============================================================ */
-const SHORTLINK_ICONS = { exe:'🔗', shrinkme:'⛓' };
-let shortlinkBusy = false;
-let linksCountdownInterval = null;
-
-async function loadShortlinks(){
-  try{
-    const res = await fetch(`${API_BASE}/shortlinks/${state.user.id}`);
-    const list = await res.json();
-    if (Array.isArray(list)) state.shortlinks = list;
-  } catch(e){ console.error("Could not load shortlinks:", e); }
-  renderShortlinks();
-}
-
-function renderShortlinks(){
-  const el = document.getElementById('linkList');
-  if (!el) return;
-  document.getElementById('linksSubtotal').textContent = `${state.apFromShortlinks} AP`;
-  if (!state.shortlinks.length){
-    el.innerHTML = `<div class="ad-row"><div class="info"><div class="name" style="color:var(--text-muted);font-weight:400;">No shortlinks available right now.</div></div></div>`;
-    return;
-  }
-  el.innerHTML = state.shortlinks.map(l=>{
-    const pct = Math.min(100, (l.doneToday / l.dailyLimit) * 100);
-    const full = l.doneToday >= l.dailyLimit;
-    let btn;
-    if (state.banned) btn = `<button class="watch-btn" disabled>Suspended</button>`;
-    else if (!l.enabled) btn = `<button class="watch-btn" disabled>Soon</button>`;
-    else if (l.unlockAt && Date.now() < l.unlockAt) btn = `<button class="watch-btn" disabled style="min-width:78px;">${formatCountdown(l.unlockAt - Date.now())}</button>`;
-    else if (full) btn = `<button class="watch-btn" disabled>Done</button>`;
-    else btn = `<button class="watch-btn" onclick="startShortlink('${l.key}')">Start</button>`;
-    return `<div class="ad-row">
-      <div class="icon">${SHORTLINK_ICONS[l.key]||'🔗'}</div>
-      <div class="info">
-        <div class="name">${l.name}</div>
-        <div class="sub">+${l.points} points per link</div>
-        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-        <div class="count">${l.doneToday}/${l.dailyLimit} completed today</div>
-      </div>
-      ${btn}
-    </div>`;
-  }).join('');
-
-  // keep cooldown countdowns ticking only while one is running
-  const anyLocked = state.shortlinks.some(l => l.unlockAt && Date.now() < l.unlockAt);
-  if (anyLocked && !linksCountdownInterval) linksCountdownInterval = setInterval(renderShortlinks, 1000);
-  else if (!anyLocked && linksCountdownInterval){ clearInterval(linksCountdownInterval); linksCountdownInterval = null; }
-}
-
-async function startShortlink(provider){
-  if (shortlinkBusy) return;
-  shortlinkBusy = true;
-  try{
-    const res = await fetch(`${API_BASE}/shortlink/start`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ userId: state.user.id, provider, initData: getInitData() })
-    });
-    const r = await res.json();
-    if (r.success && r.url){
-      if (tg && tg.openLink) tg.openLink(r.url); else window.open(r.url, '_blank');
-    } else {
-      const msgs = {
-        limit: "You reached today's limit for this shortlink. Try again after the daily reset.",
-        cooldown: "This shortlink is on cooldown. Please wait for the timer.",
-        banned: "Your account is suspended.",
-        not_configured: "This shortlink is not available yet.",
-        shortener_failed: "Could not create the link right now. Please try again in a moment.",
-      };
-      alert(msgs[r.reason] || "Something went wrong. Please try again.");
-    }
-  } catch(e){
-    console.error("Shortlink start failed:", e);
-    alert("Network error. Please try again.");
-  } finally { shortlinkBusy = false; }
-}
-
-// When the user comes back from the browser, refresh balance + shortlink counters
+// When the user comes back from the browser, refresh balance + ad counters
 document.addEventListener('visibilitychange', () => {
   const adsPage = document.getElementById('page-ads');
   if (!document.hidden && adsPage && adsPage.classList.contains('active') && state.user){
@@ -2666,15 +2559,12 @@ function renderEarn(){
   });
   renderAds();
   loadAdConfig().then(renderAds);
-  loadShortlinks();
 }
 
 const wallTimers = {};
 const WALLS = {
   offerwall: { frame:'offerwallFrame', fb:'offerwallFallback', src:()=>`${CPALEAD_OFFERWALL_URL}?subid=${state.user.id}` },
-  gaintwall: { frame:'gaintwallFrame', fb:'gaintwallFallback', src:()=>`https://gaintwall.com/offerwall?apiKey=${encodeURIComponent(GAINTWALL_API_KEY)}&userId=${encodeURIComponent(String(state.user.id))}` },
-  clickwall: { frame:'clickwallFrame', fb:'clickwallFallback', src:()=>`https://clickwall.net/app/iframe/${encodeURIComponent(CLICKWALL_APP_ID)}/${encodeURIComponent(String(state.user.id))}` },
-  timewall: { frame:'timewallFrame', fb:'timewallFallback', src:()=>`https://timewall.io/users/login?oid=${encodeURIComponent(TIMEWALL_PLACEMENT_ID)}&uid=${encodeURIComponent(String(state.user.id))}` }
+  gaintwall: { frame:'gaintwallFrame', fb:'gaintwallFallback', src:()=>`https://gaintwall.com/offerwall?apiKey=${encodeURIComponent(GAINTWALL_API_KEY)}&userId=${encodeURIComponent(String(state.user.id))}` }
 };
 
 function getOfferwallSrc(key='offerwall'){ return WALLS[key].src(); }
@@ -3193,7 +3083,7 @@ async function openUserProfile(tgId){
             <div class="upf-sec">Activity</div>
             <div class="upf-grid">${hcell('Joined','Sep 04, 2026')}${hcell('Streak','🔥 59 days')}${hcell('Ads watched','1,284')}${hcell('Check-ins','412')}${hcell('Referrals','37')}${hcell('Referral AP','5,960')}</div>
             <div class="upf-sec">AP breakdown</div>
-            <div class="upf-grid">${hcell('Watch ads','8,410')}${hcell('Shortlinks','2,236')}${hcell('Tasks','1,905')}${hcell('Daily check-in','3,174')}</div>
+            <div class="upf-grid">${hcell('Watch ads','8,410')}${hcell('Tasks','1,905')}${hcell('Daily check-in','3,174')}</div>
             <div class="upf-sec">Withdrawals</div>
             <div class="upf-grid">${hcell('Total paid out','$128.40')}${hcell('Payments','6')}</div>
             <div class="upf-sec">Season history</div>
@@ -3241,7 +3131,6 @@ async function openUserProfile(tgId){
       <div class="upf-sec">AP breakdown</div>
       <div class="upf-grid">
         ${cell('Watch ads', num(u.apFromAds), 'ap')}
-        ${cell('Shortlinks', num(u.apFromShortlinks), 'ap')}
         ${cell('Tasks', num(u.apFromTasks), 'ap')}
         ${cell('Daily check-in', num(u.apFromCheckin), 'ap')}
       </div>
@@ -3804,23 +3693,54 @@ function drawChart(data){
 /* ============================================================
    WITHDRAW + SEASON PAYOUT BOXES
    ============================================================ */
-/* The running season's "has started" announcement runs on this notice board for 7 days after the season starts. */
-let runSeasonBox = null, runSeasonBoxTried = false;
+/* ---------- Profile notice bar: fully automatic messages ----------
+   Built only from the season data (no one has to type anything):
+     1) "<Season> has started (start to end date)"
+     2) "Payouts of <previous season> will be processed from <month> 3 to <month> 5"   (month after that season ended)
+     3) "<Season> withdrawals will open on <month> 1 and <month> 2"                    (month after this season ends)
+        -> while the window is open it turns into "Withdrawals are OPEN now for <season>!" */
+let seasonBoxesCache = [], seasonBoxesAt = 0, seasonBoxesBusy = false;
 async function ensureRunSeasonBox(){
-  if (runSeasonBoxTried) return;
-  runSeasonBoxTried = true;
+  if (seasonBoxesBusy || (seasonBoxesAt && Date.now() - seasonBoxesAt < 5 * 60000)) return;
+  seasonBoxesBusy = true;
   try{
     const b = await (await fetch(`${API_BASE}/season-boxes`)).json();
-    runSeasonBox = (Array.isArray(b) ? b : []).find(x => x.status === 'active') || null;
-  } catch(e){}
+    if (Array.isArray(b)){ seasonBoxesCache = b; seasonBoxesAt = Date.now(); }
+    else seasonBoxesAt = Date.now() - 4 * 60000;          // failed: try again in about a minute
+  } catch(e){ seasonBoxesAt = Date.now() - 4 * 60000; }
+  seasonBoxesBusy = false;
   renderWithdrawInfo();
 }
-function seasonAnnounceText(){
-  const b = runSeasonBox;
-  if (!b || !b.startDate) return '';
-  const age = Date.now() - Date.parse(b.startDate + 'T00:00:00Z');
-  if (!(age >= 0 && age <= 7 * 86400000)) return '';
-  return `🏆 ${b.seasonName} has started (${b.startDate} to ${b.endDate}) · AP is back to 0 for everyone · the new Leaderboard is live · your AP of the last season is saved on the LFA page`;
+const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function monthAfter(dateStr){                      // "2026-12-31" -> { y: 2027, m: 0 }  (m = 0..11)
+  const p = String(dateStr).split('-').map(Number);
+  const d = new Date(Date.UTC(p[0], p[1], 1));
+  return { y: d.getUTCFullYear(), m: d.getUTCMonth() };
+}
+function autoNoticeMessages(){
+  const msgs = [], boxes = (seasonBoxesCache || []).filter(b => b.startDate && b.endDate);
+  const s = state.settings || {};
+  const now = Date.now() + (s.serverNow ? (new Date(s.serverNow).getTime() - Date.now()) : 0);
+  const run = boxes.find(b => b.status === 'active');
+  if (!run) return msgs;
+  // 1) season started
+  msgs.push(`🏆 ${run.seasonName} has started (${run.startDate} to ${run.endDate})`);
+  // 2) payouts of the previous season (month after it ended, 3rd to 5th)
+  const prev = boxes.filter(b => b.status !== 'active' && b.endDate < run.startDate)
+    .sort((a, b) => String(b.endDate).localeCompare(String(a.endDate)))[0];
+  if (prev){
+    const pm = monthAfter(prev.endDate), lastDay = Date.UTC(pm.y, pm.m, 5, 23, 59, 59);
+    if (now <= lastDay) msgs.push(`💸 Payouts of ${prev.seasonName} will be processed from ${MONTH_SHORT[pm.m]} 3 to ${MONTH_SHORT[pm.m]} 5`);
+  }
+  // 3) withdrawals
+  if (s.withdrawOpen){
+    const payBox = boxes.find(b => b.isCurrent) || prev || run;
+    msgs.push(`🟢 Withdrawals are OPEN now for ${payBox.seasonName}! Tap Withdraw below to submit your request.`);
+  } else {
+    const wm = monthAfter(run.endDate);
+    msgs.push(`🟢 ${run.seasonName} withdrawals will open on ${MONTH_SHORT[wm.m]} 1 and ${MONTH_SHORT[wm.m]} 2, ${wm.y}`);
+  }
+  return msgs;
 }
 function renderWithdrawInfo(){
   const sub = document.getElementById('withdrawSub');
@@ -3828,17 +3748,9 @@ function renderWithdrawInfo(){
   const noticeText = document.getElementById('withdrawNoticeText');
   ensureRunSeasonBox();
 
-  // Force ON -> the notice board switches to an automatic "withdraw is open" message.
-  // Auto / Force OFF -> it keeps showing the admin's own notice text.
-  // The season announcement (first 7 days of a season) runs next to it.
-  const msgs = [];
-  const ann = seasonAnnounceText();
-  if (ann) msgs.push(ann);
-  if (state.settings.withdrawMode === 'on'){
-    msgs.push(`🟢 Withdrawals are OPEN now for ${state.settings.seasonName}! Tap Withdraw below to submit your request.`);
-  } else if (state.settings.withdrawNotice){
-    msgs.push(state.settings.withdrawNotice);
-  }
+  // The bar is automatic. An optional line typed by the admin (Admin > Settings) is added at the end.
+  const msgs = autoNoticeMessages();
+  if (state.settings.withdrawNotice) msgs.push(state.settings.withdrawNotice);
   if (msgs.length){
     const text = msgs.join('      ✦      ');
     noticeBox.style.display = 'block';
@@ -4022,39 +3934,48 @@ function updateBellBadge(){
   renderNoticePops();
 }
 
-/* ---------- Small landscape pop-ups for automatic notices ----------
-   Every time the person opens the bot, the notices they have NOT seen yet pop up on top of the app,
-   one after another, and then disappear by themselves (they are not marked as seen, so they come
-   back the next time the bot is opened). Tap = open + mark as seen, ✕ = mark as seen.
-     1 notice  -> 10 seconds
-     2 notices ->  5 seconds each
-     3 or more ->  4 seconds each (the queue keeps going until all have been shown)       */
+/* ---------- Premium pop-ups for notifications ----------
+   Every notification pops up on top of the app for 3 seconds, one after another:
+     yellow = automatic notices and "withdrawal request received"
+     green  = withdrawal paid (received)
+     red    = withdrawal declined
+   A notification pops up once on this device (it stays unread in the bell until opened).
+   Tap = open it, ✕ = dismiss. New ones that arrive while the app is open pop up too (checked every 30 s). */
 const POP_MAX_AGE_MS = 14 * 86400000;
-let popQueue = null, popPer = 4000, popTimer = null, popCurKey = null;
+const POP_MS = 3000;
+const POP_MAX_PER_BATCH = 4;
+const POP_TYPES = ['auto', 'withdraw_request', 'withdraw_paid', 'withdraw_declined'];
+let popQueue = [], popTimer = null, popCurKey = null;
 const popHidden = new Set();                         // opened / dismissed during this visit
 function isSeasonAnnounce(n){ return !n.personal && String(n.id || '').startsWith('season-start-'); }
-// "<Season> has started" is NOT a pop-up: it runs on the Withdraw page notice board (see renderWithdrawInfo)
+// "<Season> has started" lives on the Profile notice bar (see autoNoticeMessages), not as a pop-up
+function getPopShown(){ try{ return new Set(JSON.parse(localStorage.getItem('lfa_pop_shown') || '[]')); }catch(e){ return new Set(); } }
+function markPopShown(key){
+  try{ const set = getPopShown(); set.add(key); localStorage.setItem('lfa_pop_shown', JSON.stringify([...set].slice(-300))); }catch(e){}
+}
+function popTone(n){ return n.type === 'withdraw_paid' ? 'green' : n.type === 'withdraw_declined' ? 'red' : 'gold'; }
 function popValid(n){
-  if (popHidden.has(noticeKey(n)) || isSeasonAnnounce(n)) return false;
+  if (!POP_TYPES.includes(n.type) || isSeasonAnnounce(n)) return false;
+  const key = noticeKey(n);
+  if (popHidden.has(key) || getPopShown().has(key)) return false;
   const age = Date.now() - new Date(n.createdAt).getTime();
   return isNoticeUnread(n) && age <= POP_MAX_AGE_MS;
 }
-function popDuration(total){ return total <= 1 ? 10000 : (total === 2 ? 5000 : 4000); }
 function popFind(key){
   const i = cachedNotices.findIndex(n => noticeKey(n) === key);
   return i < 0 ? null : { n: cachedNotices[i], i };
 }
 function renderNoticePops(){
-  if (popQueue === null){                       // first time in this visit: build the queue once
-    if (!noticesFetchedOnce) return;
-    const list = cachedNotices.filter(n => n.type === 'auto' && popValid(n))
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    popQueue = list.map(noticeKey);
-    popPer = popDuration(popQueue.length);
-    popNext();
-  } else if (popCurKey){                        // the one on screen was read somewhere else -> move on
+  if (!noticesFetchedOnce) return;
+  const fresh = cachedNotices.filter(n => popValid(n) && noticeKey(n) !== popCurKey && !popQueue.includes(noticeKey(n)))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  fresh.slice(0, POP_MAX_PER_BATCH).reverse().forEach(n => popQueue.push(noticeKey(n)));   // oldest of the batch first
+  fresh.slice(POP_MAX_PER_BATCH).forEach(n => markPopShown(noticeKey(n)));                  // too many at once: skip the extra ones
+  if (popCurKey){                                 // the one on screen was read somewhere else -> move on
     const f = popFind(popCurKey);
-    if (!f || !popValid(f.n)) popNext();
+    if (!f || popHidden.has(popCurKey) || !isNoticeUnread(f.n)) popNext();
+  } else if (popQueue.length){
+    popNext();
   }
 }
 function popNext(){
@@ -4064,17 +3985,17 @@ function popNext(){
   while (popQueue.length){
     const key = popQueue.shift();
     const f = popFind(key);
-    if (!f || !popValid(f.n)) continue;
+    if (!f || popHidden.has(key) || !isNoticeUnread(f.n) || getPopShown().has(key)) continue;
     const { n, i } = f;
-    popCurKey = key;
-    const prev = String(n.body || '').replace(/\s+/g, ' ').trim();
-    box.innerHTML = `<div class="npop" onclick="popOpen(${i})">
+    popCurKey = key; markPopShown(key);
+    const firstLine = String(n.body || '').split('\n').map(x => x.trim()).filter(Boolean)[0] || '';
+    box.innerHTML = `<div class="npop t-${popTone(n)}" onclick="popOpen(${i})">
       <div class="npop-ico">${noticeIcon(n)}</div>
-      <div class="npop-txt"><div class="npop-t">${escHtml(n.title)}</div>${prev ? `<div class="npop-b">${escHtml(prev)}</div>` : ''}</div>
+      <div class="npop-txt"><div class="npop-t">${escHtml(n.title)}</div>${firstLine ? `<div class="npop-b">${escHtml(firstLine)}</div>` : ''}</div>
       <button class="npop-x" aria-label="Dismiss" onclick="popDismiss(${i}, event)">✕</button>
-      <div class="npop-bar" style="animation-duration:${popPer}ms"></div>
+      <div class="npop-bar" style="animation-duration:${POP_MS}ms"></div>
     </div>`;
-    popTimer = setTimeout(popNext, popPer);
+    popTimer = setTimeout(popNext, POP_MS);
     return;
   }
   box.innerHTML = '';
@@ -4266,7 +4187,7 @@ async function sendTicketReply(id){
   if (r.success) openTicket(id);
 }
 
-setInterval(() => { if (state.user) refreshNoticeBadge(); }, 60000);
+setInterval(() => { if (state.user && !document.hidden) refreshNoticeBadge(); }, 30000);
 
 let withdrawInfo = { ap:0, up:0, apAllocationUsdt:0, upToUsdtRate:100, withdrawOpen:false, seasonName:'' };
 
@@ -4286,8 +4207,9 @@ async function loadWithdrawPage(){
     `<div class="wd-part"><div class="wp-name">${x[0]}</div><div class="wp-val">${x[1]}</div></div>`).join('');
   document.getElementById('wdUpParts').innerHTML = partBoxes(getUpParts());
   const ap = withdrawInfo.apParts || {};
-  const apItems = [['WATCH ADS', ap.ads || 0], ['SHORTLINKS', ap.links || 0]];
-  if ((ap.other || 0) > 0) apItems.push(['TASKS & MORE', ap.other]);
+  const apItems = [['WATCH ADS', ap.ads || 0]];
+  const apRest = (ap.other || 0) + (ap.links || 0);   // tasks, check-ins, spin, chest, referrals (+ any older shortlink AP)
+  if (apRest > 0) apItems.push(['TASKS & MORE', apRest]);
   document.getElementById('wdApParts').innerHTML = partBoxes(apItems);
   document.getElementById('wdApAllocation').textContent = `$${(withdrawInfo.apAllocationUsdt||0).toFixed(2)}`;
 
@@ -4306,10 +4228,10 @@ async function loadWithdrawPage(){
   loadWithdrawHistory();
 }
 
-// Reward Wall 1 + 2 + 3 (+ other UP) = all UP the user holds
+// Reward Wall 1 + 2 (+ other UP) = all UP the user holds
 function getUpParts(){
   const bw = withdrawInfo.upByWall || {};
-  const items = [['REWARD WALL 1', bw.cpalead || 0], ['REWARD WALL 2', bw.gaintwall || 0], ['REWARD WALL 3', bw.clickwall || 0], ['REWARD WALL 4', bw.timewall || 0]];
+  const items = [['REWARD WALL 1', bw.cpalead || 0], ['REWARD WALL 2', bw.gaintwall || 0]];
   if ((withdrawInfo.upOther || 0) > 0) items.push(['OTHER UP', withdrawInfo.upOther]);
   return items;
 }
@@ -4364,13 +4286,12 @@ async function loadSeasonBoxes(){
       const updating = b.status !== 'active' && b.endDate && nowMs < liveUntil(b) && b.auto && Object.keys(b.auto).some(k => b.auto[k]);
       const tag = b.status === 'active' ? pill('LIVE', 'rgba(74,222,128,.18)', '#4ADE80')
                 : updating ? pill('UPDATING', 'rgba(232,185,80,.18)', '#E8B950') : '';
-      const usersLine = (b.totalUsers || 0) > 0
-        ? `<div style="display:flex;align-items:center;gap:8px;margin:0 0 10px;padding:8px 12px;border-radius:12px;background:rgba(232,185,80,.10);border:1px solid rgba(232,185,80,.35);font-size:12.5px;">${SI.users}<span><b style="font-family:'Space Grotesk',sans-serif;font-size:15px;color:var(--gold);">${Number(b.totalUsers).toLocaleString()}</b> <span style="color:var(--text-muted);">total users this season</span></span></div>` : '';
+      const usersLine = '';   // total users of the season are shown in the Participants cell below
       const note = early
         ? `<div style="margin-top:6px;padding:12px;border-radius:12px;text-align:center;font-size:12px;color:var(--text-muted);background:rgba(0,0,0,.06);border:1px dashed rgba(232,185,80,.45);">🚀 This season is already running. Full details show from <b style="color:var(--gold);">${dayLabel(fullFrom(b))}, 6:00 AM</b>.</div>` : '';
       const grid = early ? '' : `
         <div class="sgrid">
-          ${cell('users', b.participants||0, 'Participants')}
+          ${cell('users', b.totalUsers || b.participants || 0, 'Participants')}
           ${cell('coins', b.totalPointsEarned||0, 'Total AP')}
           ${cell('up', b.totalUp||0, 'Total UP')}
           ${cell('wallet', '$' + (b.totalUsdtPaid||0).toFixed(2), 'Total Paid')}
@@ -4532,6 +4453,7 @@ async function submitWithdraw(){
   }
   status.textContent = "Request submitted. You'll be paid between the 3rd–5th if approved.";
   loadWithdrawHistory();
+  refreshNoticeBadge();      // the yellow "request received" pop-up shows right away
 }
 
 /* ============================================================
