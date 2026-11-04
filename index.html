@@ -4304,7 +4304,7 @@ async function loadSeasonBoxes(){
           ${cell('up', b.totalUp||0, 'Total UP')}
           ${cell('wallet', '$' + (b.totalUsdtPaid||0).toFixed(2), 'Total Paid')}
           ${cell('shield', '$' + (b.apAllocation||0).toFixed(2), 'AP Allocation')}
-          ${cell('up', '$' + ((b.totalUp||0)/100).toFixed(2), 'UP Allocation')}
+          ${cell('up', '$' + (b.totalUpUsdt != null ? b.totalUpUsdt : (b.totalUp||0)/100).toFixed(2), 'UP Allocation')}
         </div>`;
       const toggle = early ? '' : `
         <div class="season-box-toggle" onclick="toggleSeasonParticipants('${b.id}', this)">
