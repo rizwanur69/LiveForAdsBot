@@ -1633,7 +1633,7 @@ if (tg) { tg.ready(); tg.expand(); }
 document.getElementById('lfaWhitepaperLink').href = LFA_WHITEPAPER_PDF_URL;
 document.getElementById('lfaTermsLink').href = LFA_TERMS_PDF_URL;
 
-const ADSGRAM_BLOCK_ID = "58435";
+const ADSGRAM_BLOCK_ID = "57144";
 let AdsgramController = null;
 // Created on demand, so it still works if the Adsgram script finishes loading after the page starts
 function getAdsgram(){
@@ -1777,6 +1777,26 @@ function getInitData(){
   if (webIdToken) return 'web:' + webIdToken;
   return tg && tg.initData ? tg.initData : null;
 }
+// The server now checks WHO is asking for personal data (profile, withdrawals, activity ...). This sends the signed
+// Telegram / web-login proof as a header on every call to our API, so no page has to remember to add it.
+(function(){
+  const _fetch = window.fetch.bind(window);
+  window.fetch = function(input, init){
+    try{
+      const url = typeof input === 'string' ? input : (input && input.url) || '';
+      if (typeof API_BASE === 'string' && url.indexOf(API_BASE) === 0){
+        const proof = getInitData();
+        if (proof){
+          init = Object.assign({}, init);
+          const h = new Headers(init.headers || (typeof input !== 'string' && input.headers) || {});
+          if (!h.has('x-init-data')) h.set('x-init-data', proof);
+          init.headers = h;
+        }
+      }
+    }catch(e){ /* never block a request because of this */ }
+    return _fetch(input, init);
+  };
+})();
 
 function getGuestId(){
   let id = localStorage.getItem('lfa_guest_id');
@@ -1947,8 +1967,9 @@ function renderHomeHeader(){
   const name = state.displayName || state.user.name;
   const avatarUrl = state.avatarUrl || state.telegramAvatarUrl;
   document.getElementById('homeName').textContent = name;
-  document.getElementById('homeAvatar').innerHTML = avatarUrl
-    ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
+  const _homeAv = safeImg(avatarUrl);
+  document.getElementById('homeAvatar').innerHTML = _homeAv
+    ? `<img src="${escHtmlRw(_homeAv)}">` : escHtmlRw((name[0]||'U').toUpperCase());
   document.getElementById('homeSub').textContent = String(state.user.id).startsWith('guest') ? 'Guest' : 'ID: ' + state.user.id;
   document.getElementById('homeAp').textContent = state.totalPoints;
   document.getElementById('homeUp').textContent = state.up;
@@ -1961,6 +1982,13 @@ function renderHomeHeader(){
 /* ===================== Trust strip, Lucky Spin, Weekly Chest, Withdraw readiness ===================== */
 function utcToday(){ return new Date().toISOString().slice(0,10); }
 function fmtMoney(n){ n = n || 0; return '$' + n.toLocaleString(undefined, { minimumFractionDigits: n < 1000 ? 2 : 0, maximumFractionDigits: n < 1000 ? 2 : 0 }); }
+// Only real pictures may ever be put into <img src>: an inline jpeg/png/webp, or a plain https link. Anything else is dropped.
+function safeImg(u){
+  const s = String(u == null ? '' : u);
+  if (/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/]+={0,2}$/.test(s)) return s;
+  if (/^https:\/\/[^\s"'<>`\\]{3,480}$/.test(s)) return s;
+  return '';
+}
 function escHtmlRw(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function timeAgoShort(iso){
   if (!iso) return '';
@@ -2000,7 +2028,7 @@ function openExt(href){ if (tg && tg.openLink) { tg.openLink(href); return false
 function pflRow(r){
   const nm = String(r.name || 'A member');
   const initial = escHtmlRw((Array.from(nm)[0] || 'U').toUpperCase());
-  const av = r.tgId ? `<img src="${API_BASE}/avatar/${encodeURIComponent(r.tgId)}" alt="" onerror="this.parentElement.textContent='${initial}'">` : initial;
+  const av = r.pid && /^[a-f0-9]{16}$/.test(String(r.pid)) ? `<img src="${API_BASE}/feed-avatar/${r.pid}" alt="" data-i="${initial}" onerror="this.parentElement.textContent=this.dataset.i">` : initial;
   const h = String(r.txHash || '');
   const short = h ? h.slice(0, 6) + '…' + h.slice(-4) : '';
   const chip = h
@@ -2504,8 +2532,8 @@ function renderTasks(){
     return `<div class="ad-row">
       <div class="icon">${t.type==='channel'?'📢':t.type==='webpage'?'🌐':t.type==='pdf'?'📄':'✓'}</div>
       <div class="info">
-        <div class="name">${t.title}</div>
-        <div class="sub">+${t.points||50} points ${done?'· Completed':''}</div>
+        <div class="name">${escHtmlRw(t.title)}</div>
+        <div class="sub">+${Number(t.points)||50} points ${done?'· Completed':''}</div>
       </div>
       <button class="watch-btn" ${done?'disabled':''} onclick="doTask('${t.id}','${t.url||''}')">${done?'Done':'Go'}</button>
     </div>`;
@@ -2863,6 +2891,7 @@ async function reportAdWatched(networkKey){
       if (result.reason === 'limit') alert('You reached the limit for this network today.');
       if (result.reason === 'disabled') alert('This ad source is paused right now.');
       if (result.reason === 'banned') alert('Your account is suspended.');
+      if (result.reason === 'login_required') alert('Please open the app from inside Telegram to earn points.');
       return;
     }
     state.adsToday[networkKey] = { count: result.count || 0, unlockAt: result.unlockAt || null, day: new Date().toISOString().slice(0,10) };
@@ -2967,9 +2996,12 @@ async function loadLeaderboard(){
 
 function initials(name){ return (name||'U')[0].toUpperCase(); }
 function avatarHtml(user){
-  const src = user.avatarUrl || (user.hasTelegramAvatar ? `${API_BASE}/avatar/${user.tgId}` : null);
-  if (src) return `<img src="${src}" alt="" onerror="this.parentElement.textContent='${initials(user.name)}'">`;
-  return initials(user.name);
+  const own = safeImg(user.avatarUrl);
+  const src = own || (user.hasTelegramAvatar && /^\d{1,20}$/.test(String(user.tgId)) ? `${API_BASE}/avatar/${user.tgId}` : null);
+  const ini = escHtmlRw(initials(user.name));
+  // the letter is kept in a data attribute (never pasted into script text) and shown if the picture fails to load
+  if (src) return `<img src="${escHtmlRw(src)}" alt="" data-i="${ini}" onerror="this.parentElement.textContent=this.dataset.i">`;
+  return ini;
 }
 
 function renderLeaderboard(data, emptyMsg){
@@ -3180,9 +3212,9 @@ function renderReferral(){
     const pct = Math.min(adsPct, checkinsPct); // both conditions must be met
     return `<div class="ref-user">
       <div class="ref-user-top">
-        <div class="avatar">${r.name[0]}</div>
+        <div class="avatar">${escHtmlRw(String(r.name||'U')[0])}</div>
         <div class="info">
-          <div class="name">${r.name}</div>
+          <div class="name">${escHtmlRw(r.name)}</div>
           <div class="sub">${r.ads}/${REFERRAL_ELIGIBILITY_ADS} ads · ${r.checkins||0}/${REFERRAL_ELIGIBILITY_CHECKINS} check-ins</div>
         </div>
         <span class="badge ${r.eligible?'eligible':'pending'}">${r.eligible?'Eligible':'Pending'}</span>
@@ -3264,13 +3296,16 @@ function setCover(el, src){
   if (!src) return;
   const d = document.createElement('div');
   d.className = 'hero-img';
-  d.style.backgroundImage = 'url("' + String(src).replace(/"/g, '%22') + '")';
+  const _safeCover = safeImg(src);
+  if (!_safeCover) return;
+  d.style.backgroundImage = 'url("' + _safeCover.replace(/"/g, '%22') + '")';
   el.insertBefore(d, el.firstChild);
 }
 function renderProfile(){
   const name = state.displayName || state.user.name;
   const avatarUrl = state.pendingAvatarDataUrl || state.avatarUrl || state.telegramAvatarUrl;
-  const av = avatarUrl ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
+  const _pfAv = safeImg(avatarUrl);
+  const av = _pfAv ? `<img src="${escHtmlRw(_pfAv)}">` : escHtmlRw((name[0]||'U').toUpperCase());
   document.getElementById('pfName').textContent = name;
   document.getElementById('pfId').textContent = 'ID: ' + state.user.id;
   document.getElementById('pfAvatar').innerHTML = av;
@@ -3444,7 +3479,7 @@ function confirmCrop(){
     state.coverRemoved = false;
   } else {
     state.pendingAvatarDataUrl = dataUrl;
-    document.getElementById('profileAvatar').innerHTML = `<img src="${dataUrl}">`;
+    document.getElementById('profileAvatar').innerHTML = `<img src="${escHtmlRw(safeImg(dataUrl))}">`;
   }
   document.getElementById('cropOverlay').classList.remove('active');
   renderProfile();
@@ -3458,7 +3493,7 @@ async function saveProfile(){
     const res = await fetch(`${API_BASE}/user/${state.user.id}/profile`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify(Object.assign(
-        { displayName: newName, avatarUrl: newAvatar, initData: getInitData() },
+        Object.assign({ displayName: newName, initData: getInitData() }, state.pendingAvatarDataUrl ? { avatarUrl: state.pendingAvatarDataUrl } : {}),
         state.pendingCoverDataUrl ? { coverUrl: state.pendingCoverDataUrl } : (state.coverRemoved ? { coverUrl: '' } : {})
       ))
     });
@@ -4180,7 +4215,7 @@ async function openTicket(id){
   openLfaModal(`<h3>${escHtml(t.subject)}</h3>
     <div class="lfa-modal-date"><span class="tk-pill ${t.status}">${t.status === 'open' ? 'Open' : 'Closed'}</span> · ${new Date(t.createdAt).toLocaleString()}</div>
     <div class="lfa-modal-body">${escHtml(t.description)}</div>
-    ${t.image ? `<img class="tk-img" src="${t.image}">` : ''}
+    ${safeImg(t.image) ? `<img class="tk-img" src="${escHtmlRw(safeImg(t.image))}">` : ''}
     ${replies}
     ${t.status === 'open' ? `<textarea id="tkReplyText" rows="2" maxlength="2000" placeholder="Write a reply..."></textarea>
       <button class="withdraw-submit" style="margin-top:8px;" onclick="sendTicketReply('${t.id}')">Send reply</button>` : '<div class="withdraw-note">This ticket is closed.</div>'}`);
@@ -4452,7 +4487,10 @@ async function submitWithdraw(){
       user_not_found: "Account not found. Close the app and open it again from Telegram.",
       invalid_init_data: "Your session expired. Close the app and open it again from Telegram, then retry.",
       missing_init_data: "Please open the app from inside Telegram to withdraw.",
-      user_id_mismatch: "Account mismatch. Close the app and open it again from Telegram."
+      user_id_mismatch: "Account mismatch. Close the app and open it again from Telegram.",
+      balance_changed: "Your balance changed while sending. Please check it and try again.",
+      login_required: "Please open the app from inside Telegram to withdraw.",
+      too_fast: "Too many tries. Please wait a few minutes and try again."
     };
     const code = result.reason || result.error || 'unknown';
     status.textContent = reasons[code] || `Server error — please try again in a minute. (code: ${code})`;
