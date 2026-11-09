@@ -1143,6 +1143,14 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
           <span class="ec-rail"></span>
           <span class="ec-foot"><span class="ec-unit up">UP</span><span class="ec-stat" id="ecGaintwallStat">0</span></span>
         </button>
+        <button class="earn-card ec-violet" id="earnCardOfferwallme" onclick="setEarnSubTab('offerwallme')">
+          <span class="ec-badge">NEW</span>
+          <span class="ec-icon"><svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17l-6.1 3.6 1.4-6.8L2.2 9.1l6.9-.8z"/></svg><span class="ec-num">3</span></span>
+          <span class="ec-title">REWARD WALL 3</span>
+          <span class="ec-desc">Offers, surveys and tasks</span>
+          <span class="ec-rail"></span>
+          <span class="ec-foot"><span class="ec-unit up">UP</span><span class="ec-stat" id="ecOfferwallmeStat">0</span></span>
+        </button>
         <button class="earn-card ec-teal" id="earnCardAds" onclick="setEarnSubTab('ads')">
           <span class="ec-badge">DAILY</span>
           <span class="ec-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></svg></span>
@@ -1181,6 +1189,20 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
         <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Gaintwall didn't load. Try again below.</div>
         <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('gaintwall')">Reload</button>
         <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('gaintwall')">Open directly</button>
+      </div>
+    </div>
+
+    <div class="earn-subpage" id="earnSubpage-offerwallme" style="display:none;">
+      <div class="earn-section-head-premium up">
+        <div class="eshp-title">REWARD WALL 3</div>
+        <div class="eshp-val" id="offerwallmeSubtotal">0 UP</div>
+      </div>
+      <div class="ads-note">Complete offers, surveys and tasks for real USD value. 100 UP = 1 USDT.</div>
+      <iframe id="offerwallmeFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
+      <div id="offerwallmeFallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
+        <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Reward Wall 3 didn't load. Try again below.</div>
+        <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('offerwallme')">Reload</button>
+        <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('offerwallme')">Open directly</button>
       </div>
     </div>
 
@@ -1646,8 +1668,9 @@ function getAdsgram(){
 const WALL_TABS = [
   { tab:'offerwall', wall:'cpalead',   label:'REWARD WALL 1', card:'earnCardOfferwall', sub:'offerwallSubtotal', stat:'ecOfferwallStat' },
   { tab:'gaintwall', wall:'gaintwall', label:'REWARD WALL 2', card:'earnCardGaintwall', sub:'gaintwallSubtotal', stat:'ecGaintwallStat' },
+  { tab:'offerwallme', wall:'offerwallme', label:'REWARD WALL 3', card:'earnCardOfferwallme', sub:'offerwallmeSubtotal', stat:'ecOfferwallmeStat' },
 ];
-const EARN_TITLES = { offerwall:'REWARD WALL 1', gaintwall:'REWARD WALL 2', ads:'WATCH ADS' };
+const EARN_TITLES = { offerwall:'REWARD WALL 1', gaintwall:'REWARD WALL 2', offerwallme:'REWARD WALL 3', ads:'WATCH ADS' };
 let currentEarnTab = 'hub';
 function wallEnabled(wall){
   const c = ((state.settings || {}).offerwalls || {})[wall];
@@ -1683,7 +1706,7 @@ function setEarnSubTab(tab){
   if (wt && !wallEnabled(wt.wall)) tab = 'hub';   // admin switched this wall off
   if (!EARN_TITLES[tab]) tab = 'hub';
   currentEarnTab = tab;
-  ['offerwall','gaintwall','ads'].forEach(t=>{
+  ['offerwall','gaintwall','offerwallme','ads'].forEach(t=>{
     document.getElementById('earnSubpage-'+t).style.display = tab === t ? 'block' : 'none';
   });
   document.getElementById('earnHub').style.display = tab === 'hub' ? 'block' : 'none';
@@ -1692,7 +1715,7 @@ function setEarnSubTab(tab){
   document.getElementById('earnBackTitle').textContent = EARN_TITLES[tab] || '';
   if (wt){
     updateEarnTotals();
-    loadOfferwallFrame(tab);       // key 'offerwall' or 'gaintwall'
+    loadOfferwallFrame(tab);       // key 'offerwall', 'gaintwall' or 'offerwallme'
     refreshBalances().then(updateEarnTotals);
   }
   if (tab === 'hub') window.scrollTo({ top:0 });
@@ -2592,15 +2615,32 @@ function renderEarn(){
 const wallTimers = {};
 const WALLS = {
   offerwall: { frame:'offerwallFrame', fb:'offerwallFallback', src:()=>`${CPALEAD_OFFERWALL_URL}?subid=${state.user.id}` },
-  gaintwall: { frame:'gaintwallFrame', fb:'gaintwallFallback', src:()=>`https://gaintwall.com/offerwall?apiKey=${encodeURIComponent(GAINTWALL_API_KEY)}&userId=${encodeURIComponent(String(state.user.id))}` }
+  gaintwall: { frame:'gaintwallFrame', fb:'gaintwallFallback', src:()=>`https://gaintwall.com/offerwall?apiKey=${encodeURIComponent(GAINTWALL_API_KEY)}&userId=${encodeURIComponent(String(state.user.id))}` },
+  // Offerwall.me needs a SIGNED link: the backend builds it for the verified account (valid 1 hour, cached here for 50 minutes)
+  offerwallme: { frame:'offerwallmeFrame', fb:'offerwallmeFallback', src:()=>owmCache.url, prepare:prepareOfferwallMe }
 };
+const owmCache = { url:'', until:0, uid:'' };
+async function prepareOfferwallMe(){
+  if (owmCache.url && owmCache.uid === String(state.user.id) && Date.now() < owmCache.until) return true;
+  owmCache.url = '';
+  try{
+    const res = await fetch(`${API_BASE}/offerwallme/url`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId: state.user.id, initData: getInitData() }) });
+    const d = await res.json();
+    if (d && d.success && d.url){ owmCache.url = d.url; owmCache.uid = String(state.user.id); owmCache.until = Date.now() + 50*60*1000; return true; }
+  } catch(e){ console.error('Reward Wall 3 link failed:', e); }
+  return false;
+}
 
 function getOfferwallSrc(key='offerwall'){ return WALLS[key].src(); }
 
-function loadOfferwallFrame(key='offerwall'){
+async function loadOfferwallFrame(key='offerwall'){
   const w = WALLS[key];
   const frame = document.getElementById(w.frame);
   const fallback = document.getElementById(w.fb);
+  if (w.prepare){
+    const ok = await w.prepare();
+    if (!ok){ fallback.style.display = 'block'; frame.style.display = 'none'; return; }   // guest / not logged in / not configured
+  }
   const wantedSrc = getOfferwallSrc(key);
   if (frame.src === wantedSrc) return; // already loaded/loading, don't restart it
 
@@ -2626,7 +2666,8 @@ function reloadOfferwall(key='offerwall'){
   setTimeout(() => loadOfferwallFrame(key), 50);
 }
 
-function openOfferwallDirect(key='offerwall'){
+async function openOfferwallDirect(key='offerwall'){
+  if (WALLS[key].prepare && !(await WALLS[key].prepare())) return;
   const url = getOfferwallSrc(key);
   if (tg) tg.openLink(url); else window.open(url, '_blank');
 }
@@ -4271,10 +4312,10 @@ async function loadWithdrawPage(){
   loadWithdrawHistory();
 }
 
-// Reward Wall 1 + 2 (+ other UP) = all UP the user holds
+// Reward Wall 1 + 2 + 3 (+ other UP) = all UP the user holds
 function getUpParts(){
   const bw = withdrawInfo.upByWall || {};
-  const items = [['REWARD WALL 1', bw.cpalead || 0], ['REWARD WALL 2', bw.gaintwall || 0]];
+  const items = [['REWARD WALL 1', bw.cpalead || 0], ['REWARD WALL 2', bw.gaintwall || 0], ['REWARD WALL 3', bw.offerwallme || 0]];
   if ((withdrawInfo.upOther || 0) > 0) items.push(['OTHER UP', withdrawInfo.upOther]);
   return items;
 }
