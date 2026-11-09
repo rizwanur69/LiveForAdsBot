@@ -1018,39 +1018,6 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
   body.web-mode .topbar{padding:0 20px !important;}
 }
 </style>
-<style id="adsgramFix">
-.intro-ov{position:fixed;inset:0;z-index:99999;background:var(--bg);display:none;flex-direction:column;max-width:480px;margin:0 auto}
-.intro-ov.show{display:flex}
-.intro-skip{align-self:flex-end;margin:18px 20px 0;background:none;border:none;color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer}
-.intro-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 32px}
-.intro-emoji{font-size:64px;margin-bottom:18px}
-.intro-t{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:10px}
-.intro-d{color:var(--text-muted);font-size:14px;line-height:1.55;max-width:300px}
-.intro-dots{text-align:center;margin-bottom:16px}
-.intro-dots i{display:inline-block;width:8px;height:8px;border-radius:5px;background:var(--line);margin:0 3px;transition:.2s}
-.intro-dots i.on{background:var(--green);width:22px}
-.intro-cta{margin:0 28px 34px;padding:14px;border:none;border-radius:26px;background:var(--green);color:#fff;font-weight:700;font-size:15px;cursor:pointer}
-.home-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
-.hq-btn{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:11px 2px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11.5px;font-weight:600;color:var(--text);cursor:pointer;font-family:inherit}
-.hq-btn span{font-size:21px;line-height:1}
-.home-link{display:flex;align-items:center;gap:12px;width:100%;margin-top:10px;padding:13px 14px;background:var(--surface);border:1px solid var(--line);border-radius:18px;color:var(--text);text-align:left;cursor:pointer;font-family:inherit}
-.home-link .hl-ic{font-size:22px}.home-link .hl-t{flex:1}.home-link b{display:block;font-size:13.5px}.home-link small{color:var(--text-muted);font-size:11.5px}
-.home-link .hl-go{color:var(--text-muted);font-size:20px}
-.earn-label{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;margin:18px 2px 0;display:flex;align-items:center;gap:8px}
-.earn-label .opt{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;background:var(--up-dim);color:var(--green);border-radius:10px;padding:2px 8px}
-.info-box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:10px 0;font-size:12.5px;color:var(--text-muted);line-height:1.5}
-.info-box b{color:var(--text)}
-.po-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
-.po-row:last-child{border:none}
-.po-mid{flex:1;min-width:0}.po-mid b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.po-mid small{color:var(--text-muted);font-size:11.5px}
-.po-amt{text-align:right;font-weight:700;color:var(--green)}
-.po-amt a{display:block;font-size:10.5px;font-weight:600;color:var(--text-muted);text-decoration:none}
-.po-paid{display:inline-block;background:var(--up-dim);color:var(--green);border-radius:10px;font-size:10px;font-weight:700;padding:1px 8px}
-.how-step{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}.how-step:last-child{border:none}
-.how-n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
-.how-step b{display:block;font-size:13.5px}.how-step small{color:var(--text-muted);font-size:12px}
-.wp-btn{display:block;text-align:center;margin-top:12px;padding:12px;border-radius:22px;background:var(--green);color:#fff;font-weight:700;font-size:13.5px;text-decoration:none}
-</style>
 </head>
 <body class="light-theme">
 <script>
@@ -1066,7 +1033,7 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
       if (!home || home.querySelector('.web-col')) return;
       var L = document.createElement('div'); L.className = 'web-col web-col-l';
       var R = document.createElement('div'); R.className = 'web-col web-col-r';
-      var leftIds = {payFlow:1, chestCard:1, spinCard:1, homeQuick:1, homeInfoCards:1};
+      var leftIds = {payFlow:1, chestCard:1, spinCard:1};
       Array.prototype.slice.call(home.children).forEach(function(el){
         var left = el.classList.contains('profile-card') || el.classList.contains('reward-card') || leftIds[el.id];
         (left ? L : R).appendChild(el);
@@ -1103,17 +1070,6 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
         <div class="hb-row"><span class="hb-label ap">AP</span><span class="hb-val ap" id="homeAp">0</span></div>
         <div class="hb-row"><span class="hb-label up">UP</span><span class="hb-val up" id="homeUp">0</span></div>
       </div>
-    </div>
-
-    <div class="home-quick" id="homeQuick">
-      <button class="hq-btn" onclick="goTasks()"><span>📋</span>Tasks</button>
-      <button class="hq-btn" onclick="quickSpin()"><span>🎡</span>Spin</button>
-      <button class="hq-btn" onclick="showPage('referral', document.querySelectorAll('.nav-item')[3])"><span>👥</span>Refer</button>
-      <button class="hq-btn" onclick="showPage('withdraw')"><span>💸</span>Withdraw</button>
-    </div>
-    <div id="homeInfoCards">
-      <button class="home-link" onclick="showPage('payouts')"><span class="hl-ic">✅</span><span class="hl-t"><b>Latest payouts</b><small>Recent withdrawals paid to members</small></span><span class="hl-go">›</span></button>
-      <button class="home-link" onclick="showPage('howitworks')"><span class="hl-ic">ℹ️</span><span class="hl-t"><b>How it works</b><small>Earn, level up, withdraw</small></span><span class="hl-go">›</span></button>
     </div>
 
     <div class="payflow" id="payFlow" style="display:none;">
@@ -1164,18 +1120,12 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
     <div id="earnHub">
       <div class="earn-hub-head">
         <div class="eh-title">Earn</div>
-        <div class="eh-sub">Many ways to earn. Rewarded ads are just one optional bonus.</div>
+        <div class="eh-sub">Pick a way to earn. Your totals are shown below.</div>
       </div>
       <div class="earn-totals">
         <div class="et-box ap" onclick="openHistory('ap','ads')"><span class="et-label">Total AP</span><span class="et-val" id="etAp">0</span><span class="et-hist">History ›</span></div>
         <div class="et-box up" onclick="openHistory('up','ads')"><span class="et-label">Total UP</span><span class="et-val" id="etUp">0</span><span class="et-hist">History ›</span></div>
       </div>
-      <div class="earn-label">Daily &amp; Tasks</div>
-      <div class="home-quick" style="grid-template-columns:1fr 1fr;margin-top:10px;">
-        <button class="hq-btn" onclick="goTasks()"><span>📋</span>Tasks</button>
-        <button class="hq-btn" onclick="goCheckin()"><span>🔥</span>Daily check-in</button>
-      </div>
-      <div class="earn-label">Offer Walls</div>
       <div class="earn-grid">
         <button class="earn-card" id="earnCardOfferwall" onclick="setEarnSubTab('offerwall')">
           <span class="ec-badge">HOT</span>
@@ -1201,14 +1151,11 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
           <span class="ec-rail"></span>
           <span class="ec-foot"><span class="ec-unit up">UP</span><span class="ec-stat" id="ecOfferwallmeStat">0</span></span>
         </button>
-      </div>
-      <div class="earn-label">Bonus <span class="opt">OPTIONAL</span></div>
-      <div class="earn-grid" style="grid-template-columns:1fr;margin-top:10px;">
         <button class="earn-card ec-teal" id="earnCardAds" onclick="setEarnSubTab('ads')">
-          <span class="ec-badge" style="background:var(--green);">OPTIONAL</span>
+          <span class="ec-badge">DAILY</span>
           <span class="ec-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></svg></span>
           <span class="ec-title">WATCH ADS</span>
-          <span class="ec-desc">Optional bonus AP</span>
+          <span class="ec-desc">Quick ads, instant AP</span>
           <span class="ec-rail"></span>
           <span class="ec-foot"><span class="ec-unit ap">AP</span><span class="ec-stat" id="ecAdsStat">0</span></span>
         </button>
@@ -1264,39 +1211,11 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
         <div class="eshp-title">WATCH ADS</div>
         <div class="eshp-val" id="adsSubtotal">0 AP</div>
       </div>
-      <div class="info-box"><b>Rewarded ads are optional.</b> An ad starts only when you tap it, and you get AP as a bonus for it.</div>
-      <div class="info-box"><b>Where do ads appear?</b> Rewarded ads: only on this screen, when you tap. Our ad partners may also show an occasional sponsored banner or notification while you use the app.</div>
       <div class="ads-note">Each ad gives 50 AP. 5 ads per network, then a 3-hour cooldown. Counts reset daily at 6:00 AM.</div>
       <div class="ads-note" id="adsterraNote" style="display:none;">Adsterra: tap Open, look at the offer for a few seconds, then come back and tap Claim to get your AP.</div>
       <div id="adList"></div>
     </div>
 
-  </div>
-
-  <!-- ================= LATEST PAYOUTS ================= -->
-  <div class="page" id="page-payouts">
-    <div style="padding-top:6px;">
-      <button class="wp-back" onclick="showPage('home', document.querySelectorAll('.nav-item')[0])">‹ Back</button>
-      <div class="section-label" style="margin-top:10px;">Latest payouts</div>
-      <div class="info-box" style="margin-top:0;">Recent withdrawals paid to members. Tap “View on chain” to verify a payment.</div>
-      <div class="info-box" id="poList" style="padding-top:4px;padding-bottom:4px;">Loading...</div>
-      <a class="wp-btn" id="poChannelBtn" style="display:none;" href="#" onclick="return openExt(this.href)">📢 Open public proof channel</a>
-    </div>
-  </div>
-
-  <!-- ================= HOW IT WORKS ================= -->
-  <div class="page" id="page-howitworks">
-    <div style="padding-top:6px;">
-      <button class="wp-back" onclick="showPage('home', document.querySelectorAll('.nav-item')[0])">‹ Back</button>
-      <div class="section-label" style="margin-top:10px;">How it works</div>
-      <div class="info-box" style="padding-top:4px;padding-bottom:4px;">
-        <div class="how-step"><span class="how-n">1</span><div><b>Earn AP</b><small>Daily check-in, tasks, lucky spin and referrals.</small></div></div>
-        <div class="how-step"><span class="how-n">2</span><div><b>Earn UP (real value)</b><small>Complete partner offers on the Offer Walls.</small></div></div>
-        <div class="how-step"><span class="how-n">3</span><div><b>Level up and seasons</b><small>Climb the leaderboard and win season prizes.</small></div></div>
-        <div class="how-step"><span class="how-n">4</span><div><b>Withdraw USDT</b><small>UP converts to USDT at the rate shown on the Withdraw page.</small></div></div>
-      </div>
-      <div class="info-box"><b>Ads in this app.</b> Rewarded ads are an optional bonus in Earn → Bonus: Watch ads (you tap to start). Our ad partners may also show an occasional sponsored banner or notification.</div>
-    </div>
   </div>
 
   <!-- ================= LEADERBOARD ================= -->
@@ -1736,7 +1655,7 @@ if (tg) { tg.ready(); tg.expand(); }
 document.getElementById('lfaWhitepaperLink').href = LFA_WHITEPAPER_PDF_URL;
 document.getElementById('lfaTermsLink').href = LFA_TERMS_PDF_URL;
 
-const ADSGRAM_BLOCK_ID = "58830";
+const ADSGRAM_BLOCK_ID = "57144";
 let AdsgramController = null;
 // Created on demand, so it still works if the Adsgram script finishes loading after the page starts
 function getAdsgram(){
@@ -1992,7 +1911,6 @@ function showPage(name, el){
   if (wdCooldownInterval){ clearInterval(wdCooldownInterval); wdCooldownInterval = null; }
 
   if (name === 'home') loadHome();
-  if (name === 'payouts') loadPayoutsPage();
   if (name === 'notices') loadNoticesPage();
   if (name === 'support') loadTicketsPage();
   if (name === 'profile') refreshSupportBadge();
@@ -4859,58 +4777,6 @@ if (WEB_LOGIN_ON){
   }
 } else {
   bootApp();
-}
-</script>
-<div class="intro-ov" id="introOv">
-  <button class="intro-skip" onclick="introDone()">Skip</button>
-  <div class="intro-body"><div class="intro-emoji" id="introEmoji"></div><div class="intro-t" id="introTitle"></div><div class="intro-d" id="introDesc"></div></div>
-  <div class="intro-dots" id="introDots"></div>
-  <button class="intro-cta" id="introBtn" onclick="introNext()">Next</button>
-</div>
-<script>
-(function(){
-  var SL=[
-    ['🎁','Earn real rewards','Daily check-in, tasks, spin and partner offers. Collect AP and UP as you go.'],
-    ['🧭','Many ways to earn','Tasks, referrals, seasons and offer walls. Rewarded ads are an optional bonus.'],
-    ['💸','Withdraw to USDT','See recent payouts inside the app. UP converts to USDT at the rate on the Withdraw page.']
-  ], i=0;
-  function paint(){
-    document.getElementById('introEmoji').textContent=SL[i][0];
-    document.getElementById('introTitle').textContent=SL[i][1];
-    document.getElementById('introDesc').textContent=SL[i][2];
-    document.getElementById('introDots').innerHTML=SL.map(function(_,k){return '<i class="'+(k===i?'on':'')+'"></i>';}).join('');
-    document.getElementById('introBtn').textContent=(i===SL.length-1)?'Get started':'Next';
-  }
-  window.introNext=function(){ if(i<SL.length-1){i++;paint();} else introDone(); };
-  window.introDone=function(){ try{localStorage.setItem('lfa_intro_v1','1');}catch(e){} document.getElementById('introOv').classList.remove('show'); };
-  try{ if(!localStorage.getItem('lfa_intro_v1')){ paint(); document.getElementById('introOv').classList.add('show'); } }catch(e){}
-})();
-
-/* ===== Adsgram re-submission additions ===== */
-const PROOF_CHANNEL_URL = 'https://t.me/liveforads_2027'; // paste your public payout-proof Telegram channel link here (e.g. https://t.me/yourchannel). Leave empty to hide the button.
-function goTasks(){
-  showPage('home', document.querySelectorAll('.nav-item')[0]);
-  setTimeout(function(){ var t=document.getElementById('taskList'); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); },250);
-}
-function goCheckin(){
-  showPage('home', document.querySelectorAll('.nav-item')[0]);
-  setTimeout(function(){ var t=document.querySelector('.reward-card'); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); },250);
-}
-function quickSpin(){
-  var c=state.rewards && state.rewards.spin;
-  if (c && c.enabled) openSpin(); else goCheckin();
-}
-async function loadPayoutsPage(){
-  var box=document.getElementById('poList'), btn=document.getElementById('poChannelBtn');
-  if (btn){ if (PROOF_CHANNEL_URL){ btn.href=PROOF_CHANNEL_URL; btn.style.display='block'; } else btn.style.display='none'; }
-  if (!box) return;
-  try{ await loadPublicStats(); }catch(e){}
-  var feed=(state.payoutFeed||[]).slice(0,30);
-  if (!feed.length){ box.innerHTML='<div style="padding:10px 0;">No payouts to show yet.</div>'; return; }
-  box.innerHTML=feed.map(function(r){
-    var link=r.txUrl?'<a href="'+escHtmlRw(r.txUrl)+'" target="_blank" rel="noopener" onclick="return openExt(this.href)">View on chain</a>':'';
-    return '<div class="po-row"><div class="po-mid"><b>'+escHtmlRw(r.name||'A member')+'</b><small>'+escHtmlRw(timeAgoShort(r.at))+'</small></div><div class="po-amt">'+fmtMoney(r.amount)+'<br><span class="po-paid">PAID</span>'+link+'</div></div>';
-  }).join('');
 }
 </script>
 </body>
