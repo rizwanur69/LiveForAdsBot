@@ -283,6 +283,11 @@
   .settings-row:last-child{border-bottom:none;}
   .settings-row .slabel{font-size:13.5px; font-weight:600;}
   .settings-row .shint{font-size:11px; color:var(--text-muted); margin-top:2px;}
+  .tgl{position:relative; width:50px; height:30px; border-radius:30px; border:1px solid var(--line); background:var(--surface-raised); cursor:pointer; padding:0; flex:none; transition:background .2s,border-color .2s;}
+  .tgl i{position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:var(--text-muted); transition:transform .2s,background .2s;}
+  .tgl.on{background:rgba(74,222,128,.22); border-color:rgba(74,222,128,.55);}
+  .tgl.on i{transform:translateX(20px); background:#4ADE80;}
+  .settings-btn.danger{color:#FF6B6B; border-color:rgba(255,107,107,.45);}
   .settings-btn{background:var(--surface-raised); border:1px solid var(--line); color:var(--text); font-size:12.5px; font-weight:600; padding:8px 14px; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif;}
   .theme-switch{display:flex; gap:6px;}
   .theme-switch button{background:var(--surface-raised); border:1px solid var(--line); color:var(--text-muted); font-size:11.5px; font-weight:600; padding:7px 12px; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif;}
@@ -737,6 +742,8 @@
 
   .bottom-nav{background:var(--surface); border-top:1px solid rgba(176,122,22,0.30); border-radius:22px 22px 0 0; padding:9px 6px calc(9px + env(safe-area-inset-bottom)); box-shadow:0 -10px 30px rgba(0,0,0,0.22);}
   .nav-item{font-size:10.5px; gap:4px; transition:color .2s;}
+  .nav-item span{max-width:100%; white-space:nowrap; letter-spacing:-.2px;}
+  @media (max-width:400px){ .nav-item{font-size:9.6px;} }
   .nav-item .ni{display:block;}
   .nav-item.active{color:var(--gold); font-weight:600;}
   .nav-item.active .ni{fill:currentColor; fill-opacity:0.22;}
@@ -1143,14 +1150,6 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
           <span class="ec-rail"></span>
           <span class="ec-foot"><span class="ec-unit up">UP</span><span class="ec-stat" id="ecGaintwallStat">0</span></span>
         </button>
-        <button class="earn-card ec-violet" id="earnCardOfferwallme" onclick="setEarnSubTab('offerwallme')">
-          <span class="ec-badge">NEW</span>
-          <span class="ec-icon"><svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17l-6.1 3.6 1.4-6.8L2.2 9.1l6.9-.8z"/></svg><span class="ec-num">3</span></span>
-          <span class="ec-title">REWARD WALL 3</span>
-          <span class="ec-desc">Offers, surveys and tasks</span>
-          <span class="ec-rail"></span>
-          <span class="ec-foot"><span class="ec-unit up">UP</span><span class="ec-stat" id="ecOfferwallmeStat">0</span></span>
-        </button>
         <button class="earn-card ec-teal" id="earnCardAds" onclick="setEarnSubTab('ads')">
           <span class="ec-badge">DAILY</span>
           <span class="ec-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></svg></span>
@@ -1192,20 +1191,6 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
       </div>
     </div>
 
-    <div class="earn-subpage" id="earnSubpage-offerwallme" style="display:none;">
-      <div class="earn-section-head-premium up">
-        <div class="eshp-title">REWARD WALL 3</div>
-        <div class="eshp-val" id="offerwallmeSubtotal">0 UP</div>
-      </div>
-      <div class="ads-note">Complete offers, surveys and tasks for real USD value. 100 UP = 1 USDT.</div>
-      <iframe id="offerwallmeFrame" sandbox="allow-popups allow-same-origin allow-scripts allow-forms allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" src="" style="width:100%; height:690px; border:none; border-radius:14px;" frameborder="0"></iframe>
-      <div id="offerwallmeFallback" style="display:none; text-align:center; padding:24px 16px; background:var(--surface); border:1px solid var(--line); border-radius:14px; margin-top:-4px;">
-        <div style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Reward Wall 3 didn't load. Try again below.</div>
-        <button class="watch-btn" style="margin-right:8px;" onclick="reloadOfferwall('offerwallme')">Reload</button>
-        <button class="watch-btn" style="background:var(--surface-raised); color:var(--text);" onclick="openOfferwallDirect('offerwallme')">Open directly</button>
-      </div>
-    </div>
-
     <div class="earn-subpage" id="earnSubpage-ads" style="display:none;">
       <div class="earn-section-head-premium ap">
         <div class="eshp-title">WATCH ADS</div>
@@ -1221,8 +1206,8 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
   <!-- ================= LEADERBOARD ================= -->
   <div class="page" id="page-leaderboard">
     <div class="earn-toggle" style="margin-top:16px;">
-      <button class="earn-toggle-btn active" id="lbTabAll" onclick="setLeaderboardTab('all')">All Season</button>
-      <button class="earn-toggle-btn" id="lbTabCur" onclick="setLeaderboardTab('current')">This Season</button>
+      <button class="earn-toggle-btn" id="lbTabAll" onclick="setLeaderboardTab('all')">All Season</button>
+      <button class="earn-toggle-btn active" id="lbTabCur" onclick="setLeaderboardTab('current')">This Season</button>
       <button class="earn-toggle-btn" id="lbTabPrev" onclick="setLeaderboardTab('prev')">Last Season</button>
     </div>
     <div class="lb-pick" id="lbPick">
@@ -1568,7 +1553,7 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
   <div class="bottom-nav">
     <button class="nav-item active" onclick="showPage('home', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5h4v5"/></svg><span>Home</span></button>
     <button class="nav-item" onclick="showPage('ads', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg><span>Earn</span></button>
-    <button class="nav-item" onclick="showPage('leaderboard', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9l-5.2 2.8 1-5.9L3.5 9.7l5.9-.8z"/></svg><span>Leaders</span></button>
+    <button class="nav-item" onclick="showPage('leaderboard', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9l-5.2 2.8 1-5.9L3.5 9.7l5.9-.8z"/></svg><span>Leaderboard</span></button>
     <button class="nav-item" onclick="showPage('referral', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.6c2.7.2 4.5 2 4.5 4.9"/></svg><span>Referral</span></button>
     <button class="nav-item" onclick="showPage('lfa', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9c-2.6-2.6-3.9-5.6-3.9-9S9.4 5.6 12 3z"/></svg><span>LFA</span></button>
     <button class="nav-item" onclick="showPage('profile', this)"><svg class="ni" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c0-4 3.4-6.3 7.5-6.3s7.5 2.3 7.5 6.3"/></svg><span>Profile</span></button>
@@ -1587,6 +1572,13 @@ body.dark-theme .crop-actions .confirm-btn,body.dark-theme .sec-chip,body.dark-t
           <button id="themeLightBtn" onclick="setTheme('light')">Ivory</button>
           <button id="themeDarkBtn" onclick="setTheme('dark')">Dark</button>
         </div>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="slabel">Haptic feedback</div>
+          <div class="shint" id="hapticHint">Vibration when you earn rewards</div>
+        </div>
+        <button type="button" class="tgl" id="hapticToggle" role="switch" aria-checked="true" aria-label="Haptic feedback" onclick="toggleHaptics()"><i></i></button>
       </div>
       <div class="settings-row">
         <div>
@@ -1668,9 +1660,8 @@ function getAdsgram(){
 const WALL_TABS = [
   { tab:'offerwall', wall:'cpalead',   label:'REWARD WALL 1', card:'earnCardOfferwall', sub:'offerwallSubtotal', stat:'ecOfferwallStat' },
   { tab:'gaintwall', wall:'gaintwall', label:'REWARD WALL 2', card:'earnCardGaintwall', sub:'gaintwallSubtotal', stat:'ecGaintwallStat' },
-  { tab:'offerwallme', wall:'offerwallme', label:'REWARD WALL 3', card:'earnCardOfferwallme', sub:'offerwallmeSubtotal', stat:'ecOfferwallmeStat' },
 ];
-const EARN_TITLES = { offerwall:'REWARD WALL 1', gaintwall:'REWARD WALL 2', offerwallme:'REWARD WALL 3', ads:'WATCH ADS' };
+const EARN_TITLES = { offerwall:'REWARD WALL 1', gaintwall:'REWARD WALL 2', ads:'WATCH ADS' };
 let currentEarnTab = 'hub';
 function wallEnabled(wall){
   const c = ((state.settings || {}).offerwalls || {})[wall];
@@ -1706,7 +1697,7 @@ function setEarnSubTab(tab){
   if (wt && !wallEnabled(wt.wall)) tab = 'hub';   // admin switched this wall off
   if (!EARN_TITLES[tab]) tab = 'hub';
   currentEarnTab = tab;
-  ['offerwall','gaintwall','offerwallme','ads'].forEach(t=>{
+  ['offerwall','gaintwall','ads'].forEach(t=>{
     document.getElementById('earnSubpage-'+t).style.display = tab === t ? 'block' : 'none';
   });
   document.getElementById('earnHub').style.display = tab === 'hub' ? 'block' : 'none';
@@ -1715,7 +1706,7 @@ function setEarnSubTab(tab){
   document.getElementById('earnBackTitle').textContent = EARN_TITLES[tab] || '';
   if (wt){
     updateEarnTotals();
-    loadOfferwallFrame(tab);       // key 'offerwall', 'gaintwall' or 'offerwallme'
+    loadOfferwallFrame(tab);       // key 'offerwall' or 'gaintwall'
     refreshBalances().then(updateEarnTotals);
   }
   if (tab === 'hub') window.scrollTo({ top:0 });
@@ -1800,26 +1791,6 @@ function getInitData(){
   if (webIdToken) return 'web:' + webIdToken;
   return tg && tg.initData ? tg.initData : null;
 }
-// The server now checks WHO is asking for personal data (profile, withdrawals, activity ...). This sends the signed
-// Telegram / web-login proof as a header on every call to our API, so no page has to remember to add it.
-(function(){
-  const _fetch = window.fetch.bind(window);
-  window.fetch = function(input, init){
-    try{
-      const url = typeof input === 'string' ? input : (input && input.url) || '';
-      if (typeof API_BASE === 'string' && url.indexOf(API_BASE) === 0){
-        const proof = getInitData();
-        if (proof){
-          init = Object.assign({}, init);
-          const h = new Headers(init.headers || (typeof input !== 'string' && input.headers) || {});
-          if (!h.has('x-init-data')) h.set('x-init-data', proof);
-          init.headers = h;
-        }
-      }
-    }catch(e){ /* never block a request because of this */ }
-    return _fetch(input, init);
-  };
-})();
 
 function getGuestId(){
   let id = localStorage.getItem('lfa_guest_id');
@@ -1915,7 +1886,7 @@ function showPage(name, el){
   if (name === 'support') loadTicketsPage();
   if (name === 'profile') refreshSupportBadge();
   if (name === 'ads') loadUserFromServer().then(renderEarn);
-  if (name === 'leaderboard') loadLeaderboard();
+  if (name === 'leaderboard') setLeaderboardTab('current');   // always open on "This Season" first
   if (name === 'referral') { loadUserFromServer().then(renderReferral); loadReferralsFromServer(); }
   if (name === 'lfa') loadLfaFrame();
   if (name === 'profile') {
@@ -1990,9 +1961,8 @@ function renderHomeHeader(){
   const name = state.displayName || state.user.name;
   const avatarUrl = state.avatarUrl || state.telegramAvatarUrl;
   document.getElementById('homeName').textContent = name;
-  const _homeAv = safeImg(avatarUrl);
-  document.getElementById('homeAvatar').innerHTML = _homeAv
-    ? `<img src="${escHtmlRw(_homeAv)}">` : escHtmlRw((name[0]||'U').toUpperCase());
+  document.getElementById('homeAvatar').innerHTML = avatarUrl
+    ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
   document.getElementById('homeSub').textContent = String(state.user.id).startsWith('guest') ? 'Guest' : 'ID: ' + state.user.id;
   document.getElementById('homeAp').textContent = state.totalPoints;
   document.getElementById('homeUp').textContent = state.up;
@@ -2005,13 +1975,6 @@ function renderHomeHeader(){
 /* ===================== Trust strip, Lucky Spin, Weekly Chest, Withdraw readiness ===================== */
 function utcToday(){ return new Date().toISOString().slice(0,10); }
 function fmtMoney(n){ n = n || 0; return '$' + n.toLocaleString(undefined, { minimumFractionDigits: n < 1000 ? 2 : 0, maximumFractionDigits: n < 1000 ? 2 : 0 }); }
-// Only real pictures may ever be put into <img src>: an inline jpeg/png/webp, or a plain https link. Anything else is dropped.
-function safeImg(u){
-  const s = String(u == null ? '' : u);
-  if (/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/]+={0,2}$/.test(s)) return s;
-  if (/^https:\/\/[^\s"'<>`\\]{3,480}$/.test(s)) return s;
-  return '';
-}
 function escHtmlRw(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function timeAgoShort(iso){
   if (!iso) return '';
@@ -2051,7 +2014,7 @@ function openExt(href){ if (tg && tg.openLink) { tg.openLink(href); return false
 function pflRow(r){
   const nm = String(r.name || 'A member');
   const initial = escHtmlRw((Array.from(nm)[0] || 'U').toUpperCase());
-  const av = r.pid && /^[a-f0-9]{16}$/.test(String(r.pid)) ? `<img src="${API_BASE}/feed-avatar/${r.pid}" alt="" data-i="${initial}" onerror="this.parentElement.textContent=this.dataset.i">` : initial;
+  const av = r.tgId ? `<img src="${API_BASE}/avatar/${encodeURIComponent(r.tgId)}" alt="" onerror="this.parentElement.textContent='${initial}'">` : initial;
   const h = String(r.txHash || '');
   const short = h ? h.slice(0, 6) + '…' + h.slice(-4) : '';
   const chip = h
@@ -2201,7 +2164,7 @@ async function doSpin(){
   setTimeout(async () => {
     state.lastSpinDay = utcToday(); state.spinning = false;
     resultEl.style.fontSize = ''; resultEl.textContent = `You won +${r.points} AP!`;
-    if (tg) tg.HapticFeedback?.notificationOccurred('success');
+    haptic('success');
     await loadUserFromServer(); renderHomeHeader(); renderCheckin(); updateSpinOverlay(); renderSpinCard();
     // the result stays for 3 seconds, then the pop-up closes by itself
     clearTimeout(spinAutoCloseTimer);
@@ -2260,7 +2223,7 @@ async function openChest(){
   btn.disabled = false;
   if (r.success){
     showRewardSheet('🎁', 'Chest opened!', `+${r.points} AP`, `You checked in on ${r.days} days this week.`);
-    if (tg) tg.HapticFeedback?.notificationOccurred('success');
+    haptic('success');
     await loadUserFromServer(); renderHomeHeader(); renderCheckin();
   } else if (r.reason === 'already_opened'){
     state.chestWeek = chestInfo().weekKey; renderChestCard();
@@ -2525,7 +2488,7 @@ async function doCheckin(){
       state.totalPoints += 0; // already included from loadUserFromServer
       renderHomeHeader();
       renderCheckin();
-      if (tg) tg.HapticFeedback?.notificationOccurred('success');
+      haptic('success');
     } else {
       renderCheckin();
     }
@@ -2555,8 +2518,8 @@ function renderTasks(){
     return `<div class="ad-row">
       <div class="icon">${t.type==='channel'?'📢':t.type==='webpage'?'🌐':t.type==='pdf'?'📄':'✓'}</div>
       <div class="info">
-        <div class="name">${escHtmlRw(t.title)}</div>
-        <div class="sub">+${Number(t.points)||50} points ${done?'· Completed':''}</div>
+        <div class="name">${t.title}</div>
+        <div class="sub">+${t.points||50} points ${done?'· Completed':''}</div>
       </div>
       <button class="watch-btn" ${done?'disabled':''} onclick="doTask('${t.id}','${t.url||''}')">${done?'Done':'Go'}</button>
     </div>`;
@@ -2615,32 +2578,15 @@ function renderEarn(){
 const wallTimers = {};
 const WALLS = {
   offerwall: { frame:'offerwallFrame', fb:'offerwallFallback', src:()=>`${CPALEAD_OFFERWALL_URL}?subid=${state.user.id}` },
-  gaintwall: { frame:'gaintwallFrame', fb:'gaintwallFallback', src:()=>`https://gaintwall.com/offerwall?apiKey=${encodeURIComponent(GAINTWALL_API_KEY)}&userId=${encodeURIComponent(String(state.user.id))}` },
-  // Offerwall.me needs a SIGNED link: the backend builds it for the verified account (valid 1 hour, cached here for 50 minutes)
-  offerwallme: { frame:'offerwallmeFrame', fb:'offerwallmeFallback', src:()=>owmCache.url, prepare:prepareOfferwallMe }
+  gaintwall: { frame:'gaintwallFrame', fb:'gaintwallFallback', src:()=>`https://gaintwall.com/offerwall?apiKey=${encodeURIComponent(GAINTWALL_API_KEY)}&userId=${encodeURIComponent(String(state.user.id))}` }
 };
-const owmCache = { url:'', until:0, uid:'' };
-async function prepareOfferwallMe(){
-  if (owmCache.url && owmCache.uid === String(state.user.id) && Date.now() < owmCache.until) return true;
-  owmCache.url = '';
-  try{
-    const res = await fetch(`${API_BASE}/offerwallme/url`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId: state.user.id, initData: getInitData() }) });
-    const d = await res.json();
-    if (d && d.success && d.url){ owmCache.url = d.url; owmCache.uid = String(state.user.id); owmCache.until = Date.now() + 50*60*1000; return true; }
-  } catch(e){ console.error('Reward Wall 3 link failed:', e); }
-  return false;
-}
 
 function getOfferwallSrc(key='offerwall'){ return WALLS[key].src(); }
 
-async function loadOfferwallFrame(key='offerwall'){
+function loadOfferwallFrame(key='offerwall'){
   const w = WALLS[key];
   const frame = document.getElementById(w.frame);
   const fallback = document.getElementById(w.fb);
-  if (w.prepare){
-    const ok = await w.prepare();
-    if (!ok){ fallback.style.display = 'block'; frame.style.display = 'none'; return; }   // guest / not logged in / not configured
-  }
   const wantedSrc = getOfferwallSrc(key);
   if (frame.src === wantedSrc) return; // already loaded/loading, don't restart it
 
@@ -2666,8 +2612,7 @@ function reloadOfferwall(key='offerwall'){
   setTimeout(() => loadOfferwallFrame(key), 50);
 }
 
-async function openOfferwallDirect(key='offerwall'){
-  if (WALLS[key].prepare && !(await WALLS[key].prepare())) return;
+function openOfferwallDirect(key='offerwall'){
   const url = getOfferwallSrc(key);
   if (tg) tg.openLink(url); else window.open(url, '_blank');
 }
@@ -2914,7 +2859,7 @@ async function claimAdsterra(key){
   } finally { adsterraBusy = false; }
   if (paid){
     renderEarn();
-    if (tg) tg.HapticFeedback?.notificationOccurred('success');
+    haptic('success');
   } else {
     renderAds();
   }
@@ -2932,7 +2877,6 @@ async function reportAdWatched(networkKey){
       if (result.reason === 'limit') alert('You reached the limit for this network today.');
       if (result.reason === 'disabled') alert('This ad source is paused right now.');
       if (result.reason === 'banned') alert('Your account is suspended.');
-      if (result.reason === 'login_required') alert('Please open the app from inside Telegram to earn points.');
       return;
     }
     state.adsToday[networkKey] = { count: result.count || 0, unlockAt: result.unlockAt || null, day: new Date().toISOString().slice(0,10) };
@@ -2940,13 +2884,13 @@ async function reportAdWatched(networkKey){
     state.apFromAds += result.pointsEarned || adCfg(networkKey).points;
   } catch(e){ console.error("ad-watched failed:", e); alert("Couldn't reach the server."); return; }
   renderEarn();
-  if (tg) tg.HapticFeedback?.notificationOccurred('success');
+  haptic('success');
 }
 
 /* ============================================================
    LEADERBOARD
    ============================================================ */
-let leaderboardTab = 'all';      // all | current | prev | pick
+let leaderboardTab = 'current';      // all | current | prev | pick
 let lbPickBox = '';
 let lbBoxes = null;
 
@@ -3037,12 +2981,9 @@ async function loadLeaderboard(){
 
 function initials(name){ return (name||'U')[0].toUpperCase(); }
 function avatarHtml(user){
-  const own = safeImg(user.avatarUrl);
-  const src = own || (user.hasTelegramAvatar && /^\d{1,20}$/.test(String(user.tgId)) ? `${API_BASE}/avatar/${user.tgId}` : null);
-  const ini = escHtmlRw(initials(user.name));
-  // the letter is kept in a data attribute (never pasted into script text) and shown if the picture fails to load
-  if (src) return `<img src="${escHtmlRw(src)}" alt="" data-i="${ini}" onerror="this.parentElement.textContent=this.dataset.i">`;
-  return ini;
+  const src = user.avatarUrl || (user.hasTelegramAvatar ? `${API_BASE}/avatar/${user.tgId}` : null);
+  if (src) return `<img src="${src}" alt="" onerror="this.parentElement.textContent='${initials(user.name)}'">`;
+  return initials(user.name);
 }
 
 function renderLeaderboard(data, emptyMsg){
@@ -3253,9 +3194,9 @@ function renderReferral(){
     const pct = Math.min(adsPct, checkinsPct); // both conditions must be met
     return `<div class="ref-user">
       <div class="ref-user-top">
-        <div class="avatar">${escHtmlRw(String(r.name||'U')[0])}</div>
+        <div class="avatar">${r.name[0]}</div>
         <div class="info">
-          <div class="name">${escHtmlRw(r.name)}</div>
+          <div class="name">${r.name}</div>
           <div class="sub">${r.ads}/${REFERRAL_ELIGIBILITY_ADS} ads · ${r.checkins||0}/${REFERRAL_ELIGIBILITY_CHECKINS} check-ins</div>
         </div>
         <span class="badge ${r.eligible?'eligible':'pending'}">${r.eligible?'Eligible':'Pending'}</span>
@@ -3270,7 +3211,7 @@ function copyRefLink(){
   const input = document.getElementById('refLinkInput');
   input.select();
   document.execCommand('copy');
-  if (tg) tg.HapticFeedback?.notificationOccurred('success');
+  haptic('success');
 }
 
 /* ============================================================
@@ -3337,16 +3278,13 @@ function setCover(el, src){
   if (!src) return;
   const d = document.createElement('div');
   d.className = 'hero-img';
-  const _safeCover = safeImg(src);
-  if (!_safeCover) return;
-  d.style.backgroundImage = 'url("' + _safeCover.replace(/"/g, '%22') + '")';
+  d.style.backgroundImage = 'url("' + String(src).replace(/"/g, '%22') + '")';
   el.insertBefore(d, el.firstChild);
 }
 function renderProfile(){
   const name = state.displayName || state.user.name;
   const avatarUrl = state.pendingAvatarDataUrl || state.avatarUrl || state.telegramAvatarUrl;
-  const _pfAv = safeImg(avatarUrl);
-  const av = _pfAv ? `<img src="${escHtmlRw(_pfAv)}">` : escHtmlRw((name[0]||'U').toUpperCase());
+  const av = avatarUrl ? `<img src="${avatarUrl}">` : (name[0]||'U').toUpperCase();
   document.getElementById('pfName').textContent = name;
   document.getElementById('pfId').textContent = 'ID: ' + state.user.id;
   document.getElementById('pfAvatar').innerHTML = av;
@@ -3520,7 +3458,7 @@ function confirmCrop(){
     state.coverRemoved = false;
   } else {
     state.pendingAvatarDataUrl = dataUrl;
-    document.getElementById('profileAvatar').innerHTML = `<img src="${escHtmlRw(safeImg(dataUrl))}">`;
+    document.getElementById('profileAvatar').innerHTML = `<img src="${dataUrl}">`;
   }
   document.getElementById('cropOverlay').classList.remove('active');
   renderProfile();
@@ -3534,7 +3472,7 @@ async function saveProfile(){
     const res = await fetch(`${API_BASE}/user/${state.user.id}/profile`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify(Object.assign(
-        Object.assign({ displayName: newName, initData: getInitData() }, state.pendingAvatarDataUrl ? { avatarUrl: state.pendingAvatarDataUrl } : {}),
+        { displayName: newName, avatarUrl: newAvatar, initData: getInitData() },
         state.pendingCoverDataUrl ? { coverUrl: state.pendingCoverDataUrl } : (state.coverRemoved ? { coverUrl: '' } : {})
       ))
     });
@@ -3564,10 +3502,27 @@ async function saveProfile(){
   }
 }
 
+/* ---------- Haptic feedback (vibration) on/off, remembered on this device ---------- */
+function hapticsOn(){ try{ return localStorage.getItem('lfaHaptics') !== 'off'; }catch(e){ return true; } }
+function haptic(kind){ if (!hapticsOn()) return; try{ if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred(kind || 'success'); }catch(e){} }
+function renderHapticToggle(){
+  const b = document.getElementById('hapticToggle'); if (!b) return;
+  const on = hapticsOn();
+  b.classList.toggle('on', on); b.setAttribute('aria-checked', on ? 'true' : 'false');
+  const h = document.getElementById('hapticHint'); if (h) h.textContent = on ? 'Vibration is ON when you earn rewards' : 'Vibration is OFF';
+}
+function toggleHaptics(){
+  const next = !hapticsOn();
+  try{ localStorage.setItem('lfaHaptics', next ? 'on' : 'off'); }catch(e){}
+  renderHapticToggle();
+  if (next) haptic('success');
+}
+
 function openSettings(){
   document.getElementById('settingsOverlay').classList.add('active');
   document.getElementById('themeDarkBtn').classList.toggle('active', state.theme === 'dark');
   document.getElementById('themeLightBtn').classList.toggle('active', state.theme !== 'dark');
+  renderHapticToggle();
   refreshAccountSettings();
 }
 function closeSettings(){
@@ -4256,7 +4211,7 @@ async function openTicket(id){
   openLfaModal(`<h3>${escHtml(t.subject)}</h3>
     <div class="lfa-modal-date"><span class="tk-pill ${t.status}">${t.status === 'open' ? 'Open' : 'Closed'}</span> · ${new Date(t.createdAt).toLocaleString()}</div>
     <div class="lfa-modal-body">${escHtml(t.description)}</div>
-    ${safeImg(t.image) ? `<img class="tk-img" src="${escHtmlRw(safeImg(t.image))}">` : ''}
+    ${t.image ? `<img class="tk-img" src="${t.image}">` : ''}
     ${replies}
     ${t.status === 'open' ? `<textarea id="tkReplyText" rows="2" maxlength="2000" placeholder="Write a reply..."></textarea>
       <button class="withdraw-submit" style="margin-top:8px;" onclick="sendTicketReply('${t.id}')">Send reply</button>` : '<div class="withdraw-note">This ticket is closed.</div>'}`);
@@ -4312,10 +4267,10 @@ async function loadWithdrawPage(){
   loadWithdrawHistory();
 }
 
-// Reward Wall 1 + 2 + 3 (+ other UP) = all UP the user holds
+// Reward Wall 1 + 2 (+ other UP) = all UP the user holds
 function getUpParts(){
   const bw = withdrawInfo.upByWall || {};
-  const items = [['REWARD WALL 1', bw.cpalead || 0], ['REWARD WALL 2', bw.gaintwall || 0], ['REWARD WALL 3', bw.offerwallme || 0]];
+  const items = [['REWARD WALL 1', bw.cpalead || 0], ['REWARD WALL 2', bw.gaintwall || 0]];
   if ((withdrawInfo.upOther || 0) > 0) items.push(['OTHER UP', withdrawInfo.upOther]);
   return items;
 }
@@ -4528,10 +4483,7 @@ async function submitWithdraw(){
       user_not_found: "Account not found. Close the app and open it again from Telegram.",
       invalid_init_data: "Your session expired. Close the app and open it again from Telegram, then retry.",
       missing_init_data: "Please open the app from inside Telegram to withdraw.",
-      user_id_mismatch: "Account mismatch. Close the app and open it again from Telegram.",
-      balance_changed: "Your balance changed while sending. Please check it and try again.",
-      login_required: "Please open the app from inside Telegram to withdraw.",
-      too_fast: "Too many tries. Please wait a few minutes and try again."
+      user_id_mismatch: "Account mismatch. Close the app and open it again from Telegram."
     };
     const code = result.reason || result.error || 'unknown';
     status.textContent = reasons[code] || `Server error — please try again in a minute. (code: ${code})`;
@@ -4739,12 +4691,30 @@ async function refreshAccountSettings(){
   $('setAccHint').textContent = (webIdToken ? 'Telegram (on the web)' : 'Telegram') + uname;
   gRow.style.display = ''; gBtn.style.display = '';
   if (info.googleLinked){
-    gHint.textContent = 'Connected' + (info.googleEmail ? ' · ' + info.googleEmail : '') + '. You can also sign in on the web with it.';
-    gBtn.textContent = 'Connected'; gBtn.disabled = true; gBtn.style.opacity = '.5';
+    gHint.textContent = 'Connected' + (info.googleEmail ? ' · ' + info.googleEmail : '') + '. Connected the wrong account? Disconnect it and connect the right one.';
+    gBtn.classList.add('danger');
+    if (webIdToken){
+      // signed in on the web: disconnecting here would lock this very session out, so it is done from the Telegram app
+      gHint.textContent = 'Connected' + (info.googleEmail ? ' · ' + info.googleEmail : '') + '. To disconnect it, open Settings in the Telegram app.';
+      gBtn.textContent = 'Connected'; gBtn.disabled = true; gBtn.style.opacity = '.5'; gBtn.onclick = null;
+    } else {
+      gBtn.textContent = 'Disconnect'; gBtn.disabled = false; gBtn.style.opacity = ''; gBtn.onclick = disconnectGoogle;
+    }
   } else {
+    gBtn.classList.remove('danger'); gBtn.onclick = startGoogleLink;
     gHint.textContent = 'Connect a Google account to also use the app on the web, without Telegram. It must be a Google that has no web account yet.';
     gBtn.textContent = 'Connect'; gBtn.disabled = false; gBtn.style.opacity = '';
   }
+}
+async function disconnectGoogle(){
+  const gBtn = document.getElementById('setGoogleBtn'), gHint = document.getElementById('setGoogleHint');
+  if (!confirm('Disconnect this Google account? You will not be able to sign in on the web with it any more. You can connect another Google account right after.')) return;
+  gBtn.disabled = true;
+  try{
+    const r = await (await fetch(`${API_BASE}/google-link/disconnect`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId: state.user.id, initData: getInitData() }) })).json();
+    if (!r.success){ gHint.textContent = r.reason === 'use_telegram' ? 'Open Settings in the Telegram app to disconnect Google.' : 'Could not disconnect. Please try again.'; gBtn.disabled = false; return; }
+  } catch(e){ gHint.textContent = 'Could not disconnect. Please try again.'; gBtn.disabled = false; return; }
+  refreshAccountSettings();
 }
 async function startGoogleLink(){
   const gBtn = document.getElementById('setGoogleBtn'), gHint = document.getElementById('setGoogleHint');
